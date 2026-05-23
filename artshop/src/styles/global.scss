@@ -4,6 +4,28 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap');
 
+@media (min-width: 768px) {
+  html,
+  page {
+    font-size: 50px !important;
+    max-width: 100%;
+  }
+}
+
+@media (min-width: 1024px) {
+  html,
+  page {
+    font-size: 50px !important;
+  }
+}
+
+@media (min-width: 1536px) {
+  html,
+  page {
+    font-size: 54px !important;
+  }
+}
+
 page {
   background-color: $color-surface;
   font-family: $font-sans;
@@ -31,12 +53,32 @@ image {
   display: none;
 }
 
+@media (min-width: 768px) {
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+    display: block;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: $color-rule;
+    border-radius: 3px;
+  }
+}
+
 .text-center { text-align: center; }
 .text-ellipsis { @include ellipsis; }
 
 .page-container {
   min-height: 100vh;
   background-color: $color-surface;
+
+  @media (min-width: 768px) {
+    max-width: $max-width-wide;
+    margin: 0 auto;
+  }
 }
 
 .safe-area-bottom {
@@ -68,20 +110,20 @@ image {
   @include responsive-container($max-w: $max-width-wide);
 }
 
-@media (min-width: $breakpoint-md) {
+@media (min-width: 768px) {
   .desktop-hide {
     display: none !important;
   }
 }
 
-@media (max-width: #{$breakpoint-md - 1px}) {
+@media (max-width: 767px) {
   .mobile-hide {
     display: none !important;
   }
 }
 
 .uni-tabbar {
-  @media (min-width: $breakpoint-md) {
+  @media (min-width: 768px) {
     max-width: $max-width;
     margin: 0 auto;
   }

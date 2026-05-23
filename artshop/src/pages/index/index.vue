@@ -326,7 +326,10 @@ onPullDownRefresh(() => {
 }
 
 .categories-section {
+  @include responsive-container($max-width);
   margin-top: $space-3xl;
+  padding-left: 0;
+  padding-right: 0;
   display: flex;
   flex-direction: column;
   gap: $space-2xl;
@@ -375,8 +378,10 @@ onPullDownRefresh(() => {
 }
 
 .editions-section {
+  @include responsive-container($max-width);
   margin-top: $space-4xl;
-  padding: 0 $space-lg;
+  padding-left: $space-lg;
+  padding-right: $space-lg;
 
   .section-heading {
     margin-bottom: $space-xl;
@@ -454,8 +459,10 @@ onPullDownRefresh(() => {
 }
 
 .artists-section {
+  @include responsive-container($max-width);
   margin-top: $space-4xl;
-  padding: 0 $space-lg;
+  padding-left: $space-lg;
+  padding-right: $space-lg;
 
   .section-heading {
     margin-bottom: $space-xl;
@@ -501,8 +508,10 @@ onPullDownRefresh(() => {
 }
 
 .store-section {
+  @include responsive-container($max-width);
   margin-top: $space-4xl;
-  padding: 0 $space-lg;
+  padding-left: $space-lg;
+  padding-right: $space-lg;
 
   .store-link {
     display: flex;
@@ -545,7 +554,7 @@ onPullDownRefresh(() => {
   display: none;
 }
 
-@media (min-width: $breakpoint-md) {
+@media (min-width: 768px) {
   .hero {
     max-height: 85vh;
 
@@ -558,7 +567,7 @@ onPullDownRefresh(() => {
       left: 0;
       right: 0;
       z-index: 10;
-      padding: 24px 48px;
+      padding: 20px 48px;
       background: rgba(26, 26, 26, 0.35);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
@@ -625,6 +634,7 @@ onPullDownRefresh(() => {
 
     .slogan-en {
       font-size: 14px;
+      margin-top: 12px;
     }
 
     .hero-scroll-indicator {
@@ -633,28 +643,26 @@ onPullDownRefresh(() => {
   }
 
   .categories-section {
-    @include responsive-container($max-width);
     flex-direction: row;
-    gap: $space-xl;
+    gap: 24px;
 
     .category-block {
       flex: 1;
-      height: 480rpx;
+      height: 400px;
       @include hover-lift;
     }
   }
 
   .editions-section {
-    @include responsive-container($max-width);
-
     .editions-scroll {
       overflow: visible;
       white-space: normal;
     }
 
     .editions-list {
-      @include desktop-grid(4, $space-lg);
       display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
       padding-right: 0;
     }
 
@@ -672,16 +680,15 @@ onPullDownRefresh(() => {
   }
 
   .artists-section {
-    @include responsive-container($max-width);
-
     .artists-scroll {
       overflow: visible;
       white-space: normal;
     }
 
     .artists-list {
-      @include desktop-grid(6, $space-lg);
       display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 24px;
       padding-right: 0;
     }
 
@@ -697,10 +704,8 @@ onPullDownRefresh(() => {
   }
 
   .store-section {
-    @include responsive-container($max-width);
-
     .store-link {
-      padding: $space-3xl 0;
+      padding: 64px 0;
       cursor: pointer;
       transition: all $duration-base $ease-out-expo;
 
@@ -719,7 +724,36 @@ onPullDownRefresh(() => {
   }
 
   .bottom-spacer {
-    height: $space-4xl * 2;
+    height: 160px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero {
+    .slogan-cn {
+      font-size: 48px;
+    }
+
+    .slogan-en {
+      font-size: 16px;
+      margin-top: 16px;
+    }
+  }
+
+  .categories-section {
+    .category-block {
+      height: 480px;
+    }
+  }
+
+  .store-section {
+    .store-text {
+      font-size: 28px;
+    }
+
+    .store-arrow {
+      font-size: 28px;
+    }
   }
 }
 </style>
