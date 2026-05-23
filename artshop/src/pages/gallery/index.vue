@@ -1086,4 +1086,111 @@ onMounted(() => {
     letter-spacing: 0.02em;
   }
 }
+
+@media (min-width: $breakpoint-md) {
+  .gallery-page {
+    max-width: $max-width;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: $space-xl;
+    padding-right: $space-xl;
+  }
+
+  .category-tabs {
+    &__item {
+      padding: 0 $space-lg;
+    }
+
+    &__text {
+      font-size: $font-base;
+    }
+  }
+
+  .sub-tabs {
+    &__item {
+      padding: 0 $space-md;
+      margin-right: $space-sm;
+    }
+
+    &__text {
+      font-size: $font-sm;
+    }
+  }
+
+  .toolbar {
+    padding: $space-md $space-xl;
+
+    &__sort-text {
+      font-size: $font-sm;
+    }
+
+    &__view-icon {
+      font-size: $font-lg;
+    }
+  }
+
+  .artwork-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: $space-md;
+    padding: $space-md;
+  }
+
+  .skeleton-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: $space-md;
+    padding: $space-md;
+  }
+
+  .artwork-item {
+    @include hover-lift;
+
+    &__info {
+      padding: $space-sm $space-sm $space-md;
+    }
+
+    &__title {
+      font-size: $font-sm;
+    }
+
+    &__price {
+      font-size: $font-base;
+    }
+  }
+
+  .gallery-content {
+    @include desktop-scrollbar;
+  }
+
+  .filter-popup {
+    max-width: 480px;
+    left: auto;
+    right: $space-xl;
+    border: 1rpx solid $color-rule;
+  }
+
+  .filter-popup__body {
+    @include desktop-scrollbar;
+  }
+}
+
+@media (min-width: $breakpoint-lg) {
+  .gallery-page {
+    padding-left: $space-2xl;
+    padding-right: $space-2xl;
+  }
+
+  .category-tabs {
+    &__item {
+      padding: 0 $space-xl;
+    }
+  }
+
+  .artwork-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .skeleton-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
 </style>

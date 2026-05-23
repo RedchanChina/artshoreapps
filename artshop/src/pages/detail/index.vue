@@ -791,4 +791,110 @@ onShareAppMessage(() => ({
     }
   }
 }
+
+@media (min-width: $breakpoint-lg) {
+  .detail-page {
+    width: 100%;
+    max-width: $max-width;
+    margin: 0 auto;
+    padding: $space-xl $space-2xl;
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    column-gap: $space-3xl;
+  }
+
+  .page-scroll {
+    grid-column: 1 / -1;
+    height: auto;
+    overflow: visible;
+  }
+
+  .page-scroll .uni-scroll-view {
+    overflow: visible;
+    height: auto;
+  }
+
+  .page-scroll .uni-scroll-view-content {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    column-gap: $space-3xl;
+  }
+
+  .hero {
+    grid-column: 1;
+
+    .hero-swiper {
+      height: 70vh;
+      max-height: 70vh;
+    }
+  }
+
+  .info {
+    grid-column: 1;
+  }
+
+  .specs {
+    grid-column: 2;
+    grid-row: 1 / 3;
+    border-top: none;
+    align-self: start;
+    position: sticky;
+    top: $space-xl;
+  }
+
+  .preview-links {
+    grid-column: 2;
+    border-top: none;
+  }
+
+  .section {
+    grid-column: 1 / -1;
+  }
+
+  .bottom-spacer {
+    display: none;
+  }
+
+  .bottom-bar {
+    grid-column: 2;
+    position: static;
+    border-top: 1rpx solid $color-rule;
+    padding: $space-lg 0;
+  }
+
+  .artist-scroll {
+    overflow: visible;
+
+    .uni-scroll-view {
+      overflow: visible;
+    }
+
+    .artist-scroll-inner {
+      flex-wrap: wrap;
+
+      .artist-work {
+        width: calc(25% - #{$space-md} * 3 / 4);
+        flex-shrink: 1;
+
+        .artist-work-img {
+          width: 100%;
+          height: 0;
+          padding-bottom: 133.33%;
+        }
+      }
+    }
+  }
+
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: $space-md;
+
+    .related-item {
+      width: auto;
+
+      @include hover-lift;
+    }
+  }
+}
 </style>

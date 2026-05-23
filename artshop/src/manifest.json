@@ -5,6 +5,30 @@
     "versionName": "1.0.0",
     "versionCode": "100",
     "transformPx": false,
+    "h5": {
+        "title": "ArtShop — More Art In Life",
+        "template": "index.html",
+        "router": {
+            "mode": "history",
+            "base": "/"
+        },
+        "sdkConfigs": {},
+        "async": {
+            "loading": "AsyncLoading"
+        },
+        "devServer": {
+            "host": "0.0.0.0",
+            "port": 5173,
+            "https": false
+        },
+        "publicPath": "/",
+        "viewport": {
+            "responsive": true,
+            "deviceRatio": {}
+        },
+        "flexible": true,
+        "resetViewport": false
+    },
     "app-plus": {
         "usingComponents": true,
         "nvueStyleCompiler": "uni-app",

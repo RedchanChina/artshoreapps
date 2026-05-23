@@ -1,17 +1,20 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <script>
-      var coverSupport = 'CSS' in window && typeof CSS.supports === 'function' && (CSS.supports('top: env(a)') ||
-        CSS.supports('top: constant(a)'))
-      document.write(
-        '<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0' +
-        (coverSupport ? ', viewport-fit=cover' : '') + '" />')
-    </script>
-    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0, viewport-fit=cover" />
+    <meta name="description" content="ArtShop — 让生活多一点艺术。摄影、插画限量艺术微喷作品及周边衍生产品。" />
+    <meta name="theme-color" content="#FFFFFF" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://trae-api-cn.mchost.guru" />
+    <title>ArtShop — More Art In Life</title>
     <!--preload-links-->
     <!--app-context-->
+    <style>
+      body { margin: 0; padding: 0; background: #FFFFFF; }
+      #app { min-height: 100vh; }
+    </style>
   </head>
   <body>
     <div id="app"><!--app-html--></div>
