@@ -1,6 +1,6 @@
-const { collection, getOpenId, getUserByOpenId } = require('../common/db')
-const { success, fail, pageResult } = require('../common/response')
-const COL = require('../common/constants')
+const { collection, getOpenId, getUserByOpenId } = require('./common/db')
+const { success, fail, pageResult } = require('./common/response')
+const COL = require('./common/constants')
 
 async function createOrder(event, context) {
   try {

@@ -1,6 +1,6 @@
-const { getOpenId, getUserByOpenId, ensureUser, collection } = require('../common/db')
-const { success, fail, pageResult } = require('../common/response')
-const COL = require('../common/constants')
+const { getOpenId, getUserByOpenId, ensureUser, collection } = require('./common/db')
+const { success, fail, pageResult } = require('./common/response')
+const COL = require('./common/constants')
 
 async function login(event, context) {
   try {

@@ -1,6 +1,6 @@
-const { collection, getOpenId } = require('../common/db')
-const { success, fail } = require('../common/response')
-const COL = require('../common/constants')
+const { collection, getOpenId } = require('./common/db')
+const { success, fail } = require('./common/response')
+const COL = require('./common/constants')
 
 async function createPayment(event, context) {
   try {

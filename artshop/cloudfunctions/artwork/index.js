@@ -1,6 +1,6 @@
-const { collection, paginate } = require('../common/db')
-const { success, fail, pageResult } = require('../common/response')
-const COL = require('../common/constants')
+const { collection, paginate } = require('./common/db')
+const { success, fail, pageResult } = require('./common/response')
+const COL = require('./common/constants')
 
 async function getArtworkList(event) {
   try {
