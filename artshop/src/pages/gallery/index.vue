@@ -1087,73 +1087,73 @@ onMounted(() => {
   }
 }
 
-@media (min-width: $breakpoint-md) {
+@media (min-width: 768px) {
   .gallery-page {
-    max-width: $max-width;
+    max-width: 1280px;
     margin-left: auto;
     margin-right: auto;
-    padding-left: $space-xl;
-    padding-right: $space-xl;
+    padding-left: 24px;
+    padding-right: 24px;
   }
 
   .category-tabs {
     &__item {
-      padding: 0 $space-lg;
+      padding: 0 16px;
     }
 
     &__text {
-      font-size: $font-base;
+      font-size: 13px;
     }
   }
 
   .sub-tabs {
     &__item {
-      padding: 0 $space-md;
-      margin-right: $space-sm;
+      padding: 0 12px;
+      margin-right: 8px;
     }
 
     &__text {
-      font-size: $font-sm;
+      font-size: 11px;
     }
   }
 
   .toolbar {
-    padding: $space-md $space-xl;
+    padding: 12px 24px;
 
     &__sort-text {
-      font-size: $font-sm;
+      font-size: 11px;
     }
 
     &__view-icon {
-      font-size: $font-lg;
+      font-size: 18px;
     }
   }
 
   .artwork-grid {
     grid-template-columns: repeat(3, 1fr);
-    gap: $space-md;
-    padding: $space-md;
+    gap: 12px;
+    padding: 12px;
   }
 
   .skeleton-grid {
     grid-template-columns: repeat(3, 1fr);
-    gap: $space-md;
-    padding: $space-md;
+    gap: 12px;
+    padding: 12px;
   }
 
   .artwork-item {
     @include hover-lift;
 
     &__info {
-      padding: $space-sm $space-sm $space-md;
+      padding: 8px 8px 12px;
     }
 
     &__title {
-      font-size: $font-sm;
+      font-size: 11px;
     }
 
     &__price {
-      font-size: $font-base;
+      font-size: 13px;
     }
   }
 
@@ -1164,8 +1164,8 @@ onMounted(() => {
   .filter-popup {
     max-width: 480px;
     left: auto;
-    right: $space-xl;
-    border: 1rpx solid $color-rule;
+    right: 24px;
+    border: 1px solid $color-rule;
   }
 
   .filter-popup__body {
@@ -1173,15 +1173,15 @@ onMounted(() => {
   }
 }
 
-@media (min-width: $breakpoint-lg) {
+@media (min-width: 1024px) {
   .gallery-page {
-    padding-left: $space-2xl;
-    padding-right: $space-2xl;
+    padding-left: 32px;
+    padding-right: 32px;
   }
 
   .category-tabs {
     &__item {
-      padding: 0 $space-xl;
+      padding: 0 24px;
     }
   }
 

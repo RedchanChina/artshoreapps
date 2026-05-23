@@ -263,7 +263,7 @@ const onLoginLogout = () => {
   height: 120rpx;
 }
 
-@media (min-width: $breakpoint-md) {
+@media (min-width: 768px) {
   .user-page {
     @include responsive-container;
   }
@@ -273,8 +273,8 @@ const onLoginLogout = () => {
   }
 
   .profile-avatar {
-    width: 200rpx;
-    height: 200rpx;
+    width: 100px;
+    height: 100px;
   }
 
   .profile-name {
@@ -354,7 +354,7 @@ const onLoginLogout = () => {
   }
 }
 
-@media (min-width: $breakpoint-lg) {
+@media (min-width: 1024px) {
   .user-page {
     @include desktop-sidebar(1fr, 360px);
     padding: $space-2xl;

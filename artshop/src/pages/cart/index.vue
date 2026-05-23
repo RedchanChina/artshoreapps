@@ -452,7 +452,7 @@ safeAreaBottom.value = systemInfo.safeArea?.bottom
   }
 }
 
-@media (min-width: $breakpoint-md) {
+@media (min-width: 768px) {
   .cart-page {
     @include responsive-container($max-width-narrow);
   }
@@ -479,8 +479,8 @@ safeAreaBottom.value = systemInfo.safeArea?.bottom
   }
 
   .item-thumb {
-    width: 180rpx;
-    height: 180rpx;
+    width: 90px;
+    height: 90px;
   }
 
   .item-info {
@@ -498,7 +498,7 @@ safeAreaBottom.value = systemInfo.safeArea?.bottom
 
     .stepper-value {
       font-size: $font-base;
-      min-width: 40rpx;
+      min-width: 20px;
     }
   }
 

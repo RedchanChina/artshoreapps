@@ -792,15 +792,15 @@ onShareAppMessage(() => ({
   }
 }
 
-@media (min-width: $breakpoint-lg) {
+@media (min-width: 1024px) {
   .detail-page {
     width: 100%;
-    max-width: $max-width;
+    max-width: 1280px;
     margin: 0 auto;
-    padding: $space-xl $space-2xl;
+    padding: 24px 32px;
     display: grid;
     grid-template-columns: 1fr 400px;
-    column-gap: $space-3xl;
+    column-gap: 48px;
   }
 
   .page-scroll {
@@ -817,7 +817,7 @@ onShareAppMessage(() => ({
   .page-scroll .uni-scroll-view-content {
     display: grid;
     grid-template-columns: 1fr 400px;
-    column-gap: $space-3xl;
+    column-gap: 48px;
   }
 
   .hero {
@@ -839,7 +839,7 @@ onShareAppMessage(() => ({
     border-top: none;
     align-self: start;
     position: sticky;
-    top: $space-xl;
+    top: 24px;
   }
 
   .preview-links {
@@ -858,8 +858,8 @@ onShareAppMessage(() => ({
   .bottom-bar {
     grid-column: 2;
     position: static;
-    border-top: 1rpx solid $color-rule;
-    padding: $space-lg 0;
+    border-top: 1px solid $color-rule;
+    padding: 16px 0;
   }
 
   .artist-scroll {
@@ -873,7 +873,7 @@ onShareAppMessage(() => ({
       flex-wrap: wrap;
 
       .artist-work {
-        width: calc(25% - #{$space-md} * 3 / 4);
+        width: calc(25% - 9px);
         flex-shrink: 1;
 
         .artist-work-img {
@@ -888,7 +888,7 @@ onShareAppMessage(() => ({
   .related-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: $space-md;
+    gap: 12px;
 
     .related-item {
       width: auto;

@@ -611,7 +611,7 @@ function onLoadMore() {
   height: 160rpx;
 }
 
-@media (min-width: $breakpoint-md) {
+@media (min-width: 768px) {
   .community-page {
     @include responsive-container;
   }
@@ -652,7 +652,7 @@ function onLoadMore() {
   }
 
   .article-cover {
-    height: 280rpx;
+    height: 140px;
   }
 
   .article-title {
@@ -670,7 +670,7 @@ function onLoadMore() {
   }
 
   .exhibition-cover {
-    height: 320rpx;
+    height: 160px;
   }
 
   .topic-list {
@@ -707,17 +707,17 @@ function onLoadMore() {
   }
 }
 
-@media (min-width: $breakpoint-lg) {
+@media (min-width: 1024px) {
   .article-item {
     grid-template-columns: 2fr 3fr;
   }
 
   .article-cover {
-    height: 320rpx;
+    height: 160px;
   }
 
   .exhibition-cover {
-    height: 360rpx;
+    height: 180px;
   }
 
   .tab-panel {

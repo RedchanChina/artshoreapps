@@ -733,7 +733,7 @@ onLoad(() => {
   height: 160rpx;
 }
 
-@media (min-width: $breakpoint-md) {
+@media (min-width: 768px) {
   .artist-page {
     @include responsive-container;
   }
@@ -751,8 +751,8 @@ onLoad(() => {
   }
 
   .artist-avatar {
-    width: 200rpx;
-    height: 200rpx;
+    width: 100px;
+    height: 100px;
     margin-bottom: 0;
   }
 
@@ -836,7 +836,7 @@ onLoad(() => {
   }
 }
 
-@media (min-width: $breakpoint-lg) {
+@media (min-width: 1024px) {
   .works-grid {
     grid-template-columns: repeat(4, 1fr);
   }

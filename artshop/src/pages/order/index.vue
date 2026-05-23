@@ -505,7 +505,7 @@ const onAfterSale = (order: Order) => {
   color: $color-ink-tertiary;
 }
 
-@media (min-width: $breakpoint-md) {
+@media (min-width: 768px) {
   .order-page {
     @include responsive-container($max-width-narrow);
   }
@@ -551,8 +551,8 @@ const onAfterSale = (order: Order) => {
   }
 
   .order-thumb {
-    width: 120rpx;
-    height: 120rpx;
+    width: 60px;
+    height: 60px;
   }
 
   .order-product-title {

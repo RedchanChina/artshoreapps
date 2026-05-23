@@ -736,7 +736,7 @@ onLoad(() => {
   }
 }
 
-@media (min-width: $breakpoint-md) {
+@media (min-width: 768px) {
   .checkout-page {
     @include responsive-container;
   }
@@ -746,14 +746,14 @@ onLoad(() => {
   }
 
   .checkout-content {
-    @media (min-width: $breakpoint-lg) {
+    @media (min-width: 1024px) {
       @include desktop-sidebar(1fr, 400px);
       overflow: hidden;
     }
   }
 
   .checkout-scroll {
-    @media (min-width: $breakpoint-lg) {
+    @media (min-width: 1024px) {
       overflow-y: auto;
       padding-right: $space-2xl;
     }
@@ -772,8 +772,8 @@ onLoad(() => {
   }
 
   .order-item-thumb {
-    width: 140rpx;
-    height: 140rpx;
+    width: 70px;
+    height: 70px;
   }
 
   .order-item-title {
