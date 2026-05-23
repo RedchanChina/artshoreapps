@@ -1,6 +1,19 @@
 <template>
   <view class="home-page">
     <view class="hero">
+      <view class="desktop-nav">
+        <text class="nav-wordmark">ARTSHOP</text>
+        <view class="nav-links">
+          <text class="nav-link">Works</text>
+          <text class="nav-link">Artists</text>
+          <text class="nav-link">Community</text>
+          <text class="nav-link">About</text>
+        </view>
+        <view class="nav-actions">
+          <text class="nav-action">Cart (0)</text>
+          <text class="nav-action">Account</text>
+        </view>
+      </view>
       <image
         class="hero-image"
         :src="heroImage"
@@ -526,5 +539,187 @@ onPullDownRefresh(() => {
 .bottom-spacer {
   height: $space-4xl;
   @include safe-area-bottom;
+}
+
+.desktop-nav {
+  display: none;
+}
+
+@media (min-width: $breakpoint-md) {
+  .hero {
+    max-height: 85vh;
+
+    .desktop-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 10;
+      padding: 24px 48px;
+      background: rgba(26, 26, 26, 0.35);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .nav-wordmark {
+      font-family: $font-sans;
+      font-size: 14px;
+      font-weight: 500;
+      color: #ffffff;
+      letter-spacing: 0.3em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 32px;
+    }
+
+    .nav-link {
+      font-family: $font-sans;
+      font-size: 13px;
+      font-weight: 400;
+      color: rgba(255, 255, 255, 0.8);
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      transition: color $duration-base $ease-out;
+
+      &:hover {
+        color: #ffffff;
+      }
+    }
+
+    .nav-actions {
+      display: flex;
+      gap: 24px;
+    }
+
+    .nav-action {
+      font-family: $font-sans;
+      font-size: 13px;
+      font-weight: 400;
+      color: rgba(255, 255, 255, 0.8);
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: color $duration-base $ease-out;
+
+      &:hover {
+        color: #ffffff;
+      }
+    }
+
+    .hero-brand {
+      display: none;
+    }
+
+    .hero-slogan {
+      left: 48px;
+      bottom: 64px;
+    }
+
+    .slogan-cn {
+      font-size: 36px;
+    }
+
+    .slogan-en {
+      font-size: 14px;
+    }
+
+    .hero-scroll-indicator {
+      bottom: 32px;
+    }
+  }
+
+  .categories-section {
+    @include responsive-container($max-width);
+    flex-direction: row;
+    gap: $space-xl;
+
+    .category-block {
+      flex: 1;
+      height: 480rpx;
+      @include hover-lift;
+    }
+  }
+
+  .editions-section {
+    @include responsive-container($max-width);
+
+    .editions-scroll {
+      overflow: visible;
+      white-space: normal;
+    }
+
+    .editions-list {
+      @include desktop-grid(4, $space-lg);
+      display: grid;
+      padding-right: 0;
+    }
+
+    .edition-item {
+      width: auto;
+      @include hover-lift;
+
+      .edition-image-wrap {
+        width: 100%;
+        height: 0;
+        padding-bottom: 133%;
+        position: relative;
+      }
+    }
+  }
+
+  .artists-section {
+    @include responsive-container($max-width);
+
+    .artists-scroll {
+      overflow: visible;
+      white-space: normal;
+    }
+
+    .artists-list {
+      @include desktop-grid(6, $space-lg);
+      display: grid;
+      padding-right: 0;
+    }
+
+    .artist-item {
+      width: auto;
+      @include hover-lift;
+
+      .artist-avatar {
+        width: 80px;
+        height: 80px;
+      }
+    }
+  }
+
+  .store-section {
+    @include responsive-container($max-width);
+
+    .store-link {
+      padding: $space-3xl 0;
+      cursor: pointer;
+      transition: all $duration-base $ease-out-expo;
+
+      &:hover .store-arrow {
+        transform: translateX(8px);
+      }
+    }
+
+    .store-text {
+      font-size: 24px;
+    }
+
+    .store-arrow {
+      font-size: 24px;
+    }
+  }
+
+  .bottom-spacer {
+    height: $space-4xl * 2;
+  }
 }
 </style>

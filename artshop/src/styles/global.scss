@@ -12,6 +12,7 @@ page {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
 }
 
 view, text {
@@ -53,4 +54,35 @@ image {
 
 .body-sans {
   @include sans-body;
+}
+
+.responsive-container {
+  @include responsive-container;
+}
+
+.responsive-container--narrow {
+  @include responsive-container($max-w: $max-width-narrow);
+}
+
+.responsive-container--wide {
+  @include responsive-container($max-w: $max-width-wide);
+}
+
+@media (min-width: $breakpoint-md) {
+  .desktop-hide {
+    display: none !important;
+  }
+}
+
+@media (max-width: #{$breakpoint-md - 1px}) {
+  .mobile-hide {
+    display: none !important;
+  }
+}
+
+.uni-tabbar {
+  @media (min-width: $breakpoint-md) {
+    max-width: $max-width;
+    margin: 0 auto;
+  }
 }

@@ -262,4 +262,127 @@ const onLoginLogout = () => {
 .bottom-spacer {
   height: 120rpx;
 }
+
+@media (min-width: $breakpoint-md) {
+  .user-page {
+    @include responsive-container;
+  }
+
+  .profile-header {
+    padding: $space-3xl $space-xl $space-2xl;
+  }
+
+  .profile-avatar {
+    width: 200rpx;
+    height: 200rpx;
+  }
+
+  .profile-name {
+    font-size: $font-xxl;
+  }
+
+  .section-divider {
+    margin: 0 $space-xl;
+  }
+
+  .orders-section {
+    padding: $space-xl $space-xl;
+
+    .section-heading {
+      font-size: $font-lg;
+    }
+  }
+
+  .order-links {
+    gap: $space-xl;
+  }
+
+  .order-link {
+    font-size: $font-base;
+    cursor: pointer;
+
+    &:hover {
+      color: $color-ink;
+    }
+  }
+
+  .func-list {
+    padding: $space-lg $space-xl;
+  }
+
+  .func-row {
+    padding: $space-xl 0;
+    cursor: pointer;
+
+    &:hover {
+      .func-label {
+        color: $color-accent;
+      }
+    }
+  }
+
+  .func-label {
+    font-size: $font-md;
+  }
+
+  .member-section {
+    padding: $space-xl $space-xl;
+
+    .section-heading {
+      font-size: $font-lg;
+    }
+  }
+
+  .member-level {
+    font-size: $font-xl;
+  }
+
+  .member-points {
+    font-size: $font-base;
+  }
+
+  .logout-section {
+    padding: $space-2xl $space-xl;
+  }
+
+  .logout-link {
+    cursor: pointer;
+
+    &:hover {
+      color: $color-ink;
+    }
+  }
+}
+
+@media (min-width: $breakpoint-lg) {
+  .user-page {
+    @include desktop-sidebar(1fr, 360px);
+    padding: $space-2xl;
+    gap: $space-3xl;
+  }
+
+  .profile-header {
+    padding: $space-2xl 0;
+  }
+
+  .section-divider {
+    margin: 0;
+  }
+
+  .orders-section {
+    padding: $space-xl 0;
+  }
+
+  .func-list {
+    padding: $space-lg 0;
+  }
+
+  .member-section {
+    padding: $space-xl 0;
+  }
+
+  .logout-section {
+    padding: $space-xl 0;
+  }
+}
 </style>

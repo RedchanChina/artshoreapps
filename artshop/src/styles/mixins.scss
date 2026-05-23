@@ -129,3 +129,93 @@
   background: $color-rule;
   border: none;
 }
+
+@mixin responsive-container($max-w: $max-width) {
+  width: 100%;
+  margin: 0 auto;
+  padding-left: $space-md;
+  padding-right: $space-md;
+
+  @media (min-width: $breakpoint-md) {
+    max-width: $max-w;
+    padding-left: $space-xl;
+    padding-right: $space-xl;
+  }
+
+  @media (min-width: $breakpoint-xl) {
+    padding-left: $space-2xl;
+    padding-right: $space-2xl;
+  }
+}
+
+@mixin desktop-only {
+  @media (min-width: $breakpoint-md) {
+    @content;
+  }
+}
+
+@mixin mobile-only {
+  @media (max-width: #{$breakpoint-md - 1px}) {
+    @content;
+  }
+}
+
+@mixin tablet-up {
+  @media (min-width: $breakpoint-sm) {
+    @content;
+  }
+}
+
+@mixin desktop-grid($cols: 3, $gap: $space-md) {
+  @media (min-width: $breakpoint-md) {
+    display: grid;
+    grid-template-columns: repeat($cols, 1fr);
+    gap: $gap;
+  }
+}
+
+@mixin desktop-sidebar($main: 1fr, $side: 380px) {
+  @media (min-width: $breakpoint-lg) {
+    display: grid;
+    grid-template-columns: $main $side;
+    gap: $space-3xl;
+  }
+}
+
+@mixin hover-lift {
+  transition: transform $duration-base $ease-out-expo, opacity $duration-base $ease-out;
+
+  @media (min-width: $breakpoint-md) {
+    &:hover {
+      transform: translateY(-4rpx);
+      opacity: 0.9;
+    }
+  }
+
+  &:active {
+    opacity: 0.85;
+  }
+}
+
+@mixin desktop-scrollbar {
+  @media (min-width: $breakpoint-md) {
+    &::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+      display: block;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: $color-rule;
+      border-radius: 3px;
+
+      &:hover {
+        background-color: $color-ink-tertiary;
+      }
+    }
+  }
+}

@@ -451,4 +451,70 @@ safeAreaBottom.value = systemInfo.safeArea?.bottom
     }
   }
 }
+
+@media (min-width: $breakpoint-md) {
+  .cart-page {
+    @include responsive-container($max-width-narrow);
+  }
+
+  .cart-scroll {
+    @include desktop-scrollbar;
+  }
+
+  .cart-header {
+    padding: $space-2xl $space-xl $space-lg;
+  }
+
+  .cart-list {
+    padding: 0 $space-xl;
+  }
+
+  .cart-item-wrapper {
+    margin-bottom: $space-lg;
+  }
+
+  .cart-item {
+    padding: $space-xl 0;
+    gap: $space-lg;
+  }
+
+  .item-thumb {
+    width: 180rpx;
+    height: 180rpx;
+  }
+
+  .item-info {
+    gap: $space-sm;
+  }
+
+  .quantity-stepper {
+    gap: $space-lg;
+
+    .stepper-btn {
+      font-size: $font-md;
+      padding: $space-xs $space-sm;
+      cursor: pointer;
+    }
+
+    .stepper-value {
+      font-size: $font-base;
+      min-width: 40rpx;
+    }
+  }
+
+  .bottom-bar {
+    @include responsive-container($max-width-narrow);
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    padding: $space-lg $space-2xl;
+  }
+
+  .continue-link {
+    .continue-link-text {
+      @include hover-lift;
+      cursor: pointer;
+    }
+  }
+}
 </style>

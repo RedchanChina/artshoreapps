@@ -735,4 +735,83 @@ onLoad(() => {
     opacity: 0.6;
   }
 }
+
+@media (min-width: $breakpoint-md) {
+  .checkout-page {
+    @include responsive-container;
+  }
+
+  .checkout-scroll {
+    @include desktop-scrollbar;
+  }
+
+  .checkout-content {
+    @media (min-width: $breakpoint-lg) {
+      @include desktop-sidebar(1fr, 400px);
+      overflow: hidden;
+    }
+  }
+
+  .checkout-scroll {
+    @media (min-width: $breakpoint-lg) {
+      overflow-y: auto;
+      padding-right: $space-2xl;
+    }
+  }
+
+  .shipping-section {
+    padding: $space-2xl 0 $space-lg;
+  }
+
+  .items-section {
+    padding: $space-lg 0;
+
+    .section-label {
+      font-size: $font-lg;
+    }
+  }
+
+  .order-item-thumb {
+    width: 140rpx;
+    height: 140rpx;
+  }
+
+  .order-item-title {
+    font-size: $font-base;
+  }
+
+  .fee-section {
+    padding: $space-lg 0;
+  }
+
+  .payment-section {
+    padding: $space-lg 0;
+
+    .section-label {
+      font-size: $font-lg;
+    }
+  }
+
+  .payment-options {
+    flex-direction: row;
+    gap: $space-xl;
+  }
+
+  .remark-section {
+    padding: $space-lg 0;
+  }
+
+  .bottom-bar {
+    @include responsive-container;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    padding: $space-lg $space-2xl;
+  }
+
+  .pay-btn {
+    @include hover-lift;
+    cursor: pointer;
+  }
+}
 </style>

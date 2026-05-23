@@ -732,4 +732,121 @@ onLoad(() => {
 .bottom-spacer {
   height: 160rpx;
 }
+
+@media (min-width: $breakpoint-md) {
+  .artist-page {
+    @include responsive-container;
+  }
+
+  .artist-scroll {
+    @include desktop-scrollbar;
+  }
+
+  .artist-header {
+    flex-direction: row;
+    align-items: center;
+    padding: $space-2xl $space-xl;
+    gap: $space-xl;
+    text-align: left;
+  }
+
+  .artist-avatar {
+    width: 200rpx;
+    height: 200rpx;
+    margin-bottom: 0;
+  }
+
+  .artist-name {
+    font-size: $font-xxl;
+  }
+
+  .artist-bio {
+    text-align: left;
+    max-width: none;
+  }
+
+  .artist-stats {
+    justify-content: flex-end;
+    padding: 0 $space-xl $space-md;
+  }
+
+  .follow-link {
+    margin-top: $space-sm;
+    cursor: pointer;
+
+    &:hover {
+      color: $color-ink;
+    }
+  }
+
+  .tab-bar {
+    padding: 0 $space-xl;
+  }
+
+  .tab-item {
+    padding: $space-lg $space-lg $space-md;
+    margin-right: $space-xl;
+  }
+
+  .tab-panel {
+    padding: $space-xl;
+  }
+
+  .works-grid {
+    @include desktop-grid(3, $space-lg);
+  }
+
+  .work-card {
+    @include hover-lift;
+    cursor: pointer;
+  }
+
+  .story-content {
+    max-width: $max-width-narrow;
+    margin: 0 auto;
+  }
+
+  .story-paragraph {
+    font-size: $font-md;
+    line-height: 2.2;
+  }
+
+  .interview-question {
+    font-size: $font-md;
+  }
+
+  .interview-answer {
+    font-size: $font-md;
+    line-height: 2;
+  }
+
+  .timeline-item {
+    padding: $space-xl 0;
+  }
+
+  .timeline-name {
+    font-size: $font-md;
+  }
+
+  .message-input-bar {
+    @include responsive-container;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+  }
+}
+
+@media (min-width: $breakpoint-lg) {
+  .works-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .artist-header {
+    padding: $space-3xl $space-2xl;
+  }
+
+  .tab-panel {
+    padding: $space-2xl;
+  }
+}
 </style>

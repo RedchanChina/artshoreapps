@@ -504,4 +504,79 @@ const onAfterSale = (order: Order) => {
   font-size: $font-sm;
   color: $color-ink-tertiary;
 }
+
+@media (min-width: $breakpoint-md) {
+  .order-page {
+    @include responsive-container($max-width-narrow);
+  }
+
+  .order-list-wrap {
+    @include desktop-scrollbar;
+    padding: 0 $space-xl;
+  }
+
+  .tab-bar {
+    .tab-list {
+      padding: 0 $space-md;
+    }
+
+    .tab-item {
+      padding: $space-lg $space-lg;
+
+      &-text {
+        font-size: $font-base;
+      }
+    }
+  }
+
+  .order-item {
+    padding: $space-2xl 0;
+  }
+
+  .order-top {
+    margin-bottom: $space-lg;
+  }
+
+  .order-number {
+    font-size: $font-xs;
+  }
+
+  .order-status {
+    font-size: $font-xs;
+  }
+
+  .order-product {
+    gap: $space-lg;
+    margin-bottom: $space-md;
+  }
+
+  .order-thumb {
+    width: 120rpx;
+    height: 120rpx;
+  }
+
+  .order-product-title {
+    font-size: $font-base;
+  }
+
+  .order-product-spec {
+    font-size: $font-sm;
+  }
+
+  .order-product-price {
+    font-size: $font-base;
+  }
+
+  .order-bottom {
+    margin-top: $space-lg;
+  }
+
+  .order-action {
+    cursor: pointer;
+
+    &:hover {
+      color: $color-ink;
+    }
+  }
+}
 </style>

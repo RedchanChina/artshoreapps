@@ -610,4 +610,118 @@ function onLoadMore() {
 .bottom-spacer {
   height: 160rpx;
 }
+
+@media (min-width: $breakpoint-md) {
+  .community-page {
+    @include responsive-container;
+  }
+
+  .community-content {
+    @include desktop-scrollbar;
+  }
+
+  .header-top {
+    padding: $space-2xl $space-xl $space-lg;
+  }
+
+  .tab-bar {
+    padding: 0 $space-xl;
+  }
+
+  .tab-item {
+    padding: $space-lg $space-lg $space-md;
+    margin-right: $space-xl;
+  }
+
+  .tab-panel {
+    padding: $space-xl;
+  }
+
+  .article-list {
+    @include desktop-grid(2, $space-xl);
+  }
+
+  .article-item {
+    @include hover-lift;
+    cursor: pointer;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $space-md;
+    align-items: center;
+  }
+
+  .article-cover {
+    height: 280rpx;
+  }
+
+  .article-title {
+    margin-top: 0;
+    font-size: $font-lg;
+  }
+
+  .exhibition-list {
+    @include desktop-grid(3, $space-lg);
+  }
+
+  .exhibition-item {
+    @include hover-lift;
+    cursor: pointer;
+  }
+
+  .exhibition-cover {
+    height: 320rpx;
+  }
+
+  .topic-list {
+    @include desktop-grid(2, $space-lg);
+  }
+
+  .topic-item {
+    padding: $space-xl;
+    border-bottom: none;
+    border: 1rpx solid $color-rule;
+    border-radius: $radius-sm;
+    cursor: pointer;
+
+    &:hover {
+      border-color: $color-ink-tertiary;
+    }
+  }
+
+  .waterfall {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: $space-md;
+
+    &-col {
+      display: flex;
+      flex-direction: column;
+      gap: $space-md;
+    }
+  }
+
+  .post-item {
+    @include hover-lift;
+    cursor: pointer;
+  }
+}
+
+@media (min-width: $breakpoint-lg) {
+  .article-item {
+    grid-template-columns: 2fr 3fr;
+  }
+
+  .article-cover {
+    height: 320rpx;
+  }
+
+  .exhibition-cover {
+    height: 360rpx;
+  }
+
+  .tab-panel {
+    padding: $space-2xl;
+  }
+}
 </style>
