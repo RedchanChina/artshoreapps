@@ -2,7 +2,7 @@
   <view class="home-page">
     <view class="hero">
       <view class="desktop-nav">
-        <text class="nav-wordmark">ARTSHOP</text>
+        <image class="nav-logo" src="/static/logo.png" mode="heightFix" />
         <view class="nav-links">
           <text class="nav-link">Works</text>
           <text class="nav-link">Artists</text>
@@ -20,7 +20,7 @@
         mode="aspectFill"
       />
       <view class="hero-brand">
-        <text class="brand-wordmark">ARTSHOP</text>
+        <image class="brand-logo" src="/static/logo.png" mode="heightFix" />
       </view>
       <view class="hero-slogan">
         <text class="slogan-cn">让生活多一点艺术</text>
@@ -253,12 +253,8 @@ onPullDownRefresh(() => {
     z-index: 2;
   }
 
-  .brand-wordmark {
-    font-family: $font-sans;
-    font-size: 24rpx;
-    font-weight: 500;
-    color: #ffffff;
-    letter-spacing: 0.3em;
+  .brand-logo {
+    height: 48rpx;
   }
 
   .hero-slogan {
@@ -573,12 +569,8 @@ onPullDownRefresh(() => {
       -webkit-backdrop-filter: blur(12px);
     }
 
-    .nav-wordmark {
-      font-family: $font-sans;
-      font-size: 14px;
-      font-weight: 500;
-      color: #ffffff;
-      letter-spacing: 0.3em;
+    .nav-logo {
+      height: 28px;
     }
 
     .nav-links {

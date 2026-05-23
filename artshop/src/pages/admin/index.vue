@@ -2,7 +2,7 @@
   <view class="admin-layout">
     <view class="admin-sidebar" v-if="isDesktop">
       <view class="sidebar-header">
-        <text class="sidebar-title">ArtShop</text>
+        <image class="sidebar-logo" src="/static/logo.png" mode="heightFix" />
         <text class="sidebar-subtitle">后台管理</text>
       </view>
       <view
@@ -18,7 +18,8 @@
     <view class="admin-main">
       <view class="admin-topbar">
         <view class="topbar-left" v-if="!isDesktop">
-          <text class="topbar-title">ArtShop 后台</text>
+          <image class="topbar-logo" src="/static/logo.png" mode="heightFix" />
+          <text class="topbar-title-text">后台管理</text>
         </view>
         <view class="topbar-left" v-else>
           <text class="topbar-page-title">{{ currentLabel }}</text>
@@ -116,12 +117,10 @@ uni.onWindowResize(() => checkDesktop())
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.sidebar-title {
+.sidebar-logo {
   display: block;
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 22px;
-  font-weight: 600;
-  letter-spacing: 1px;
+  height: 36px;
+  margin-bottom: 4px;
 }
 
 .sidebar-subtitle {
@@ -182,10 +181,19 @@ uni.onWindowResize(() => checkDesktop())
   z-index: 50;
 }
 
-.topbar-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 18px;
-  font-weight: 600;
+.topbar-left {
+  display: flex;
+  align-items: center;
+}
+
+.topbar-logo {
+  height: 28px;
+  margin-right: 8px;
+}
+
+.topbar-title-text {
+  font-size: 16px;
+  font-weight: 500;
   color: #1a1a1a;
 }
 
