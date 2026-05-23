@@ -1,4 +1,4 @@
-import { request, type PageResult } from './cloudbase'
+import { callAction, type PageResult } from './cloudbase'
 import type { Order, OrderStatus } from '@/types/order'
 
 export interface CreateOrderData {
@@ -23,30 +23,30 @@ export interface OrderListParams {
 }
 
 export async function createOrder(orderData: CreateOrderData): Promise<Order> {
-  return request<Order>('order-create', { orderData })
+  return callAction<Order>('order', 'create', { orderData })
 }
 
 export async function getOrderList(
   params: OrderListParams = {},
 ): Promise<PageResult<Order>> {
-  return request<PageResult<Order>>('order-list', { params })
+  return callAction<PageResult<Order>>('order', 'list', { params })
 }
 
 export async function getOrderDetail(id: string): Promise<Order> {
-  return request<Order>('order-detail', { id })
+  return callAction<Order>('order', 'detail', { id })
 }
 
 export async function cancelOrder(id: string): Promise<void> {
-  return request<void>('order-cancel', { id })
+  return callAction<void>('order', 'cancel', { id })
 }
 
 export async function confirmReceive(id: string): Promise<void> {
-  return request<void>('order-confirm-receive', { id })
+  return callAction<void>('order', 'confirm-receive', { id })
 }
 
 export async function requestRefund(
   id: string,
   reason: string,
 ): Promise<void> {
-  return request<void>('order-request-refund', { id, reason })
+  return callAction<void>('order', 'request-refund', { id, reason })
 }

@@ -1,4 +1,4 @@
-import { request, type PageResult } from './cloudbase'
+import { callAction, type PageResult } from './cloudbase'
 
 export interface Article {
   id: string
@@ -60,42 +60,42 @@ export interface PostListParams {
 export async function getArticles(
   params: ArticleListParams = {},
 ): Promise<PageResult<Article>> {
-  return request<PageResult<Article>>('community-articles', { params })
+  return callAction<PageResult<Article>>('community', 'articles', { params })
 }
 
 export async function getArticleDetail(id: string): Promise<Article> {
-  return request<Article>('community-article-detail', { id })
+  return callAction<Article>('community', 'article-detail', { id })
 }
 
 export async function getTopics(
   params: TopicListParams = {},
 ): Promise<PageResult<Topic>> {
-  return request<PageResult<Topic>>('community-topics', { params })
+  return callAction<PageResult<Topic>>('community', 'topics', { params })
 }
 
 export async function getTopicDetail(id: string): Promise<Topic> {
-  return request<Topic>('community-topic-detail', { id })
+  return callAction<Topic>('community', 'topic-detail', { id })
 }
 
 export async function getPosts(
   params: PostListParams = {},
 ): Promise<PageResult<Post>> {
-  return request<PageResult<Post>>('community-posts', { params })
+  return callAction<PageResult<Post>>('community', 'posts', { params })
 }
 
 export async function createPost(
   data: Pick<Post, 'topicId' | 'content' | 'images'>,
 ): Promise<Post> {
-  return request<Post>('community-post-create', { data })
+  return callAction<Post>('community', 'post-create', { data })
 }
 
 export async function likePost(id: string): Promise<void> {
-  return request<void>('community-post-like', { id })
+  return callAction<void>('community', 'post-like', { id })
 }
 
 export async function commentPost(
   id: string,
   content: string,
 ): Promise<void> {
-  return request<void>('community-post-comment', { id, content })
+  return callAction<void>('community', 'post-comment', { id, content })
 }

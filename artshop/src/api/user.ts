@@ -1,4 +1,4 @@
-import { request, type PageResult } from './cloudbase'
+import { callAction, type PageResult } from './cloudbase'
 import type {
   User,
   Address,
@@ -7,11 +7,11 @@ import type {
 } from '@/types/user'
 
 export async function login(code: string): Promise<{ token: string; userInfo: User }> {
-  return request<{ token: string; userInfo: User }>('user-login', { code })
+  return callAction<{ token: string; userInfo: User }>('user', 'login', { code })
 }
 
 export async function getUserInfo(): Promise<User> {
-  return request<User>('user-info', {})
+  return callAction<User>('user', 'info', {})
 }
 
 export interface UpdateUserInfoData {
@@ -25,28 +25,28 @@ export interface UpdateUserInfoData {
 export async function updateUserInfo(
   data: UpdateUserInfoData,
 ): Promise<User> {
-  return request<User>('user-update', { data })
+  return callAction<User>('user', 'update', { data })
 }
 
 export async function getAddresses(): Promise<Address[]> {
-  return request<Address[]>('user-addresses', {})
+  return callAction<Address[]>('user', 'addresses', {})
 }
 
 export async function addAddress(
   data: Omit<Address, 'id' | 'userId'>,
 ): Promise<Address> {
-  return request<Address>('user-address-add', { data })
+  return callAction<Address>('user', 'address-add', { data })
 }
 
 export async function updateAddress(
   id: string,
   data: Partial<Omit<Address, 'id' | 'userId'>>,
 ): Promise<Address> {
-  return request<Address>('user-address-update', { id, data })
+  return callAction<Address>('user', 'address-update', { id, data })
 }
 
 export async function deleteAddress(id: string): Promise<void> {
-  return request<void>('user-address-delete', { id })
+  return callAction<void>('user', 'address-delete', { id })
 }
 
 export interface CollectionListParams {
@@ -58,7 +58,7 @@ export interface CollectionListParams {
 export async function getCollections(
   params: CollectionListParams = {},
 ): Promise<PageResult<CollectionItem>> {
-  return request<PageResult<CollectionItem>>('user-collections', { params })
+  return callAction<PageResult<CollectionItem>>('user', 'collections', { params })
 }
 
 export interface AddCollectionData {
@@ -69,13 +69,13 @@ export interface AddCollectionData {
 export async function addCollection(
   data: AddCollectionData,
 ): Promise<CollectionItem> {
-  return request<CollectionItem>('user-collection-add', { data })
+  return callAction<CollectionItem>('user', 'collection-add', { data })
 }
 
 export async function removeCollection(id: string): Promise<void> {
-  return request<void>('user-collection-remove', { id })
+  return callAction<void>('user', 'collection-remove', { id })
 }
 
 export async function getCoupons(): Promise<Coupon[]> {
-  return request<Coupon[]>('user-coupons', {})
+  return callAction<Coupon[]>('user', 'coupons', {})
 }

@@ -75,3 +75,20 @@ export async function request<T = unknown>(
     throw error
   }
 }
+
+export type ActionModule =
+  | 'user'
+  | 'artwork'
+  | 'artist'
+  | 'order'
+  | 'payment'
+  | 'community'
+  | 'store'
+
+export async function callAction<T = unknown>(
+  module: ActionModule,
+  action: string,
+  data?: Record<string, unknown>,
+): Promise<T> {
+  return request<T>(module, { action, ...data })
+}
