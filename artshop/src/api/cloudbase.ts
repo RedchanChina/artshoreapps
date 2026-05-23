@@ -1,6 +1,6 @@
 import cloudbase from '@cloudbase/js-sdk'
 
-const ENV_ID = 'your-env-id'
+const ENV_ID = 'moreart-d9gb4c4ig54ef6812'
 
 let app: cloudbase.app.App | null = null
 
