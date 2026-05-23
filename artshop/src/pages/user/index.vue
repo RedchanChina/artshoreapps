@@ -45,6 +45,10 @@
         <text class="func-label">About</text>
         <text class="func-arrow">→</text>
       </view>
+      <view class="func-row" @tap="onFuncItemTap('admin')">
+        <text class="func-label">⚙️ 后台管理</text>
+        <text class="func-arrow">→</text>
+      </view>
     </view>
 
     <view class="section-divider" />
@@ -94,6 +98,7 @@ const onFuncItemTap = (key: string) => {
     coupons: '/pages/user/coupons',
     messages: '/pages/user/messages',
     about: '/pages/user/about',
+    admin: '/pages/admin/index',
   }
   const url = urlMap[key]
   if (url) {

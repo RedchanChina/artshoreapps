@@ -126,6 +126,14 @@
 				"navigationBarTitleText": "消息中心",
 				"backgroundColor": "#FAFAF8"
 			}
+		},
+		{
+			"path": "pages/admin/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "后台管理",
+				"backgroundColor": "#F5F5F5"
+			}
 		}
 	],
 	"tabBar": {

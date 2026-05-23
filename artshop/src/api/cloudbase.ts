@@ -84,6 +84,7 @@ export type ActionModule =
   | 'payment'
   | 'community'
   | 'store'
+  | 'admin'
 
 export async function callAction<T = unknown>(
   module: ActionModule,
