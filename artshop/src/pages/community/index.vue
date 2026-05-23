@@ -1,24 +1,20 @@
 <template>
   <view class="community-page">
-    <view class="community-header safe-area-top">
+    <view class="community-header">
       <view class="header-top">
-        <text class="header-title">艺术社区</text>
-        <text class="header-subtitle">Community</text>
+        <text class="header-title">Community</text>
       </view>
-      <view class="tab-segmented">
+      <view class="tab-bar">
         <view
           v-for="(tab, idx) in tabs"
           :key="idx"
-          class="tab-segmented__item"
-          :class="{ 'tab-segmented__item--active': activeTab === idx }"
+          class="tab-item"
+          :class="{ 'tab-item--active': activeTab === idx }"
           @tap="onTabChange(idx)"
         >
-          <text class="tab-segmented__text">{{ tab }}</text>
+          <text class="tab-item-text">{{ tab }}</text>
+          <view v-if="activeTab === idx" class="tab-item-indicator" />
         </view>
-        <view
-          class="tab-segmented__indicator"
-          :style="{ left: indicatorLeft + 'rpx', width: indicatorWidth + 'rpx' }"
-        />
       </view>
     </view>
 
@@ -33,205 +29,83 @@
       :bounces="false"
     >
       <view class="tab-panel" v-if="activeTab === 0">
-        <view class="news-categories">
-          <scroll-view scroll-x :show-scrollbar="false" enhanced>
-            <view class="news-categories__inner">
-              <view
-                v-for="cat in newsCategories"
-                :key="cat"
-                class="news-cat-tag"
-                :class="{ 'news-cat-tag--active': activeNewsCat === cat }"
-                @tap="activeNewsCat = cat"
-              >
-                <text class="news-cat-tag__text">{{ cat }}</text>
-              </view>
-            </view>
-          </scroll-view>
-        </view>
-        <view class="news-list">
+        <view class="article-list">
           <view
-            v-for="(article, idx) in filteredArticles"
+            v-for="article in filteredArticles"
             :key="article.id"
-            class="article-card"
+            class="article-item"
             @tap="onArticleTap(article)"
           >
-            <image class="article-card__cover" :src="article.cover" mode="aspectFill" lazy-load />
-            <view class="article-card__body">
-              <text class="article-card__title">{{ article.title }}</text>
-              <view class="article-card__meta">
-                <text class="article-card__tag">{{ article.category }}</text>
-                <text class="article-card__dot">·</text>
-                <text class="article-card__date">{{ article.date }}</text>
-                <text class="article-card__dot">·</text>
-                <text class="article-card__reads">{{ article.readCount }} 阅读</text>
-              </view>
-            </view>
+            <image class="article-cover" :src="article.cover" mode="aspectFill" lazy-load />
+            <text class="article-title">{{ article.title }}</text>
+            <text class="article-date">{{ article.date }}</text>
           </view>
         </view>
         <view class="load-more" v-if="articles.length > 0">
-          <view class="load-more__loading" v-if="loadingMore">
-            <view class="load-more__spinner" />
-            <text class="load-more__text">加载中...</text>
-          </view>
-          <text class="load-more__end" v-else-if="!hasMore">— 已浏览全部资讯 —</text>
+          <text class="load-more-end" v-if="!hasMore">—</text>
         </view>
       </view>
 
       <view class="tab-panel" v-if="activeTab === 1">
-        <view class="gallery-intro">
-          <text class="gallery-intro__title">沉浸式线上展厅</text>
-          <text class="gallery-intro__desc">足不出户，漫步艺术空间</text>
-        </view>
         <view class="exhibition-list">
           <view
             v-for="exhibition in exhibitions"
             :key="exhibition.id"
-            class="exhibition-card"
+            class="exhibition-item"
             @tap="onExhibitionTap(exhibition)"
           >
-            <view class="exhibition-card__cover-wrap">
-              <image class="exhibition-card__cover" :src="exhibition.cover" mode="aspectFill" lazy-load />
-              <view class="exhibition-card__overlay" />
-              <view class="exhibition-card__cover-info">
-                <text class="exhibition-card__cover-title">{{ exhibition.title }}</text>
-                <text class="exhibition-card__cover-sub">{{ exhibition.theme }}</text>
-              </view>
-            </view>
-            <view class="exhibition-card__footer">
-              <view class="exhibition-card__detail">
-                <view class="exhibition-card__row">
-                  <text class="exhibition-card__label">策展人</text>
-                  <text class="exhibition-card__value">{{ exhibition.curator }}</text>
-                </view>
-                <view class="exhibition-card__row">
-                  <text class="exhibition-card__label">作品数</text>
-                  <text class="exhibition-card__value">{{ exhibition.artworkCount }} 件</text>
-                </view>
-              </view>
-              <view class="exhibition-card__btn" @tap.stop="onEnterGallery(exhibition)">
-                <text class="exhibition-card__btn-text">进入展厅</text>
-              </view>
+            <image class="exhibition-cover" :src="exhibition.cover" mode="aspectFill" lazy-load />
+            <view class="exhibition-info">
+              <text class="exhibition-title">{{ exhibition.title }}</text>
+              <text class="exhibition-enter" @tap.stop="onEnterGallery(exhibition)">Enter →</text>
             </view>
           </view>
         </view>
       </view>
 
       <view class="tab-panel" v-if="activeTab === 2">
-        <view class="hot-topics">
-          <view class="hot-topics__header">
-            <view class="section-title-group">
-              <view class="accent-line" />
-              <text class="section-title">热门话题</text>
-            </view>
-          </view>
-          <scroll-view scroll-x :show-scrollbar="false" enhanced>
-            <view class="hot-topics__list">
-              <view
-                v-for="topic in hotTopics"
-                :key="topic.id"
-                class="hot-topic-card"
-                @tap="onTopicTap(topic)"
-              >
-                <image class="hot-topic-card__bg" :src="topic.cover" mode="aspectFill" lazy-load />
-                <view class="hot-topic-card__mask" />
-                <view class="hot-topic-card__content">
-                  <text class="hot-topic-card__name">#{{ topic.name }}</text>
-                  <text class="hot-topic-card__count">{{ topic.postCount }} 参与</text>
-                </view>
-              </view>
-            </view>
-          </scroll-view>
-        </view>
-        <view class="all-topics">
-          <view class="all-topics__header">
-            <view class="section-title-group">
-              <view class="accent-line" />
-              <text class="section-title">全部话题</text>
-            </view>
-          </view>
-          <view class="topic-grid">
-            <view
-              v-for="topic in allTopics"
-              :key="topic.id"
-              class="topic-card"
-              @tap="onTopicTap(topic)"
-            >
-              <image class="topic-card__cover" :src="topic.cover" mode="aspectFill" lazy-load />
-              <view class="topic-card__info">
-                <text class="topic-card__name">#{{ topic.name }}</text>
-                <text class="topic-card__desc">{{ topic.description }}</text>
-                <text class="topic-card__count">{{ topic.postCount }} 篇内容</text>
-              </view>
-            </view>
+        <view class="topic-list">
+          <view
+            v-for="topic in allTopics"
+            :key="topic.id"
+            class="topic-item"
+            @tap="onTopicTap(topic)"
+          >
+            <text class="topic-name">#{{ topic.name }}</text>
+            <text class="topic-count">{{ topic.postCount }} posts</text>
           </view>
         </view>
       </view>
 
       <view class="tab-panel" v-if="activeTab === 3">
-        <view class="showoff-list">
-          <view class="waterfall">
-            <view class="waterfall__col">
-              <view
-                v-for="post in leftPosts"
-                :key="post.id"
-                class="showoff-card"
-                @tap="onShowoffTap(post)"
-              >
-                <image
-                  class="showoff-card__image"
-                  :src="post.image"
-                  mode="widthFix"
-                  lazy-load
-                />
-                <view class="showoff-card__body">
-                  <text class="showoff-card__caption">{{ post.caption }}</text>
-                  <view class="showoff-card__user-row">
-                    <image class="showoff-card__avatar" :src="post.avatar" mode="aspectFill" />
-                    <text class="showoff-card__username">{{ post.username }}</text>
-                  </view>
-                  <view class="showoff-card__actions">
-                    <view class="showoff-card__action" @tap.stop="onLikePost(post)">
-                      <text class="showoff-card__action-icon">{{ post.liked ? '♥' : '♡' }}</text>
-                      <text class="showoff-card__action-count">{{ post.likeCount }}</text>
-                    </view>
-                    <view class="showoff-card__action" @tap.stop="onCommentPost(post)">
-                      <text class="showoff-card__action-icon">💬</text>
-                      <text class="showoff-card__action-count">{{ post.commentCount }}</text>
-                    </view>
-                  </view>
-                </view>
+        <view class="waterfall">
+          <view class="waterfall-col">
+            <view
+              v-for="post in leftPosts"
+              :key="post.id"
+              class="post-item"
+              @tap="onShowoffTap(post)"
+            >
+              <image class="post-image" :src="post.image" mode="widthFix" lazy-load />
+              <text class="post-caption">{{ post.caption }}</text>
+              <view class="post-user">
+                <text class="post-username">{{ post.username }}</text>
+                <text class="post-likes">{{ post.liked ? '♥' : '♡' }} {{ post.likeCount }}</text>
               </view>
             </view>
-            <view class="waterfall__col">
-              <view
-                v-for="post in rightPosts"
-                :key="post.id"
-                class="showoff-card"
-                @tap="onShowoffTap(post)"
-              >
-                <image
-                  class="showoff-card__image"
-                  :src="post.image"
-                  mode="widthFix"
-                  lazy-load
-                />
-                <view class="showoff-card__body">
-                  <text class="showoff-card__caption">{{ post.caption }}</text>
-                  <view class="showoff-card__user-row">
-                    <image class="showoff-card__avatar" :src="post.avatar" mode="aspectFill" />
-                    <text class="showoff-card__username">{{ post.username }}</text>
-                  </view>
-                  <view class="showoff-card__actions">
-                    <view class="showoff-card__action" @tap.stop="onLikePost(post)">
-                      <text class="showoff-card__action-icon">{{ post.liked ? '♥' : '♡' }}</text>
-                      <text class="showoff-card__action-count">{{ post.likeCount }}</text>
-                    </view>
-                    <view class="showoff-card__action" @tap.stop="onCommentPost(post)">
-                      <text class="showoff-card__action-icon">💬</text>
-                      <text class="showoff-card__action-count">{{ post.commentCount }}</text>
-                    </view>
-                  </view>
-                </view>
+          </view>
+          <view class="waterfall-col">
+            <view
+              v-for="post in rightPosts"
+              :key="post.id"
+              class="post-item"
+              @tap="onShowoffTap(post)"
+            >
+              <image class="post-image" :src="post.image" mode="widthFix" lazy-load />
+              <text class="post-caption">{{ post.caption }}</text>
+              <view class="post-user">
+                <text class="post-username">{{ post.username }}</text>
+                <text class="post-likes">{{ post.liked ? '♥' : '♡' }} {{ post.likeCount }}</text>
               </view>
             </view>
           </view>
@@ -240,31 +114,16 @@
 
       <view class="bottom-spacer" />
     </scroll-view>
-
-    <view class="fab-btn" v-if="activeTab === 3" @tap="onPublishShowoff">
-      <text class="fab-btn__icon">✚</text>
-      <text class="fab-btn__text">发布晒单</text>
-    </view>
   </view>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 
-const tabs = ['艺术资讯', '线上展厅', '话题广场', '用户晒单']
+const tabs = ['资讯', '展厅', '话题', '晒单']
 const activeTab = ref(0)
-const activeNewsCat = ref('全部')
 const isRefreshing = ref(false)
-const loadingMore = ref(false)
 const hasMore = ref(true)
-
-const newsCategories = ['全部', '展览信息', '艺术家访谈', '艺术科普', '行业动态']
-
-const indicatorWidth = 140
-const indicatorLeft = computed(() => {
-  const segmentWidth = 750 / tabs.length
-  return (activeTab.value * segmentWidth + (segmentWidth - indicatorWidth) / 2)
-})
 
 const imgBase = 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt='
 
@@ -319,10 +178,7 @@ const articles = ref([
   },
 ])
 
-const filteredArticles = computed(() => {
-  if (activeNewsCat.value === '全部') return articles.value
-  return articles.value.filter((a) => a.category === activeNewsCat.value)
-})
+const filteredArticles = computed(() => articles.value)
 
 const exhibitions = ref([
   {
@@ -348,23 +204,6 @@ const exhibitions = ref([
     cover: imgBase + 'morandi+still+life+ceramic+vase+quiet+objects+painting&image_size=landscape_16_9',
     curator: '苏婉清',
     artworkCount: 18,
-  },
-])
-
-const hotTopics = ref([
-  {
-    id: 't1',
-    name: '艺术生活',
-    cover: imgBase + 'art+life+aesthetic+home+decor+painting+on+wall&image_size=landscape_16_9',
-    postCount: 2863,
-    description: '分享艺术融入日常的美好方式',
-  },
-  {
-    id: 't2',
-    name: '家居美学',
-    cover: imgBase + 'home+aesthetic+interior+design+art+wall+minimalist&image_size=landscape_16_9',
-    postCount: 4127,
-    description: '打造有品位的艺术居住空间',
   },
 ])
 
@@ -489,13 +328,8 @@ const userPosts = ref([
   },
 ])
 
-const leftPosts = computed(() => {
-  return userPosts.value.filter((_, i) => i % 2 === 0)
-})
-
-const rightPosts = computed(() => {
-  return userPosts.value.filter((_, i) => i % 2 !== 0)
-})
+const leftPosts = computed(() => userPosts.value.filter((_, i) => i % 2 === 0))
+const rightPosts = computed(() => userPosts.value.filter((_, i) => i % 2 !== 0))
 
 function onTabChange(idx: number) {
   activeTab.value = idx
@@ -522,22 +356,6 @@ function onShowoffTap(post: { id: string }) {
   uni.navigateTo({ url: `/pages/community/showoff?id=${post.id}` })
 }
 
-function onLikePost(post: { id: string; liked: boolean; likeCount: number }) {
-  const target = userPosts.value.find((p) => p.id === post.id)
-  if (target) {
-    target.liked = !target.liked
-    target.likeCount += target.liked ? 1 : -1
-  }
-}
-
-function onCommentPost(post: { id: string }) {
-  uni.navigateTo({ url: `/pages/community/showoff?id=${post.id}&action=comment` })
-}
-
-function onPublishShowoff() {
-  uni.navigateTo({ url: '/pages/community/publish' })
-}
-
 function onRefresh() {
   isRefreshing.value = true
   setTimeout(() => {
@@ -546,97 +364,72 @@ function onRefresh() {
 }
 
 function onLoadMore() {
-  if (loadingMore.value || !hasMore.value) return
-  loadingMore.value = true
-  setTimeout(() => {
-    loadingMore.value = false
-    hasMore.value = false
-  }, 800)
+  if (!hasMore.value) return
+  hasMore.value = false
 }
 </script>
 
 <style lang="scss" scoped>
-@import '@/styles/variables.scss';
 @import '@/styles/mixins.scss';
-
 .community-page {
   min-height: 100vh;
-  background-color: $color-bg;
+  background-color: $color-surface;
   display: flex;
   flex-direction: column;
 }
 
 .community-header {
-  background-color: $color-white;
-  padding-bottom: $spacing-sm;
+  background-color: $color-surface;
   position: sticky;
   top: 0;
   z-index: 100;
 }
 
 .header-top {
-  padding: $spacing-base $spacing-md $spacing-sm;
+  padding: $space-xl $space-lg $space-md;
+
+  .header-title {
+    @include serif-heading;
+    font-size: $font-xl;
+  }
+}
+
+.tab-bar {
   display: flex;
-  align-items: baseline;
-  gap: $spacing-sm;
+  padding: 0 $space-lg;
+  border-bottom: 1rpx solid $color-rule;
 }
 
-.header-title {
-  font-family: 'Georgia', 'Noto Serif SC', serif;
-  font-size: $font-xl;
-  font-weight: 600;
-  color: $color-text-primary;
-  letter-spacing: 4rpx;
-}
-
-.header-subtitle {
-  font-family: 'Georgia', serif;
-  font-size: $font-sm;
-  color: $color-text-tertiary;
-  letter-spacing: 2rpx;
-}
-
-.tab-segmented {
-  display: flex;
+.tab-item {
   position: relative;
-  margin: 0 $spacing-md;
-  background-color: $color-bg-secondary;
-  border-radius: $radius-full;
-  padding: 4rpx;
-  height: 72rpx;
+  padding: $space-md $space-md $space-sm;
+  @include flex-center;
+  flex-direction: column;
+  margin-right: $space-lg;
 
-  &__item {
-    flex: 1;
-    @include flex-center;
-    position: relative;
-    z-index: 1;
-    transition: $transition-base;
-
-    &--active {
-      .tab-segmented__text {
-        color: $color-text-primary;
-        font-weight: 600;
-      }
+  &--active {
+    .tab-item-text {
+      color: $color-ink;
     }
   }
+}
 
-  &__text {
-    font-size: $font-sm;
-    color: $color-text-secondary;
-    letter-spacing: 1rpx;
-    transition: $transition-base;
-  }
+.tab-item-text {
+  @include sans-body;
+  font-size: $font-sm;
+  color: $color-ink-tertiary;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
 
-  &__indicator {
-    position: absolute;
-    top: 4rpx;
-    height: 64rpx;
-    background-color: $color-white;
-    border-radius: $radius-full;
-    box-shadow: $shadow-sm;
-    transition: left 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    z-index: 0;
-  }
+.tab-item-indicator {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32rpx;
+  height: 2rpx;
+  background-color: $color-ink;
 }
 
 .community-content {
@@ -645,550 +438,173 @@ function onLoadMore() {
 }
 
 .tab-panel {
-  padding: $spacing-base;
+  padding: $space-lg;
 }
 
-.news-categories {
-  margin-bottom: $spacing-base;
-
-  &__inner {
-    display: inline-flex;
-    gap: $spacing-sm;
-    padding-right: $spacing-base;
-  }
-}
-
-.news-cat-tag {
-  padding: $spacing-xs $spacing-md;
-  border-radius: $radius-full;
-  background-color: $color-bg-secondary;
-  transition: $transition-base;
-
-  &--active {
-    background-color: $morandi-beige;
-
-    .news-cat-tag__text {
-      color: $color-white;
-    }
-  }
-
-  &__text {
-    font-size: $font-sm;
-    color: $color-text-secondary;
-    white-space: nowrap;
-    letter-spacing: 1rpx;
-  }
-}
-
-.news-list {
+.article-list {
   display: flex;
   flex-direction: column;
-  gap: $spacing-base;
+  gap: $space-xl;
 }
 
-.article-card {
-  background-color: $color-white;
-  border-radius: $radius-lg;
-  overflow: hidden;
-  box-shadow: $shadow-sm;
-  transition: $transition-base;
-
+.article-item {
   &:active {
-    transform: scale(0.98);
-    box-shadow: $shadow-base;
+    opacity: 0.8;
   }
+}
 
-  &__cover {
-    width: 100%;
-    height: 340rpx;
-  }
+.article-cover {
+  width: 100%;
+  height: 360rpx;
+  border-radius: $radius-xs;
+}
 
-  &__body {
-    padding: $spacing-base $spacing-md $spacing-md;
-  }
+.article-title {
+  @include serif-heading;
+  font-size: $font-md;
+  display: block;
+  margin-top: $space-md;
+  line-height: 1.5;
+  @include ellipsis(2);
+}
 
-  &__title {
-    font-family: 'Georgia', 'Noto Serif SC', serif;
-    font-size: $font-md;
-    color: $color-text-primary;
-    font-weight: 500;
-    letter-spacing: 1rpx;
-    line-height: 1.5;
-    @include ellipsis(2);
-  }
-
-  &__meta {
-    display: flex;
-    align-items: center;
-    margin-top: $spacing-sm;
-    gap: $spacing-xs;
-  }
-
-  &__tag {
-    font-size: $font-xs;
-    color: $color-accent;
-    background-color: rgba($color-accent, 0.08);
-    padding: 2rpx 12rpx;
-    border-radius: $radius-sm;
-    letter-spacing: 1rpx;
-  }
-
-  &__dot {
-    font-size: $font-xs;
-    color: $color-text-placeholder;
-  }
-
-  &__date,
-  &__reads {
-    font-size: $font-xs;
-    color: $color-text-tertiary;
-    letter-spacing: 1rpx;
-  }
+.article-date {
+  @include sans-body;
+  font-size: $font-xs;
+  display: block;
+  margin-top: $space-xs;
 }
 
 .load-more {
   @include flex-center;
-  padding: $spacing-lg 0 $spacing-xl;
-
-  &__loading {
-    @include flex-center;
-    gap: $spacing-sm;
-  }
-
-  &__spinner {
-    width: 32rpx;
-    height: 32rpx;
-    border: 3rpx solid $color-border;
-    border-top-color: $morandi-beige;
-    border-radius: $radius-full;
-    animation: spin 0.8s linear infinite;
-  }
-
-  &__text {
-    font-size: $font-sm;
-    color: $color-text-tertiary;
-  }
-
-  &__end {
-    font-size: $font-sm;
-    color: $color-text-placeholder;
-    letter-spacing: 2rpx;
-  }
+  padding: $space-xl 0;
 }
 
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.gallery-intro {
-  text-align: center;
-  padding: $spacing-lg 0 $spacing-md;
-
-  &__title {
-    font-family: 'Georgia', 'Noto Serif SC', serif;
-    font-size: $font-lg;
-    color: $color-text-primary;
-    font-weight: 600;
-    letter-spacing: 3rpx;
-    display: block;
-  }
-
-  &__desc {
-    font-size: $font-sm;
-    color: $color-text-tertiary;
-    letter-spacing: 2rpx;
-    margin-top: $spacing-xs;
-    display: block;
-  }
+.load-more-end {
+  @include sans-body;
+  font-size: $font-sm;
+  color: $color-ink-tertiary;
 }
 
 .exhibition-list {
   display: flex;
   flex-direction: column;
-  gap: $spacing-md;
+  gap: $space-xl;
 }
 
-.exhibition-card {
-  background-color: $color-white;
-  border-radius: $radius-lg;
-  overflow: hidden;
-  box-shadow: $shadow-sm;
-  transition: $transition-base;
+.exhibition-item {
+  &:active {
+    opacity: 0.8;
+  }
+}
+
+.exhibition-cover {
+  width: 100%;
+  height: 400rpx;
+  border-radius: $radius-xs;
+}
+
+.exhibition-info {
+  @include flex-between;
+  margin-top: $space-md;
+}
+
+.exhibition-title {
+  @include serif-heading;
+  font-size: $font-md;
+}
+
+.exhibition-enter {
+  @include sans-body;
+  font-size: $font-sm;
+  color: $color-ink-secondary;
+  letter-spacing: 0.04em;
 
   &:active {
-    transform: scale(0.98);
-    box-shadow: $shadow-base;
-  }
-
-  &__cover-wrap {
-    position: relative;
-    height: 400rpx;
-    overflow: hidden;
-  }
-
-  &__cover {
-    width: 100%;
-    height: 100%;
-  }
-
-  &__overlay {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 60%;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.5) 0%, transparent 100%);
-  }
-
-  &__cover-info {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: $spacing-md $spacing-md $spacing-base;
-  }
-
-  &__cover-title {
-    font-family: 'Georgia', 'Noto Serif SC', serif;
-    font-size: $font-xl;
-    color: #ffffff;
-    font-weight: 600;
-    letter-spacing: 4rpx;
-    text-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.3);
-    display: block;
-  }
-
-  &__cover-sub {
-    font-size: $font-sm;
-    color: rgba(255, 255, 255, 0.75);
-    letter-spacing: 2rpx;
-    margin-top: $spacing-xs;
-    display: block;
-  }
-
-  &__footer {
-    padding: $spacing-base $spacing-md;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  &__detail {
-    display: flex;
-    flex-direction: column;
-    gap: $spacing-xs;
-  }
-
-  &__row {
-    display: flex;
-    align-items: center;
-    gap: $spacing-xs;
-  }
-
-  &__label {
-    font-size: $font-xs;
-    color: $color-text-tertiary;
-    letter-spacing: 1rpx;
-  }
-
-  &__value {
-    font-size: $font-sm;
-    color: $color-text-primary;
-    letter-spacing: 1rpx;
-  }
-
-  &__btn {
-    padding: $spacing-sm $spacing-md;
-    background-color: $color-accent;
-    border-radius: $radius-base;
-    transition: $transition-base;
-
-    &:active {
-      opacity: 0.85;
-      transform: scale(0.97);
-    }
-  }
-
-  &__btn-text {
-    font-size: $font-sm;
-    color: $color-white;
-    letter-spacing: 2rpx;
+    color: $color-ink;
   }
 }
 
-.hot-topics {
-  margin-bottom: $spacing-lg;
-
-  &__header {
-    margin-bottom: $spacing-base;
-  }
-
-  &__list {
-    display: inline-flex;
-    gap: $spacing-base;
-    padding-right: $spacing-base;
-  }
-}
-
-.section-title-group {
-  display: flex;
-  align-items: center;
-  gap: $spacing-sm;
-}
-
-.accent-line {
-  width: 6rpx;
-  height: 36rpx;
-  background-color: $color-accent;
-  border-radius: $radius-full;
-}
-
-.section-title {
-  font-family: 'Georgia', 'Noto Serif SC', serif;
-  font-size: $font-lg;
-  font-weight: 600;
-  color: $color-text-primary;
-  letter-spacing: 2rpx;
-}
-
-.hot-topic-card {
-  position: relative;
-  width: 360rpx;
-  height: 240rpx;
-  border-radius: $radius-lg;
-  overflow: hidden;
-  flex-shrink: 0;
-
-  &:active {
-    transform: scale(0.97);
-  }
-
-  &__bg {
-    width: 100%;
-    height: 100%;
-  }
-
-  &__mask {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.1) 60%, transparent 100%);
-  }
-
-  &__content {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: $spacing-base;
-  }
-
-  &__name {
-    font-family: 'Georgia', 'Noto Serif SC', serif;
-    font-size: $font-md;
-    color: #ffffff;
-    font-weight: 600;
-    letter-spacing: 2rpx;
-    text-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.3);
-    display: block;
-  }
-
-  &__count {
-    font-size: $font-xs;
-    color: rgba(255, 255, 255, 0.7);
-    letter-spacing: 1rpx;
-    margin-top: $spacing-xs;
-    display: block;
-  }
-}
-
-.all-topics {
-  &__header {
-    margin-bottom: $spacing-base;
-  }
-}
-
-.topic-grid {
+.topic-list {
   display: flex;
   flex-direction: column;
-  gap: $spacing-base;
 }
 
-.topic-card {
-  display: flex;
-  background-color: $color-white;
-  border-radius: $radius-lg;
-  overflow: hidden;
-  box-shadow: $shadow-sm;
-  transition: $transition-base;
+.topic-item {
+  @include flex-between;
+  padding: $space-lg 0;
+  border-bottom: 1rpx solid $color-rule;
+
+  &:last-child {
+    border-bottom: none;
+  }
 
   &:active {
-    transform: scale(0.98);
-    box-shadow: $shadow-base;
-  }
-
-  &__cover {
-    width: 200rpx;
-    height: 200rpx;
-    flex-shrink: 0;
-  }
-
-  &__info {
-    flex: 1;
-    padding: $spacing-base;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: $spacing-xs;
-  }
-
-  &__name {
-    font-family: 'Georgia', 'Noto Serif SC', serif;
-    font-size: $font-md;
-    color: $color-text-primary;
-    font-weight: 600;
-    letter-spacing: 2rpx;
-  }
-
-  &__desc {
-    font-size: $font-sm;
-    color: $color-text-secondary;
-    letter-spacing: 1rpx;
-    @include ellipsis(2);
-    line-height: 1.5;
-  }
-
-  &__count {
-    font-size: $font-xs;
-    color: $color-text-tertiary;
-    letter-spacing: 1rpx;
+    opacity: 0.8;
   }
 }
 
-.showoff-list {
-  padding: 0;
+.topic-name {
+  @include serif-heading;
+  font-size: $font-base;
+}
+
+.topic-count {
+  @include sans-body;
+  font-size: $font-sm;
 }
 
 .waterfall {
   display: flex;
-  gap: $spacing-sm;
+  gap: $space-sm;
 
-  &__col {
+  &-col {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: $spacing-sm;
+    gap: $space-sm;
   }
 }
 
-.showoff-card {
-  background-color: $color-white;
-  border-radius: $radius-lg;
-  overflow: hidden;
-  box-shadow: $shadow-sm;
-  transition: $transition-base;
-
+.post-item {
   &:active {
-    transform: scale(0.98);
-    box-shadow: $shadow-base;
-  }
-
-  &__image {
-    width: 100%;
-  }
-
-  &__body {
-    padding: $spacing-sm $spacing-sm $spacing-base;
-  }
-
-  &__caption {
-    font-size: $font-sm;
-    color: $color-text-primary;
-    letter-spacing: 1rpx;
-    line-height: 1.5;
-    @include ellipsis(3);
-  }
-
-  &__user-row {
-    display: flex;
-    align-items: center;
-    gap: $spacing-xs;
-    margin-top: $spacing-sm;
-  }
-
-  &__avatar {
-    width: 40rpx;
-    height: 40rpx;
-    border-radius: $radius-full;
-    flex-shrink: 0;
-  }
-
-  &__username {
-    font-size: $font-xs;
-    color: $color-text-secondary;
-    letter-spacing: 1rpx;
-    @include ellipsis;
-    flex: 1;
-  }
-
-  &__actions {
-    display: flex;
-    align-items: center;
-    gap: $spacing-md;
-    margin-top: $spacing-sm;
-  }
-
-  &__action {
-    display: flex;
-    align-items: center;
-    gap: 4rpx;
-  }
-
-  &__action-icon {
-    font-size: $font-sm;
-    color: $color-text-tertiary;
-  }
-
-  &__action-count {
-    font-size: $font-xs;
-    color: $color-text-tertiary;
-    letter-spacing: 1rpx;
+    opacity: 0.8;
   }
 }
 
-.fab-btn {
-  position: fixed;
-  right: $spacing-md;
-  bottom: 180rpx;
-  display: flex;
-  align-items: center;
-  gap: $spacing-xs;
-  padding: $spacing-sm $spacing-md;
-  background-color: $color-accent;
-  border-radius: $radius-full;
-  box-shadow: $shadow-lg;
-  z-index: 50;
-  transition: $transition-base;
+.post-image {
+  width: 100%;
+  border-radius: $radius-xs;
+}
 
-  &:active {
-    opacity: 0.85;
-    transform: scale(0.95);
-  }
+.post-caption {
+  @include sans-body;
+  font-size: $font-sm;
+  color: $color-ink;
+  line-height: 1.5;
+  display: block;
+  margin-top: $space-sm;
+  @include ellipsis(3);
+}
 
-  &__icon {
-    font-size: $font-md;
-    color: $color-white;
-  }
+.post-user {
+  @include flex-between;
+  margin-top: $space-xs;
+}
 
-  &__text {
-    font-size: $font-sm;
-    color: $color-white;
-    letter-spacing: 2rpx;
-  }
+.post-username {
+  @include sans-body;
+  font-size: $font-xs;
+  @include ellipsis;
+  flex: 1;
+}
+
+.post-likes {
+  @include sans-body;
+  font-size: $font-xs;
+  color: $color-ink-tertiary;
+  flex-shrink: 0;
+  margin-left: $space-sm;
 }
 
 .bottom-spacer {

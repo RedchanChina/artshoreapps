@@ -1,16 +1,12 @@
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(40rpx);
+    transform: translateY(24rpx);
   }
   to {
     opacity: 1;
@@ -21,7 +17,7 @@
 @keyframes fadeInScale {
   from {
     opacity: 0;
-    transform: scale(0.92);
+    transform: scale(0.96);
   }
   to {
     opacity: 1;
@@ -30,82 +26,55 @@
 }
 
 @keyframes shimmer {
-  0% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0 50%;
-  }
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
 }
 
 @keyframes slideUp {
-  from {
-    transform: translateY(100%);
-  }
-  to {
-    transform: translateY(0);
-  }
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
 }
 
-@keyframes slideDown {
+@keyframes revealUp {
   from {
-    transform: translateY(-100%);
+    opacity: 0;
+    transform: translateY(48rpx);
   }
   to {
-    transform: translateY(0);
-  }
-}
-
-@keyframes pulse {
-  0%,
-  100% {
     opacity: 1;
-  }
-  50% {
-    opacity: 0.6;
+    transform: translateY(0);
   }
 }
 
 .fade-in {
-  animation: fadeIn 0.5s ease both;
+  animation: fadeIn $duration-slow $ease-out-expo both;
 }
 
 .fade-in-up {
-  animation: fadeInUp 0.5s ease both;
+  animation: fadeInUp $duration-slow $ease-out-expo both;
 }
 
 .fade-in-scale {
-  animation: fadeInScale 0.5s ease both;
+  animation: fadeInScale $duration-slow $ease-out-expo both;
+}
+
+.reveal-up {
+  animation: revealUp 0.6s $ease-out-expo both;
 }
 
 .slide-up {
-  animation: slideUp 0.4s ease both;
-}
-
-.slide-down {
-  animation: slideDown 0.4s ease both;
+  animation: slideUp $duration-slow $ease-out-expo both;
 }
 
 .skeleton {
   animation: shimmer 1.4s ease infinite;
 }
 
-.animate-delay-1 {
-  animation-delay: 0.1s;
-}
-
-.animate-delay-2 {
-  animation-delay: 0.2s;
-}
-
-.animate-delay-3 {
-  animation-delay: 0.3s;
-}
-
-.animate-delay-4 {
-  animation-delay: 0.4s;
-}
-
-.animate-delay-5 {
-  animation-delay: 0.5s;
-}
+.stagger-1 { animation-delay: 0.05s; }
+.stagger-2 { animation-delay: 0.1s; }
+.stagger-3 { animation-delay: 0.15s; }
+.stagger-4 { animation-delay: 0.2s; }
+.stagger-5 { animation-delay: 0.25s; }
+.stagger-6 { animation-delay: 0.3s; }
+.stagger-7 { animation-delay: 0.35s; }
+.stagger-8 { animation-delay: 0.4s; }

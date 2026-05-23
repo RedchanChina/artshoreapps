@@ -33,7 +33,7 @@ const formattedOriginalPrice = computed(() => {
 </script>
 
 <style lang="scss" scoped>
-@import '@/styles/variables.scss';
+@import '@/styles/mixins.scss';
 
 .price-tag {
   display: inline-flex;
@@ -41,55 +41,39 @@ const formattedOriginalPrice = computed(() => {
   gap: 2rpx;
 
   &--sm {
-    .price-tag__symbol {
-      font-size: $font-xs;
-    }
-    .price-tag__value {
-      font-size: $font-sm;
-    }
-    .price-tag__original {
-      font-size: 18rpx;
-    }
+    .price-tag__symbol { font-size: $font-xs; }
+    .price-tag__value { font-size: $font-sm; }
+    .price-tag__original { font-size: $font-xxs; }
   }
 
   &--md {
-    .price-tag__symbol {
-      font-size: $font-sm;
-    }
-    .price-tag__value {
-      font-size: $font-md;
-    }
-    .price-tag__original {
-      font-size: $font-xs;
-    }
+    .price-tag__symbol { font-size: $font-sm; }
+    .price-tag__value { font-size: $font-md; }
+    .price-tag__original { font-size: $font-xs; }
   }
 
   &--lg {
-    .price-tag__symbol {
-      font-size: $font-base;
-    }
-    .price-tag__value {
-      font-size: $font-xl;
-    }
-    .price-tag__original {
-      font-size: $font-sm;
-    }
+    .price-tag__symbol { font-size: $font-base; }
+    .price-tag__value { font-size: $font-xl; }
+    .price-tag__original { font-size: $font-sm; }
   }
 
   &__symbol {
-    color: $color-accent;
-    font-weight: 500;
+    @include sans-body;
+    color: $color-ink;
   }
 
   &__value {
-    color: $color-accent;
-    font-weight: 600;
+    @include sans-body;
+    color: $color-ink;
+    font-weight: 500;
   }
 
   &__original {
-    color: $color-text-tertiary;
+    @include sans-body;
+    color: $color-ink-tertiary;
     text-decoration: line-through;
-    margin-left: $spacing-xs;
+    margin-left: $space-xs;
   }
 }
 </style>

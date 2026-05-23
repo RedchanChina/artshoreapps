@@ -23,31 +23,21 @@
         mode="aspectFill"
         lazy-load
       />
-      <view
+      <text
         v-if="showLimited && artwork.stock <= 10 && artwork.stock > 0"
-        class="artwork-card__badge"
-      >
-        限量{{ artwork.stock }}件
-      </view>
-      <view
+        class="artwork-card__edition"
+      >ED. {{ artwork.stock }}/50</text>
+      <text
         class="artwork-card__favorite"
         :class="{ 'artwork-card__favorite--active': isFavorited }"
         @tap.stop="handleFavorite"
-      >
-        <text class="artwork-card__favorite-icon">{{ isFavorited ? '♥' : '♡' }}</text>
-      </view>
+      >{{ isFavorited ? '♥' : '♡' }}</text>
     </view>
 
     <view class="artwork-card__info">
       <text class="artwork-card__title">{{ artwork.title }}</text>
       <text v-if="showArtist" class="artwork-card__artist">{{ artwork.artistName }}</text>
-      <view v-if="showPrice" class="artwork-card__price-row">
-        <text class="artwork-card__price">¥{{ artwork.price }}</text>
-        <text
-          v-if="artwork.originalPrice && artwork.originalPrice > artwork.price"
-          class="artwork-card__original-price"
-        >¥{{ artwork.originalPrice }}</text>
-      </view>
+      <text v-if="showPrice" class="artwork-card__price">¥{{ artwork.price }}</text>
     </view>
   </view>
 </template>
@@ -89,17 +79,14 @@ const handleFavorite = () => {
 </script>
 
 <style lang="scss" scoped>
-@import '@/styles/variables.scss';
 @import '@/styles/mixins.scss';
 
 .artwork-card {
-  @include gallery-card;
-  border: none;
-  background-color: $color-white;
+  @include gallery-item;
+  background: transparent;
 
   &--active {
-    transform: scale(1.02);
-    box-shadow: $shadow-base;
+    opacity: 0.85;
   }
 
   &--skeleton {
@@ -111,109 +98,82 @@ const handleFavorite = () => {
     width: 100%;
     padding-bottom: 133.33%;
     overflow: hidden;
-    border-radius: $radius-lg $radius-lg 0 0;
   }
 
   &__image {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    @include image-cover;
   }
 
-  &__badge {
+  &__edition {
     position: absolute;
-    top: $spacing-sm;
-    left: $spacing-sm;
-    padding: $spacing-xs $spacing-sm;
-    background-color: rgba(139, 115, 85, 0.85);
-    color: $color-white;
-    font-size: $font-xs;
-    border-radius: $radius-sm;
-    letter-spacing: 1rpx;
+    top: $space-sm;
+    left: $space-sm;
+    @include sans-body;
+    font-size: $font-xxs;
+    color: $color-surface;
+    letter-spacing: 0.1em;
   }
 
   &__favorite {
     position: absolute;
-    top: $spacing-sm;
-    right: $spacing-sm;
-    width: 56rpx;
-    height: 56rpx;
-    @include flex-center;
-    background-color: rgba(255, 255, 255, 0.85);
-    border-radius: $radius-full;
-    transition: $transition-base;
+    top: $space-sm;
+    right: $space-sm;
+    font-size: $font-md;
+    color: $color-surface;
+    transition: opacity $duration-base $ease-out;
 
     &--active {
-      background-color: rgba(201, 169, 166, 0.2);
+      color: $color-surface;
     }
   }
 
-  &__favorite-icon {
-    font-size: $font-md;
-    color: $morandi-rose;
-  }
-
   &__info {
-    padding: $spacing-sm $spacing-base $spacing-base;
+    padding: $space-sm 0 0;
   }
 
   &__title {
     display: block;
+    @include serif-heading;
     font-size: $font-base;
-    font-weight: 500;
-    color: $color-text-primary;
     @include ellipsis;
-    letter-spacing: 1rpx;
   }
 
   &__artist {
     display: block;
-    margin-top: $spacing-xs;
-    font-size: $font-sm;
-    color: $color-text-secondary;
+    margin-top: $space-xxs;
+    @include sans-body;
+    font-size: $font-xs;
     @include ellipsis;
   }
 
-  &__price-row {
-    display: flex;
-    align-items: baseline;
-    margin-top: $spacing-xs;
-    gap: $spacing-xs;
-  }
-
   &__price {
-    font-size: $font-md;
-    font-weight: 600;
-    color: $color-accent;
-  }
-
-  &__original-price {
-    font-size: $font-xs;
-    color: $color-text-tertiary;
-    text-decoration: line-through;
+    display: block;
+    margin-top: $space-xxs;
+    @include sans-body;
+    font-size: $font-sm;
+    color: $color-ink;
   }
 
   &__skeleton-image {
     width: 100%;
     padding-bottom: 133.33%;
     @include skeleton-loading;
-    border-radius: $radius-lg $radius-lg 0 0;
   }
 
   &__skeleton-title {
     width: 70%;
-    height: 32rpx;
-    margin-top: $spacing-sm;
+    height: 28rpx;
+    margin-top: $space-sm;
     @include skeleton-loading;
   }
 
   &__skeleton-text {
     width: 50%;
-    height: 24rpx;
-    margin-top: $spacing-xs;
+    height: 22rpx;
+    margin-top: $space-xs;
     @include skeleton-loading;
 
     &--short {

@@ -29,88 +29,60 @@
         <view
           v-for="order in filteredOrders"
           :key="order.id"
-          class="order-card"
+          class="order-item"
           @tap="onOrderTap(order)"
         >
-          <view class="order-card-header">
-            <text class="order-number">订单号：{{ order.id }}</text>
-            <view class="order-status-badge" :class="'order-status-badge--' + order.status">
-              <text class="order-status-text">{{ getStatusLabel(order.status) }}</text>
-            </view>
+          <view class="order-top">
+            <text class="order-number">{{ order.id }}</text>
+            <text class="order-status">{{ getStatusLabel(order.status) }}</text>
           </view>
 
-          <view class="order-card-body">
-            <scroll-view scroll-x class="order-thumbs-scroll" :show-scrollbar="false">
-              <view class="order-thumbs">
-                <image
-                  v-for="(item, idx) in order.items"
-                  :key="idx"
-                  class="order-thumb"
-                  :src="item.artworkImage"
-                  mode="aspectFill"
-                />
-              </view>
-            </scroll-view>
-            <view class="order-summary">
-              <text class="order-item-count">共{{ order.items.length }}件商品</text>
-              <view class="order-price-row">
-                <text class="order-price-label">合计：</text>
-                <text class="order-price-value">¥{{ order.actualPrice }}</text>
-              </view>
+          <view
+            v-for="(item, idx) in order.items"
+            :key="idx"
+            class="order-product"
+          >
+            <image :src="item.artworkImage" mode="aspectFill" class="order-thumb" />
+            <view class="order-product-info">
+              <text class="order-product-title">{{ item.artworkTitle }}</text>
+              <text class="order-product-spec">{{ item.spec.size }} · {{ item.spec.material }}</text>
             </view>
+            <text class="order-product-price">¥{{ item.subtotal.toLocaleString('zh-CN') }}</text>
           </view>
 
-          <view class="order-card-footer">
+          <view class="order-bottom">
             <text class="order-date">{{ order.createdAt }}</text>
             <view class="order-actions">
-              <view
+              <text
                 v-if="order.status === 'PENDING_PAYMENT'"
-                class="order-action order-action--primary"
+                class="order-action"
                 @tap.stop="onPay(order)"
-              >
-                <text class="order-action-text">付款</text>
-              </view>
-              <view
+              >Pay</text>
+              <text
                 v-if="order.status === 'SHIPPED'"
-                class="order-action order-action--primary"
+                class="order-action"
                 @tap.stop="onConfirmReceive(order)"
-              >
-                <text class="order-action-text">确认收货</text>
-              </view>
-              <view
-                v-if="order.status === 'COMPLETED'"
-                class="order-action order-action--outline"
-                @tap.stop="onReview(order)"
-              >
-                <text class="order-action-text">评价</text>
-              </view>
-              <view
+              >Confirm</text>
+              <text
                 v-if="order.status === 'COMPLETED' || order.status === 'SHIPPED'"
-                class="order-action order-action--outline"
+                class="order-action"
                 @tap.stop="onAfterSale(order)"
-              >
-                <text class="order-action-text">申请售后</text>
-              </view>
+              >Refund</text>
             </view>
           </view>
         </view>
       </view>
 
-      <EmptyState
-        v-if="!loading && filteredOrders.length === 0"
-        icon="📋"
-        title="暂无订单"
-        description="还没有相关订单，去逛逛吧"
-        action-text="去逛逛"
-        @action="onGoShopping"
-      />
+      <view v-if="!loading && filteredOrders.length === 0" class="empty-state">
+        <text class="empty-text">No orders yet</text>
+      </view>
 
       <view v-if="loading" class="loading-more">
-        <text class="loading-more-text">加载中...</text>
+        <text class="loading-more-text">Loading...</text>
       </view>
 
       <view v-if="!hasMore && filteredOrders.length > 0" class="no-more">
-        <text class="no-more-text">没有更多了</text>
+        <text class="no-more-text">—</text>
       </view>
     </scroll-view>
   </view>
@@ -118,17 +90,16 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import EmptyState from '@/components/EmptyState.vue'
 import type { Order } from '@/types/order'
 import { OrderStatus } from '@/types/order'
 
 const tabs = [
-  { key: 'all', label: '全部' },
-  { key: 'PENDING_PAYMENT', label: '待付款' },
-  { key: 'PENDING_SHIPMENT', label: '待发货' },
-  { key: 'SHIPPED', label: '已发货' },
-  { key: 'COMPLETED', label: '已完成' },
-  { key: 'AFTER_SALE', label: '售后' },
+  { key: 'all', label: 'All' },
+  { key: 'PENDING_PAYMENT', label: 'Pending' },
+  { key: 'PENDING_SHIPMENT', label: 'Processing' },
+  { key: 'SHIPPED', label: 'Shipped' },
+  { key: 'COMPLETED', label: 'Completed' },
+  { key: 'AFTER_SALE', label: 'Refund' },
 ]
 
 const currentTab = ref('all')
@@ -143,10 +114,10 @@ const mockOrders = ref<Order[]>([
     items: [
       {
         artworkId: 'a1',
-        artworkTitle: '晨雾中的远山',
+        artworkTitle: 'Misty Mountains',
         artworkImage: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=misty%20mountain%20landscape%20chinese%20ink%20wash%20painting&image_size=portrait_4_3',
-        artistName: '林清远',
-        spec: { size: '60×80cm', material: '艺术微喷', frameStyle: '原木画框' },
+        artistName: 'Lin Qingyuan',
+        spec: { size: '60×80cm', material: 'Giclée', frameStyle: 'Natural wood' },
         quantity: 1,
         unitPrice: 2680,
         subtotal: 2680,
@@ -161,8 +132,8 @@ const mockOrders = ref<Order[]>([
     paymentMethod: 'WECHAT' as any,
     paymentTime: '',
     remark: '',
-    createdAt: '2026-05-01 14:30',
-    updatedAt: '2026-05-01 14:30',
+    createdAt: '2026-05-01',
+    updatedAt: '2026-05-01',
   },
   {
     id: 'ORD20260428002',
@@ -170,20 +141,20 @@ const mockOrders = ref<Order[]>([
     items: [
       {
         artworkId: 'a2',
-        artworkTitle: '静物·陶与花',
+        artworkTitle: 'Still Life · Vase & Flowers',
         artworkImage: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=still%20life%20ceramic%20vase%20wildflowers%20morandi%20palette&image_size=portrait_4_3',
-        artistName: '苏婉清',
-        spec: { size: '40×50cm', material: '水彩原作', frameStyle: '白色画框' },
+        artistName: 'Su Wanqing',
+        spec: { size: '40×50cm', material: 'Watercolor', frameStyle: 'White frame' },
         quantity: 1,
         unitPrice: 1880,
         subtotal: 1880,
       },
       {
         artworkId: 'a5',
-        artworkTitle: '海的记忆 II',
+        artworkTitle: 'Memory of the Sea II',
         artworkImage: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=ocean%20waves%20abstract%20blue%20grey%20oil%20painting%20texture&image_size=portrait_4_3',
-        artistName: '周海潮',
-        spec: { size: '80×100cm', material: '油画原作', frameStyle: '无框' },
+        artistName: 'Zhou Haichao',
+        spec: { size: '80×100cm', material: 'Oil on canvas', frameStyle: 'Unframed' },
         quantity: 1,
         unitPrice: 5960,
         subtotal: 5960,
@@ -196,10 +167,10 @@ const mockOrders = ref<Order[]>([
     status: OrderStatus.PENDING_SHIPMENT,
     shippingInfo: '',
     paymentMethod: 'WECHAT' as any,
-    paymentTime: '2026-04-28 10:15',
+    paymentTime: '2026-04-28',
     remark: '',
-    createdAt: '2026-04-28 10:12',
-    updatedAt: '2026-04-28 10:15',
+    createdAt: '2026-04-28',
+    updatedAt: '2026-04-28',
   },
   {
     id: 'ORD20260420003',
@@ -207,10 +178,10 @@ const mockOrders = ref<Order[]>([
     items: [
       {
         artworkId: 'a4',
-        artworkTitle: '春日迟迟',
+        artworkTitle: 'Lingering Spring',
         artworkImage: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=spring%20garden%20cherry%20blossom%20soft%20light%20painting&image_size=portrait_4_3',
-        artistName: '赵含章',
-        spec: { size: '50×60cm', material: '艺术微喷', frameStyle: '金色画框' },
+        artistName: 'Zhao Hanzhang',
+        spec: { size: '50×60cm', material: 'Giclée', frameStyle: 'Gold frame' },
         quantity: 1,
         unitPrice: 1560,
         subtotal: 1560,
@@ -221,12 +192,12 @@ const mockOrders = ref<Order[]>([
     discountAmount: 0,
     actualPrice: 1560,
     status: OrderStatus.SHIPPED,
-    shippingInfo: '顺丰快递 SF1234567890',
+    shippingInfo: 'SF Express SF1234567890',
     paymentMethod: 'WECHAT' as any,
-    paymentTime: '2026-04-20 09:30',
+    paymentTime: '2026-04-20',
     remark: '',
-    createdAt: '2026-04-20 09:28',
-    updatedAt: '2026-04-22 16:00',
+    createdAt: '2026-04-20',
+    updatedAt: '2026-04-22',
   },
   {
     id: 'ORD20260410004',
@@ -234,10 +205,10 @@ const mockOrders = ref<Order[]>([
     items: [
       {
         artworkId: 'a3',
-        artworkTitle: '城市光影 No.7',
+        artworkTitle: 'City Light No.7',
         artworkImage: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=urban%20city%20lights%20abstract%20photography%20night&image_size=portrait_4_3',
-        artistName: '陈默',
-        spec: { size: '70×90cm', material: '摄影限量版', frameStyle: '黑色画框' },
+        artistName: 'Chen Mo',
+        spec: { size: '70×90cm', material: 'Limited print', frameStyle: 'Black frame' },
         quantity: 1,
         unitPrice: 4280,
         subtotal: 4280,
@@ -250,10 +221,10 @@ const mockOrders = ref<Order[]>([
     status: OrderStatus.COMPLETED,
     shippingInfo: '',
     paymentMethod: 'WECHAT' as any,
-    paymentTime: '2026-04-10 11:00',
+    paymentTime: '2026-04-10',
     remark: '',
-    createdAt: '2026-04-10 10:55',
-    updatedAt: '2026-04-15 14:20',
+    createdAt: '2026-04-10',
+    updatedAt: '2026-04-15',
   },
   {
     id: 'ORD20260325005',
@@ -261,10 +232,10 @@ const mockOrders = ref<Order[]>([
     items: [
       {
         artworkId: 'a6',
-        artworkTitle: '几何冥想',
+        artworkTitle: 'Geometric Meditation',
         artworkImage: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=minimalist%20abstract%20geometric%20art%20beige%20cream&image_size=portrait_4_3',
-        artistName: '白鹿',
-        spec: { size: '40×40cm', material: '版画', frameStyle: '原木画框' },
+        artistName: 'Bai Lu',
+        spec: { size: '40×40cm', material: 'Print', frameStyle: 'Natural wood' },
         quantity: 1,
         unitPrice: 980,
         subtotal: 980,
@@ -277,10 +248,10 @@ const mockOrders = ref<Order[]>([
     status: OrderStatus.AFTER_SALE,
     shippingInfo: '',
     paymentMethod: 'WECHAT' as any,
-    paymentTime: '2026-03-25 08:45',
-    remark: '画框有轻微磕碰',
-    createdAt: '2026-03-25 08:40',
-    updatedAt: '2026-03-28 10:00',
+    paymentTime: '2026-03-25',
+    remark: '',
+    createdAt: '2026-03-25',
+    updatedAt: '2026-03-28',
   },
 ])
 
@@ -291,11 +262,11 @@ const filteredOrders = computed(() => {
 
 const getStatusLabel = (status: string): string => {
   const map: Record<string, string> = {
-    PENDING_PAYMENT: '待付款',
-    PENDING_SHIPMENT: '待发货',
-    SHIPPED: '已发货',
-    COMPLETED: '已完成',
-    AFTER_SALE: '售后中',
+    PENDING_PAYMENT: 'Pending',
+    PENDING_SHIPMENT: 'Processing',
+    SHIPPED: 'Shipped',
+    COMPLETED: 'Completed',
+    AFTER_SALE: 'Refund',
   }
   return map[status] || status
 }
@@ -325,13 +296,13 @@ const onOrderTap = (order: Order) => {
 }
 
 const onPay = (order: Order) => {
-  uni.navigateTo({ url: `/pages/order/pay?id=${order.id}` })
+  uni.navigateTo({ url: `/pages/checkout/index` })
 }
 
 const onConfirmReceive = (order: Order) => {
   uni.showModal({
-    title: '确认收货',
-    content: '确认已收到商品吗？',
+    title: '',
+    content: 'Confirm receipt?',
     success: (res) => {
       if (res.confirm) {
         order.status = OrderStatus.COMPLETED
@@ -340,33 +311,23 @@ const onConfirmReceive = (order: Order) => {
   })
 }
 
-const onReview = (order: Order) => {
-  uni.navigateTo({ url: `/pages/order/review?id=${order.id}` })
-}
-
 const onAfterSale = (order: Order) => {
   uni.navigateTo({ url: `/pages/order/aftersale?id=${order.id}` })
-}
-
-const onGoShopping = () => {
-  uni.switchTab({ url: '/pages/index/index' })
 }
 </script>
 
 <style lang="scss" scoped>
-@import '@/styles/variables.scss';
 @import '@/styles/mixins.scss';
-
 .order-page {
   min-height: 100vh;
-  background-color: $color-bg;
+  background-color: $color-surface;
   display: flex;
   flex-direction: column;
 }
 
 .tab-bar {
-  background-color: $color-white;
-  border-bottom: 1rpx solid $color-border;
+  background-color: $color-surface;
+  border-bottom: 1rpx solid $color-rule;
   position: sticky;
   top: 0;
   z-index: 10;
@@ -378,239 +339,169 @@ const onGoShopping = () => {
 
   .tab-list {
     display: inline-flex;
-    padding: 0 $spacing-sm;
+    padding: 0 $space-sm;
   }
 
   .tab-item {
     position: relative;
-    padding: $spacing-base $spacing-base;
+    padding: $space-md $space-md;
     @include flex-center;
     flex-direction: column;
-    transition: $transition-base;
 
     &--active {
       .tab-item-text {
-        color: $color-accent;
-        font-weight: 600;
+        color: $color-ink;
       }
     }
   }
 
   .tab-item-text {
-    font-size: $font-base;
-    color: $color-text-secondary;
-    letter-spacing: 1rpx;
+    @include sans-body;
+    font-size: $font-sm;
+    color: $color-ink-tertiary;
+    letter-spacing: 0.04em;
     white-space: nowrap;
   }
 
   .tab-item-indicator {
     position: absolute;
-    bottom: 4rpx;
+    bottom: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: 40rpx;
-    height: 6rpx;
-    background-color: $color-accent;
-    border-radius: $radius-full;
+    width: 32rpx;
+    height: 2rpx;
+    background-color: $color-ink;
   }
 }
 
 .order-list-wrap {
   flex: 1;
-  padding: $spacing-base $spacing-md;
+  padding: 0 $space-lg;
 }
 
 .order-list {
   display: flex;
   flex-direction: column;
-  gap: $spacing-base;
 }
 
-.order-card {
-  background-color: $color-white;
-  border-radius: $radius-lg;
-  box-shadow: $shadow-sm;
-  overflow: hidden;
-  transition: $transition-base;
-
-  &:active {
-    box-shadow: $shadow-base;
-  }
+.order-item {
+  padding: $space-xl 0;
+  border-bottom: 1rpx solid $color-rule;
 }
 
-.order-card-header {
+.order-top {
   @include flex-between;
-  padding: $spacing-base $spacing-base $spacing-sm;
-  border-bottom: 1rpx solid $color-bg-secondary;
-
-  .order-number {
-    font-size: $font-sm;
-    color: $color-text-tertiary;
-    letter-spacing: 1rpx;
-  }
+  margin-bottom: $space-md;
 }
 
-.order-status-badge {
-  padding: 4rpx 16rpx;
-  border-radius: $radius-full;
-
-  &--PENDING_PAYMENT {
-    background-color: rgba(212, 184, 150, 0.2);
-  }
-
-  &--PENDING_SHIPMENT {
-    background-color: rgba(154, 165, 180, 0.2);
-  }
-
-  &--SHIPPED {
-    background-color: rgba(168, 181, 162, 0.2);
-  }
-
-  &--COMPLETED {
-    background-color: rgba(184, 169, 201, 0.15);
-  }
-
-  &--AFTER_SALE {
-    background-color: rgba(201, 160, 160, 0.2);
-  }
-}
-
-.order-status-text {
+.order-number {
+  @include sans-body;
   font-size: $font-xs;
-  letter-spacing: 1rpx;
-
-  .order-status-badge--PENDING_PAYMENT & {
-    color: $color-warning;
-  }
-
-  .order-status-badge--PENDING_SHIPMENT & {
-    color: $morandi-blue;
-  }
-
-  .order-status-badge--SHIPPED & {
-    color: $morandi-green;
-  }
-
-  .order-status-badge--COMPLETED & {
-    color: $morandi-purple;
-  }
-
-  .order-status-badge--AFTER_SALE & {
-    color: $color-error;
-  }
+  letter-spacing: 0.02em;
 }
 
-.order-card-body {
-  padding: $spacing-base;
-
-  .order-thumbs-scroll {
-    width: 100%;
-    white-space: nowrap;
-  }
-
-  .order-thumbs {
-    display: inline-flex;
-    gap: $spacing-sm;
-  }
-
-  .order-thumb {
-    width: 120rpx;
-    height: 120rpx;
-    border-radius: $radius-base;
-    flex-shrink: 0;
-  }
-
-  .order-summary {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: $spacing-base;
-  }
-
-  .order-item-count {
-    font-size: $font-sm;
-    color: $color-text-tertiary;
-    letter-spacing: 1rpx;
-  }
-
-  .order-price-row {
-    display: flex;
-    align-items: baseline;
-  }
-
-  .order-price-label {
-    font-size: $font-sm;
-    color: $color-text-secondary;
-    letter-spacing: 1rpx;
-  }
-
-  .order-price-value {
-    font-size: $font-md;
-    font-weight: 600;
-    color: $color-accent;
-    letter-spacing: 1rpx;
-  }
+.order-status {
+  @include sans-body;
+  font-size: $font-xs;
+  color: $color-ink-secondary;
+  letter-spacing: 0.04em;
 }
 
-.order-card-footer {
+.order-product {
+  display: flex;
+  align-items: center;
+  gap: $space-md;
+  margin-bottom: $space-sm;
+}
+
+.order-thumb {
+  flex-shrink: 0;
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: $radius-xs;
+  background-color: $color-surface-warm;
+}
+
+.order-product-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $space-xxs;
+}
+
+.order-product-title {
+  @include serif-heading;
+  font-size: $font-sm;
+  @include ellipsis;
+}
+
+.order-product-spec {
+  @include sans-body;
+  font-size: $font-xs;
+}
+
+.order-product-price {
+  @include sans-body;
+  font-size: $font-sm;
+  color: $color-ink;
+  flex-shrink: 0;
+}
+
+.order-bottom {
   @include flex-between;
-  padding: $spacing-sm $spacing-base $spacing-base;
-  border-top: 1rpx solid $color-bg-secondary;
+  margin-top: $space-md;
+}
 
-  .order-date {
-    font-size: $font-xs;
-    color: $color-text-placeholder;
-    letter-spacing: 1rpx;
-  }
+.order-date {
+  @include sans-body;
+  font-size: $font-xs;
+  color: $color-ink-tertiary;
+}
 
-  .order-actions {
-    display: flex;
-    gap: $spacing-sm;
-  }
+.order-actions {
+  display: flex;
+  gap: $space-lg;
 }
 
 .order-action {
-  padding: $spacing-xs $spacing-base;
-  border-radius: $radius-full;
-  transition: $transition-base;
+  @include sans-body;
+  font-size: $font-sm;
+  color: $color-ink-secondary;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 
   &:active {
-    transform: scale(0.96);
-  }
-
-  &--primary {
-    background-color: $color-accent;
-  }
-
-  &--outline {
-    background-color: transparent;
-    border: 2rpx solid $color-border;
+    color: $color-ink;
   }
 }
 
-.order-action-text {
-  font-size: $font-sm;
-  letter-spacing: 1rpx;
+.empty-state {
+  @include flex-center;
+  padding: $space-4xl 0;
+}
 
-  .order-action--primary & {
-    color: $color-white;
-  }
-
-  .order-action--outline & {
-    color: $color-text-secondary;
-  }
+.empty-text {
+  @include serif-heading;
+  font-size: $font-md;
+  color: $color-ink-tertiary;
 }
 
 .loading-more,
 .no-more {
   @include flex-center;
-  padding: $spacing-lg 0;
+  padding: $space-lg 0;
 }
 
-.loading-more-text,
-.no-more-text {
+.loading-more-text {
+  @include sans-body;
   font-size: $font-sm;
-  color: $color-text-placeholder;
-  letter-spacing: 1rpx;
+  color: $color-ink-tertiary;
+}
+
+.no-more-text {
+  @include sans-body;
+  font-size: $font-sm;
+  color: $color-ink-tertiary;
 }
 </style>

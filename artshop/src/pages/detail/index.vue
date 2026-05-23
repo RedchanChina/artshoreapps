@@ -1,255 +1,146 @@
 <template>
   <view class="detail-page">
-    <view class="artwork-display">
-      <swiper
-        class="artwork-swiper"
-        :current="currentImageIndex"
-        :duration="300"
-        :circular="false"
-        @change="onSwiperChange"
-      >
-        <swiper-item v-for="(img, index) in artwork.images" :key="index">
-          <image
-            :src="img"
-            mode="aspectFit"
-            class="artwork-image"
-            @click="previewImage(index)"
-          />
-        </swiper-item>
-      </swiper>
+    <scroll-view class="page-scroll" scroll-y :enhanced="true" :bounces="false">
+      <view class="hero">
+        <swiper
+          class="hero-swiper"
+          :current="currentImageIndex"
+          :circular="false"
+          :duration="300"
+          @change="onSwiperChange"
+        >
+          <swiper-item v-for="(img, index) in artwork.images" :key="index">
+            <image
+              :src="img"
+              mode="aspectFill"
+              class="hero-img"
+              @click="previewImage(index)"
+            />
+          </swiper-item>
+        </swiper>
 
-      <view class="swiper-indicators" v-if="artwork.images.length > 1">
-        <view
-          v-for="(_, index) in artwork.images"
-          :key="index"
-          :class="['indicator-dot', { 'indicator-dot--active': index === currentImageIndex }]"
-        />
-      </view>
-    </view>
-
-    <view class="top-controls" :style="{ paddingTop: statusBarHeight + 'px' }">
-      <view class="back-btn" @click="goBack">
-        <text class="back-icon">‹</text>
-      </view>
-      <view class="top-right-group">
-        <view class="image-counter">
-          <text class="counter-text">{{ currentImageIndex + 1 }}/{{ artwork.images.length }}</text>
-        </view>
-        <view class="share-btn">
-          <button class="share-btn-inner" open-type="share">
-            <text class="share-icon">⬆</text>
-          </button>
+        <view class="hero-nav" :style="{ paddingTop: statusBarHeight + 'px' }">
+          <view class="nav-back" @click="goBack">
+            <text class="nav-back-text">←</text>
+          </view>
+          <text class="img-counter">{{ currentImageIndex + 1 }}/{{ artwork.images.length }}</text>
         </view>
       </view>
-    </view>
 
-    <view :class="['info-panel', { 'info-panel--expanded': panelExpanded }]">
-      <view
-        class="panel-handle"
-        @click="togglePanel"
-        @touchstart="onHandleTouchStart"
-        @touchmove.stop.prevent="onHandleTouchMove"
-        @touchend="onHandleTouchEnd"
-      >
-        <view class="handle-bar" />
+      <view class="info">
+        <text class="info-title">{{ artwork.title }}</text>
+        <view class="info-artist" @click="goToArtist">
+          <text class="info-artist-name">{{ artwork.artistName }}</text>
+        </view>
+        <text class="info-price">¥{{ formatPrice(currentPrice) }}</text>
+        <text class="info-edition">Edition {{ artwork.limitedEdition.current }}/{{ artwork.limitedEdition.total }}</text>
+        <text class="info-specs">{{ selectedSize }} · {{ selectedMaterial }} · {{ selectedFrame }} · {{ artwork.year }}</text>
+
+        <view class="divider" />
+
+        <text class="info-desc">{{ artwork.description }}</text>
+
+        <view class="info-note" v-if="artwork.artistNote">
+          <text class="info-note-text">"{{ artwork.artistNote }}"</text>
+        </view>
       </view>
 
-      <scroll-view
-        class="panel-scroll"
-        :scroll-y="panelExpanded"
-        :enhanced="true"
-        :bounces="false"
-      >
-        <view class="info-basic">
-          <text class="artwork-title">{{ artwork.title }}</text>
-          <view class="artist-row" @click="goToArtist">
-            <text class="artist-name">{{ artwork.artistName }}</text>
-            <text class="artist-arrow">›</text>
-          </view>
-          <view class="price-row">
-            <view class="price-tag">
-              <text class="price-symbol">¥</text>
-              <text class="price-value">{{ formatPrice(currentPrice) }}</text>
-              <text
-                class="price-original"
-                v-if="artwork.originalPrice && currentPrice < artwork.originalPrice"
-              >
-                ¥{{ formatPrice(artwork.originalPrice) }}
-              </text>
-            </view>
-            <view class="limited-badge" v-if="artwork.limitedEdition">
-              <text class="limited-text">限量 {{ artwork.limitedEdition.current }}/{{ artwork.limitedEdition.total }}</text>
-            </view>
-          </view>
-          <view class="quick-specs">
-            <view class="spec-chip-sm">
-              <text class="spec-chip-label">尺寸</text>
-              <text class="spec-chip-value">{{ selectedSize }}</text>
-            </view>
-            <view class="spec-dot" />
-            <view class="spec-chip-sm">
-              <text class="spec-chip-label">材质</text>
-              <text class="spec-chip-value">{{ selectedMaterial }}</text>
-            </view>
-            <view class="spec-dot" />
-            <view class="spec-chip-sm">
-              <text class="spec-chip-label">装裱</text>
-              <text class="spec-chip-value">{{ selectedFrame }}</text>
-            </view>
-            <view class="spec-dot" />
-            <view class="spec-chip-sm">
-              <text class="spec-chip-label">年份</text>
-              <text class="spec-chip-value">{{ artwork.year }}</text>
+      <view class="specs">
+        <view class="spec-group">
+          <text class="spec-label">SIZE</text>
+          <view class="spec-chips">
+            <view
+              v-for="size in uniqueSizes"
+              :key="size"
+              :class="['spec-chip', { 'spec-chip--active': selectedSize === size, 'spec-chip--disabled': !isSizeAvailable(size) }]"
+              @click="selectSize(size)"
+            >
+              <text class="spec-chip-text">{{ size }}</text>
             </view>
           </view>
         </view>
 
-        <view class="info-expanded" v-show="panelExpanded">
-          <view class="section-block">
-            <text class="section-label">作品介绍</text>
-            <text class="description-text">{{ artwork.description }}</text>
-          </view>
-
-          <view class="section-block" v-if="artwork.artistNote">
-            <text class="section-label">艺术家寄语</text>
-            <view class="artist-note-block">
-              <text class="artist-note-text">"{{ artwork.artistNote }}"</text>
+        <view class="spec-group">
+          <text class="spec-label">MATERIAL</text>
+          <view class="spec-chips">
+            <view
+              v-for="material in uniqueMaterials"
+              :key="material"
+              :class="['spec-chip', { 'spec-chip--active': selectedMaterial === material, 'spec-chip--disabled': !isMaterialAvailable(material) }]"
+              @click="selectMaterial(material)"
+            >
+              <text class="spec-chip-text">{{ material }}</text>
             </view>
           </view>
-
-          <view class="section-block">
-            <text class="section-label">规格选择</text>
-            <view class="spec-selector">
-              <view class="spec-group">
-                <text class="spec-group-title">尺寸</text>
-                <view class="spec-chips">
-                  <view
-                    v-for="size in uniqueSizes"
-                    :key="size"
-                    :class="[
-                      'spec-chip',
-                      { 'spec-chip--active': selectedSize === size },
-                      { 'spec-chip--disabled': !isSizeAvailable(size) }
-                    ]"
-                    @click="selectSize(size)"
-                  >
-                    <text class="spec-chip-text">{{ size }}</text>
-                  </view>
-                </view>
-              </view>
-              <view class="spec-group">
-                <text class="spec-group-title">材质</text>
-                <view class="spec-chips">
-                  <view
-                    v-for="material in uniqueMaterials"
-                    :key="material"
-                    :class="[
-                      'spec-chip',
-                      { 'spec-chip--active': selectedMaterial === material },
-                      { 'spec-chip--disabled': !isMaterialAvailable(material) }
-                    ]"
-                    @click="selectMaterial(material)"
-                  >
-                    <text class="spec-chip-text">{{ material }}</text>
-                  </view>
-                </view>
-              </view>
-              <view class="spec-group">
-                <text class="spec-group-title">装裱</text>
-                <view class="spec-chips">
-                  <view
-                    v-for="frame in uniqueFrames"
-                    :key="frame"
-                    :class="[
-                      'spec-chip',
-                      { 'spec-chip--active': selectedFrame === frame },
-                      { 'spec-chip--disabled': !isFrameAvailable(frame) }
-                    ]"
-                    @click="selectFrame(frame)"
-                  >
-                    <text class="spec-chip-text">{{ frame }}</text>
-                  </view>
-                </view>
-              </view>
-            </view>
-            <view class="spec-status" v-if="currentSpec">
-              <text class="stock-text" :class="{ 'stock-text--low': currentStock <= 5 }">
-                库存 {{ currentStock }} 件
-              </text>
-            </view>
-            <view class="spec-status" v-else>
-              <text class="unavailable-text">该规格组合暂无库存</text>
-            </view>
-          </view>
-
-          <view class="section-block">
-            <view class="ar-buttons">
-              <view class="ar-btn" @click="goTo3DPreview">
-                <text class="ar-icon">◎</text>
-                <text class="ar-text">3D预览</text>
-              </view>
-              <view class="ar-btn ar-btn--accent" @click="goToARPreview">
-                <text class="ar-icon">▣</text>
-                <text class="ar-text">AR摆放</text>
-              </view>
-            </view>
-          </view>
-
-          <view class="section-block">
-            <text class="section-title">该艺术家的其他作品</text>
-            <scroll-view class="artist-works-scroll" scroll-x :show-scrollbar="false">
-              <view class="artist-works-list">
-                <view
-                  v-for="work in artistWorks"
-                  :key="work.id"
-                  class="artist-work-card"
-                  @click="goToDetail(work.id)"
-                >
-                  <image :src="work.image" mode="aspectFill" class="work-thumb" />
-                  <view class="work-info">
-                    <text class="work-title">{{ work.title }}</text>
-                    <text class="work-price">¥{{ formatPrice(work.price) }}</text>
-                  </view>
-                </view>
-              </view>
-            </scroll-view>
-          </view>
-
-          <view class="section-block">
-            <text class="section-title">相似风格作品</text>
-            <view class="related-grid">
-              <view
-                v-for="item in relatedWorks"
-                :key="item.id"
-                class="related-card"
-                @click="goToDetail(item.id)"
-              >
-                <image :src="item.image" mode="aspectFill" class="related-thumb" />
-                <view class="related-info">
-                  <text class="related-title">{{ item.title }}</text>
-                  <text class="related-artist">{{ item.artistName }}</text>
-                  <text class="related-price">¥{{ formatPrice(item.price) }}</text>
-                </view>
-              </view>
-            </view>
-          </view>
-
-          <view class="bottom-spacer" />
         </view>
-      </scroll-view>
-    </view>
 
-    <view class="bottom-bar" :style="{ paddingBottom: safeAreaBottom + 'px' }">
-      <view class="fav-btn" @click="toggleFavorite">
-        <text :class="['fav-icon', { 'fav-icon--active': isFavorited }]">♥</text>
+        <view class="spec-group">
+          <text class="spec-label">FRAME</text>
+          <view class="spec-chips">
+            <view
+              v-for="frame in uniqueFrames"
+              :key="frame"
+              :class="['spec-chip', { 'spec-chip--active': selectedFrame === frame, 'spec-chip--disabled': !isFrameAvailable(frame) }]"
+              @click="selectFrame(frame)"
+            >
+              <text class="spec-chip-text">{{ frame }}</text>
+            </view>
+          </view>
+        </view>
       </view>
-      <view class="action-btns">
-        <view class="cart-btn" @click="addToCart">
-          <text class="cart-btn-text">加入购物车</text>
+
+      <view class="preview-links">
+        <text class="preview-link" @click="goTo3DPreview">View in 3D →</text>
+        <text class="preview-link" @click="goToARPreview">View in AR →</text>
+      </view>
+
+      <view class="section">
+        <text class="section-heading">More by {{ artwork.artistName }}</text>
+        <scroll-view class="artist-scroll" scroll-x :show-scrollbar="false">
+          <view class="artist-scroll-inner">
+            <view
+              v-for="work in artistWorks"
+              :key="work.id"
+              class="artist-work"
+              @click="goToDetail(work.id)"
+            >
+              <image :src="work.image" mode="aspectFill" class="artist-work-img" />
+              <text class="artist-work-title">{{ work.title }}</text>
+              <text class="artist-work-price">¥{{ formatPrice(work.price) }}</text>
+            </view>
+          </view>
+        </scroll-view>
+      </view>
+
+      <view class="section">
+        <text class="section-heading">You may also like</text>
+        <view class="related-grid">
+          <view
+            v-for="item in relatedWorks"
+            :key="item.id"
+            class="related-item"
+            @click="goToDetail(item.id)"
+          >
+            <image :src="item.image" mode="aspectFill" class="related-img" />
+            <text class="related-title">{{ item.title }}</text>
+            <text class="related-artist">{{ item.artistName }}</text>
+            <text class="related-price">¥{{ formatPrice(item.price) }}</text>
+          </view>
         </view>
-        <view class="buy-btn" @click="buyNow">
-          <text class="buy-btn-text">立即购买</text>
-        </view>
+      </view>
+
+      <view class="bottom-spacer" />
+    </scroll-view>
+
+    <view class="bottom-bar">
+      <view class="fav-action" @click="toggleFavorite">
+        <text :class="['fav-text', { 'fav-text--active': isFavorited }]">♡</text>
+      </view>
+      <view class="cart-action" @click="addToCart">
+        <text class="cart-action-text">ADD TO CART</text>
+      </view>
+      <view class="buy-action" @click="buyNow">
+        <text class="buy-action-text">BUY NOW</text>
       </view>
     </view>
   </view>
@@ -274,30 +165,24 @@ const artwork = ref({
     IMG_BASE + encodeURIComponent('oil painting canvas texture close up morandi earth tones') + IMG_SIZE,
     IMG_BASE + encodeURIComponent('artwork gallery exhibition morandi palette contemporary art') + IMG_SIZE,
   ],
-  price: 12800,
-  originalPrice: 15800,
-  category: '油画',
+  price: 2680,
+  category: 'Giclée',
   description:
-    '《静谧时光》是林墨白2024年的代表作品，以莫兰迪色系为基调，通过层叠的抽象形态与柔和的光影变化，营造出一种超越时间的宁静氛围。画面中，几何与有机形态交织，仿佛时间在此凝固，邀请观者放慢脚步，感受当下的美好。每一笔触都经过反复推敲，色彩的微妙变化在画面中流淌，如同晨光穿过薄雾，温柔而坚定。作品在抽象与具象之间找到了独特的平衡点，既有东方美学的含蓄内敛，又融入了当代艺术的自由表达。',
+    '《静谧时光》以莫兰迪色系为基调，通过层叠的抽象形态与柔和的光影变化，营造出一种超越时间的宁静氛围。画面中，几何与有机形态交织，仿佛时间在此凝固，邀请观者放慢脚步，感受当下的美好。每一笔触都经过反复推敲，色彩的微妙变化在画面中流淌，如同晨光穿过薄雾，温柔而坚定。',
   specifications: [
-    { size: '60×80cm', material: '布面油画', frameStyle: '实木画框', price: 12800, stock: 12 },
-    { size: '60×80cm', material: '布面油画', frameStyle: '无框', price: 10800, stock: 8 },
-    { size: '60×80cm', material: '纸本版画', frameStyle: '实木画框', price: 4800, stock: 20 },
-    { size: '60×80cm', material: '纸本版画', frameStyle: '无框', price: 3800, stock: 15 },
-    { size: '80×100cm', material: '布面油画', frameStyle: '实木画框', price: 22800, stock: 5 },
-    { size: '80×100cm', material: '布面油画', frameStyle: '无框', price: 19800, stock: 3 },
-    { size: '80×100cm', material: '纸本版画', frameStyle: '实木画框', price: 6800, stock: 25 },
-    { size: '80×100cm', material: '纸本版画', frameStyle: '无框', price: 5800, stock: 18 },
+    { size: '60×80cm', material: 'Giclée', frameStyle: 'White Frame', price: 2680, stock: 12 },
+    { size: '60×80cm', material: 'Giclée', frameStyle: 'No Frame', price: 1980, stock: 8 },
+    { size: '60×80cm', material: 'Oil on Canvas', frameStyle: 'White Frame', price: 12800, stock: 5 },
+    { size: '60×80cm', material: 'Oil on Canvas', frameStyle: 'No Frame', price: 10800, stock: 3 },
+    { size: '80×100cm', material: 'Giclée', frameStyle: 'White Frame', price: 4800, stock: 20 },
+    { size: '80×100cm', material: 'Giclée', frameStyle: 'No Frame', price: 3800, stock: 15 },
+    { size: '80×100cm', material: 'Oil on Canvas', frameStyle: 'White Frame', price: 22800, stock: 2 },
+    { size: '80×100cm', material: 'Oil on Canvas', frameStyle: 'No Frame', price: 19800, stock: 1 },
   ],
   limitedEdition: { total: 50, current: 12 },
   year: '2024',
-  sales: 11,
-  stock: 39,
-  rating: 4.9,
-  tags: ['抽象', '莫兰迪', '现代艺术'],
   artistNote:
     '这件作品诞生于一个清晨，阳光透过工作室的窗户洒在画布上，那一刻的宁静让我决定用最纯粹的色彩来记录这种感受。希望每一位看到这幅画的人，都能在忙碌的生活中找到属于自己的静谧时光。',
-  createdAt: '2024-03-15',
 })
 
 const artistWorks = ref([
@@ -359,16 +244,12 @@ const relatedWorks = ref([
 ])
 
 const currentImageIndex = ref(0)
-const panelExpanded = ref(false)
 const isFavorited = ref(false)
 const statusBarHeight = ref(0)
-const safeAreaBottom = ref(0)
 
 const selectedSize = ref('60×80cm')
-const selectedMaterial = ref('布面油画')
-const selectedFrame = ref('实木画框')
-
-let handleTouchStartY = 0
+const selectedMaterial = ref('Giclée')
+const selectedFrame = ref('White Frame')
 
 const uniqueSizes = computed(() => [...new Set(artwork.value.specifications.map((s) => s.size))])
 const uniqueMaterials = computed(() => [...new Set(artwork.value.specifications.map((s) => s.material))])
@@ -453,25 +334,6 @@ function goBack() {
   uni.navigateBack({ delta: 1 })
 }
 
-function togglePanel() {
-  panelExpanded.value = !panelExpanded.value
-}
-
-function onHandleTouchStart(e: any) {
-  handleTouchStartY = e.touches[0].clientY
-}
-
-function onHandleTouchMove() {}
-
-function onHandleTouchEnd(e: any) {
-  const deltaY = e.changedTouches[0].clientY - handleTouchStartY
-  if (deltaY < -40 && !panelExpanded.value) {
-    panelExpanded.value = true
-  } else if (deltaY > 40 && panelExpanded.value) {
-    panelExpanded.value = false
-  }
-}
-
 function goToArtist() {
   uni.navigateTo({ url: `/pages/artist/index?id=${artwork.value.artistId}` })
 }
@@ -515,545 +377,297 @@ function buyNow() {
   })
 }
 
-onLoad((options) => {
+onLoad(() => {
   const systemInfo = uni.getSystemInfoSync()
   statusBarHeight.value = systemInfo.statusBarHeight ?? 0
-  safeAreaBottom.value = systemInfo.safeArea?.bottom ? systemInfo.windowHeight - systemInfo.safeArea.bottom : 0
-
-  if (options?.id) {
-    // TODO: fetch artwork detail by id
-  }
 })
 
 onShareAppMessage(() => ({
-  title: `${artwork.value.title} - ${artwork.value.artistName}`,
+  title: `${artwork.value.title} — ${artwork.value.artistName}`,
   path: `/pages/detail/index?id=${artwork.value.id}`,
   imageUrl: artwork.value.images[0],
 }))
 </script>
 
 <style lang="scss">
-@import '@/styles/variables.scss';
 @import '@/styles/mixins.scss';
 
 .detail-page {
   position: relative;
   width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-  background-color: #0a0a0a;
+  min-height: 100vh;
+  background: $color-surface;
 }
 
-.artwork-display {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 1;
+.page-scroll {
+  width: 100%;
+  height: 100vh;
+}
 
-  .artwork-swiper {
+.hero {
+  position: relative;
+  width: 100%;
+
+  .hero-swiper {
+    width: 100%;
+    height: 75vh;
+  }
+
+  .hero-img {
     width: 100%;
     height: 100%;
   }
 
-  .artwork-image {
-    width: 100%;
-    height: 100%;
-  }
-
-  .swiper-indicators {
+  .hero-nav {
     position: absolute;
-    bottom: 380rpx;
+    top: 0;
     left: 0;
     right: 0;
-    @include flex-center;
-    gap: 12rpx;
-    z-index: 2;
-    padding-bottom: 24rpx;
-  }
+    @include flex-between;
+    padding: 0 $space-lg;
+    padding-bottom: $space-sm;
+    z-index: 10;
+    pointer-events: none;
 
-  .indicator-dot {
-    width: 12rpx;
-    height: 12rpx;
-    border-radius: $radius-full;
-    background-color: rgba(255, 255, 255, 0.35);
-    transition: $transition-base;
-
-    &--active {
-      width: 32rpx;
-      border-radius: 6rpx;
-      background-color: rgba(255, 255, 255, 0.85);
+    > * {
+      pointer-events: auto;
     }
   }
-}
 
-.top-controls {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 30;
-  @include flex-between;
-  padding: 16rpx $spacing-base;
-  padding-top: 16rpx;
-
-  .back-btn {
-    width: 72rpx;
-    height: 72rpx;
-    border-radius: $radius-full;
-    background-color: rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+  .nav-back {
     @include flex-center;
 
-    .back-icon {
-      font-size: 44rpx;
-      color: rgba(255, 255, 255, 0.9);
-      font-weight: 300;
-      margin-top: -4rpx;
-    }
-
-    &:active {
-      background-color: rgba(0, 0, 0, 0.5);
-    }
-  }
-
-  .top-right-group {
-    display: flex;
-    align-items: center;
-    gap: 16rpx;
-  }
-
-  .image-counter {
-    height: 56rpx;
-    padding: 0 20rpx;
-    border-radius: $radius-full;
-    background-color: rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    @include flex-center;
-
-    .counter-text {
-      font-size: $font-sm;
-      color: rgba(255, 255, 255, 0.85);
-      letter-spacing: 2rpx;
-    }
-  }
-
-  .share-btn {
-    width: 72rpx;
-    height: 72rpx;
-    border-radius: $radius-full;
-    background-color: rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    @include flex-center;
-    overflow: hidden;
-    padding: 0;
-
-    .share-btn-inner {
-      width: 100%;
-      height: 100%;
-      @include flex-center;
-      background: transparent;
-      border: none;
-      padding: 0;
-      margin: 0;
-      line-height: 1;
-
-      &::after {
-        border: none;
-      }
-    }
-
-    .share-icon {
-      font-size: 32rpx;
-      color: rgba(255, 255, 255, 0.9);
-    }
-
-    &:active {
-      background-color: rgba(0, 0, 0, 0.5);
-    }
-  }
-}
-
-.info-panel {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 110rpx;
-  height: 400rpx;
-  z-index: 10;
-  background: rgba(250, 250, 248, 0.94);
-  backdrop-filter: blur(40px);
-  -webkit-backdrop-filter: blur(40px);
-  border-radius: $radius-xl $radius-xl 0 0;
-  box-shadow: 0 -8rpx 40rpx rgba(0, 0, 0, 0.08);
-  transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  overflow: hidden;
-
-  &--expanded {
-    height: calc(100vh - 180rpx);
-  }
-
-  .panel-handle {
-    @include flex-center;
-    padding: 16rpx 0 8rpx;
-    cursor: pointer;
-
-    .handle-bar {
-      width: 64rpx;
-      height: 8rpx;
-      border-radius: $radius-full;
-      background-color: $color-border;
-    }
-  }
-
-  .panel-scroll {
-    height: calc(100% - 48rpx);
-    overflow: hidden;
-  }
-}
-
-.info-basic {
-  padding: 0 $spacing-lg $spacing-md;
-
-  .artwork-title {
-    display: block;
-    font-size: $font-xl;
-    font-weight: 600;
-    color: $color-text-primary;
-    font-family: 'Georgia', 'Noto Serif SC', serif;
-    letter-spacing: 4rpx;
-    line-height: 1.3;
-  }
-
-  .artist-row {
-    display: flex;
-    align-items: center;
-    margin-top: $spacing-xs;
-    gap: 4rpx;
-
-    .artist-name {
-      font-size: $font-base;
-      color: $color-text-secondary;
-      letter-spacing: 2rpx;
-    }
-
-    .artist-arrow {
+    .nav-back-text {
+      @include sans-body;
       font-size: $font-lg;
-      color: $color-accent;
-      font-weight: 300;
+      color: $color-ink;
+      line-height: 1;
     }
 
     &:active {
-      opacity: 0.7;
+      opacity: 0.5;
     }
   }
 
-  .price-row {
-    display: flex;
-    align-items: center;
-    margin-top: $spacing-sm;
-    gap: $spacing-sm;
-
-    .price-tag {
-      display: flex;
-      align-items: baseline;
-      gap: 4rpx;
-
-      .price-symbol {
-        font-size: $font-base;
-        color: $color-accent;
-        font-weight: 500;
-      }
-
-      .price-value {
-        font-size: $font-xl;
-        color: $color-accent;
-        font-weight: 700;
-        letter-spacing: 2rpx;
-      }
-
-      .price-original {
-        font-size: $font-sm;
-        color: $color-text-tertiary;
-        text-decoration: line-through;
-        margin-left: 8rpx;
-      }
-    }
-
-    .limited-badge {
-      height: 40rpx;
-      padding: 0 16rpx;
-      border-radius: $radius-full;
-      background-color: rgba(139, 115, 85, 0.1);
-      @include flex-center;
-
-      .limited-text {
-        font-size: $font-xs;
-        color: $color-accent;
-        letter-spacing: 2rpx;
-        font-weight: 500;
-      }
-    }
-  }
-
-  .quick-specs {
-    display: flex;
-    align-items: center;
-    margin-top: $spacing-sm;
-    gap: 0;
-    flex-wrap: wrap;
-
-    .spec-chip-sm {
-      display: flex;
-      align-items: center;
-      gap: 6rpx;
-      padding: 0 $spacing-sm;
-
-      .spec-chip-label {
-        font-size: $font-xs;
-        color: $color-text-tertiary;
-      }
-
-      .spec-chip-value {
-        font-size: $font-xs;
-        color: $color-text-secondary;
-        letter-spacing: 1rpx;
-      }
-    }
-
-    .spec-dot {
-      width: 6rpx;
-      height: 6rpx;
-      border-radius: $radius-full;
-      background-color: $color-border;
-    }
+  .img-counter {
+    @include sans-body;
+    font-size: $font-xs;
+    color: $color-ink-tertiary;
+    letter-spacing: 0.05em;
   }
 }
 
-.info-expanded {
-  padding: 0 $spacing-lg;
+.info {
+  padding: $space-xl $space-lg;
 
-  .section-block {
-    padding: $spacing-md 0;
-    border-top: 1rpx solid $color-border;
+  .info-title {
+    @include serif-heading;
+    font-size: 44rpx;
+    line-height: 1.2;
+    display: block;
+  }
 
-    &:first-child {
-      border-top: none;
+  .info-artist {
+    margin-top: $space-sm;
+
+    .info-artist-name {
+      @include sans-body;
+      font-size: $font-base;
+      color: $color-ink-secondary;
+      letter-spacing: 0.02em;
+    }
+
+    &:active {
+      opacity: 0.5;
     }
   }
 
-  .section-label {
-    display: block;
+  .info-price {
+    @include sans-body;
     font-size: $font-md;
-    font-weight: 600;
-    color: $color-text-primary;
-    letter-spacing: 2rpx;
-    margin-bottom: $spacing-sm;
-  }
-
-  .section-title {
-    @include section-title;
-    margin-bottom: $spacing-base;
-  }
-
-  .description-text {
+    color: $color-ink;
+    font-weight: 500;
     display: block;
-    font-size: $font-base;
-    color: $color-text-secondary;
-    line-height: 1.8;
-    letter-spacing: 1rpx;
+    margin-top: $space-md;
+    letter-spacing: 0.02em;
   }
 
-  .artist-note-block {
-    padding: $spacing-base;
-    background-color: $color-bg-secondary;
-    border-radius: $radius-lg;
-    border-left: 6rpx solid $color-accent-light;
+  .info-edition {
+    @include sans-body;
+    font-size: $font-xs;
+    color: $color-ink-tertiary;
+    display: block;
+    margin-top: $space-xs;
+    letter-spacing: 0.03em;
   }
 
-  .artist-note-text {
+  .info-specs {
+    @include sans-body;
+    font-size: $font-sm;
+    color: $color-ink-tertiary;
+    display: block;
+    margin-top: $space-sm;
+    letter-spacing: 0.02em;
+  }
+
+  .divider {
+    @include divider;
+    margin: $space-lg 0;
+  }
+
+  .info-desc {
+    @include sans-body;
     font-size: $font-base;
-    color: $color-text-secondary;
-    line-height: 1.8;
-    font-style: italic;
-    letter-spacing: 1rpx;
+    color: $color-ink-secondary;
+    line-height: 1.85;
+    display: block;
+    letter-spacing: 0.01em;
+  }
+
+  .info-note {
+    margin-top: $space-lg;
+    padding-left: $space-md;
+    border-left: 2rpx solid $color-ink-faint;
+
+    .info-note-text {
+      @include serif-heading;
+      font-size: $font-base;
+      color: $color-ink-secondary;
+      font-style: italic;
+      line-height: 1.85;
+    }
   }
 }
 
-.spec-selector {
+.specs {
+  padding: $space-xl $space-lg;
+  border-top: 1rpx solid $color-rule;
+
   .spec-group {
-    margin-bottom: $spacing-base;
+    margin-bottom: $space-lg;
 
     &:last-child {
       margin-bottom: 0;
     }
 
-    .spec-group-title {
+    .spec-label {
+      @include sans-body;
+      font-size: $font-xs;
+      color: $color-ink-tertiary;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
       display: block;
-      font-size: $font-sm;
-      color: $color-text-tertiary;
-      margin-bottom: $spacing-xs;
-      letter-spacing: 2rpx;
+      margin-bottom: $space-sm;
     }
 
     .spec-chips {
       display: flex;
       flex-wrap: wrap;
-      gap: $spacing-sm;
+      gap: $space-sm;
     }
 
     .spec-chip {
-      padding: $spacing-sm $spacing-base;
-      background-color: $color-bg-secondary;
-      border-radius: $radius-base;
-      border: 2rpx solid transparent;
-      transition: $transition-base;
+      padding: $space-sm $space-md;
+      border: 1rpx solid $color-ink-faint;
+      background: transparent;
+      transition: all $duration-fast $ease-out;
 
       &:active {
-        transform: scale(0.96);
+        opacity: 0.7;
       }
 
       &--active {
-        border-color: $color-accent;
-        background-color: rgba(139, 115, 85, 0.08);
+        background: $color-ink;
+        border-color: $color-ink;
 
         .spec-chip-text {
-          color: $color-accent;
-          font-weight: 500;
+          color: $color-surface;
         }
       }
 
       &--disabled {
-        opacity: 0.35;
+        opacity: 0.3;
         pointer-events: none;
       }
 
       .spec-chip-text {
+        @include sans-body;
         font-size: $font-sm;
-        color: $color-text-secondary;
-        letter-spacing: 1rpx;
+        color: $color-ink;
+        letter-spacing: 0.02em;
       }
     }
   }
 }
 
-.spec-status {
-  margin-top: $spacing-sm;
-
-  .stock-text {
-    font-size: $font-sm;
-    color: $color-text-tertiary;
-    letter-spacing: 1rpx;
-
-    &--low {
-      color: $color-error;
-    }
-  }
-
-  .unavailable-text {
-    font-size: $font-sm;
-    color: $color-error;
-    letter-spacing: 1rpx;
-  }
-}
-
-.ar-buttons {
+.preview-links {
+  padding: $space-lg $space-lg $space-xl;
+  border-top: 1rpx solid $color-rule;
   display: flex;
-  gap: $spacing-base;
+  gap: $space-xl;
 
-  .ar-btn {
-    flex: 1;
-    @include flex-center;
-    gap: $spacing-xs;
-    height: 96rpx;
-    border-radius: $radius-lg;
-    background-color: $color-bg-secondary;
-    border: 2rpx solid $color-border;
-    transition: $transition-base;
+  .preview-link {
+    @include serif-heading;
+    font-size: $font-base;
+    color: $color-ink;
+    text-decoration: underline;
+    text-underline-offset: 4rpx;
 
     &:active {
-      transform: scale(0.97);
-      opacity: 0.85;
-    }
-
-    .ar-icon {
-      font-size: $font-lg;
-      color: $color-text-secondary;
-    }
-
-    .ar-text {
-      font-size: $font-base;
-      color: $color-text-primary;
-      letter-spacing: 2rpx;
-      font-weight: 500;
-    }
-
-    &--accent {
-      background-color: $color-accent;
-      border-color: $color-accent;
-
-      .ar-icon {
-        color: $color-white;
-      }
-
-      .ar-text {
-        color: $color-white;
-      }
-
-      &:active {
-        opacity: 0.85;
-      }
+      opacity: 0.5;
     }
   }
 }
 
-.artist-works-scroll {
-  margin: 0 -#{$spacing-lg};
-  padding-left: $spacing-lg;
+.section {
+  padding: $space-xl $space-lg;
+  border-top: 1rpx solid $color-rule;
 
-  .artist-works-list {
+  .section-heading {
+    @include serif-heading;
+    font-size: $font-lg;
+    display: block;
+    margin-bottom: $space-lg;
+  }
+}
+
+.artist-scroll {
+  margin: 0 -#{$space-lg};
+
+  .artist-scroll-inner {
     display: flex;
-    gap: $spacing-base;
-    padding-right: $spacing-lg;
+    gap: $space-md;
+    padding: 0 $space-lg;
   }
 
-  .artist-work-card {
+  .artist-work {
     flex-shrink: 0;
-    width: 240rpx;
-    @include gallery-card;
+    width: 200rpx;
 
-    .work-thumb {
-      width: 240rpx;
-      height: 300rpx;
+    .artist-work-img {
+      width: 200rpx;
+      height: 268rpx;
     }
 
-    .work-info {
-      padding: $spacing-sm;
+    .artist-work-title {
+      @include sans-body;
+      font-size: $font-sm;
+      color: $color-ink;
+      display: block;
+      margin-top: $space-sm;
+      @include ellipsis;
+    }
 
-      .work-title {
-        display: block;
-        font-size: $font-sm;
-        color: $color-text-primary;
-        @include ellipsis;
-        letter-spacing: 1rpx;
-      }
-
-      .work-price {
-        display: block;
-        font-size: $font-xs;
-        color: $color-accent;
-        margin-top: 4rpx;
-        font-weight: 500;
-      }
+    .artist-work-price {
+      @include sans-body;
+      font-size: $font-xs;
+      color: $color-ink-tertiary;
+      display: block;
+      margin-top: $space-xxs;
     }
 
     &:active {
-      box-shadow: $shadow-base;
-      transform: scale(0.97);
+      opacity: 0.7;
     }
   }
 }
@@ -1061,53 +675,49 @@ onShareAppMessage(() => ({
 .related-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: $spacing-base;
+  gap: $space-md;
 
-  .related-card {
-    width: calc(50% - #{$spacing-base} / 2);
-    @include gallery-card;
+  .related-item {
+    width: calc(50% - #{$space-md} / 2);
 
-    .related-thumb {
+    .related-img {
       width: 100%;
-      height: 280rpx;
+      height: 340rpx;
     }
 
-    .related-info {
-      padding: $spacing-sm;
+    .related-title {
+      @include sans-body;
+      font-size: $font-sm;
+      color: $color-ink;
+      display: block;
+      margin-top: $space-sm;
+      @include ellipsis;
+    }
 
-      .related-title {
-        display: block;
-        font-size: $font-sm;
-        color: $color-text-primary;
-        @include ellipsis;
-        letter-spacing: 1rpx;
-      }
+    .related-artist {
+      @include sans-body;
+      font-size: $font-xs;
+      color: $color-ink-tertiary;
+      display: block;
+      margin-top: $space-xxs;
+    }
 
-      .related-artist {
-        display: block;
-        font-size: $font-xs;
-        color: $color-text-tertiary;
-        margin-top: 4rpx;
-      }
-
-      .related-price {
-        display: block;
-        font-size: $font-sm;
-        color: $color-accent;
-        margin-top: 6rpx;
-        font-weight: 500;
-      }
+    .related-price {
+      @include sans-body;
+      font-size: $font-sm;
+      color: $color-ink;
+      display: block;
+      margin-top: $space-xxs;
     }
 
     &:active {
-      box-shadow: $shadow-base;
-      transform: scale(0.97);
+      opacity: 0.7;
     }
   }
 }
 
 .bottom-spacer {
-  height: 160rpx;
+  height: 180rpx;
 }
 
 .bottom-bar {
@@ -1115,86 +725,69 @@ onShareAppMessage(() => ({
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 20;
+  z-index: 100;
   display: flex;
   align-items: center;
-  padding: $spacing-sm $spacing-base;
-  background: rgba(250, 250, 248, 0.96);
-  backdrop-filter: blur(30px);
-  -webkit-backdrop-filter: blur(30px);
-  border-top: 1rpx solid $color-border;
-  gap: $spacing-sm;
+  padding: $space-sm $space-lg;
+  background: $color-surface;
+  border-top: 1rpx solid $color-rule;
+  gap: $space-sm;
+  @include safe-area-bottom;
 
-  .fav-btn {
+  .fav-action {
     width: 88rpx;
-    height: 88rpx;
+    height: 80rpx;
     @include flex-center;
-    border-radius: $radius-full;
-    border: 2rpx solid $color-border;
-    background-color: $color-white;
-    transition: $transition-base;
 
-    .fav-icon {
-      font-size: 40rpx;
-      color: $color-text-tertiary;
-      transition: $transition-base;
+    .fav-text {
+      @include sans-body;
+      font-size: $font-lg;
+      color: $color-ink-tertiary;
+      transition: color $duration-fast $ease-out;
     }
 
-    .fav-icon--active {
-      color: $morandi-rose;
+    .fav-text--active {
+      color: $color-ink;
     }
 
     &:active {
-      transform: scale(0.92);
+      opacity: 0.5;
     }
   }
 
-  .action-btns {
+  .cart-action {
     flex: 1;
-    display: flex;
-    gap: $spacing-sm;
-  }
+    height: 80rpx;
+    @include btn-outline;
+    max-width: 50%;
 
-  .cart-btn {
-    flex: 1;
-    height: 88rpx;
-    @include flex-center;
-    border-radius: $radius-base;
-    border: 2rpx solid $morandi-beige;
-    background-color: transparent;
-    transition: $transition-base;
-
-    .cart-btn-text {
-      font-size: $font-base;
-      color: $morandi-beige;
-      letter-spacing: 2rpx;
+    .cart-action-text {
+      @include sans-body;
+      font-size: $font-sm;
+      color: $color-ink;
       font-weight: 500;
+      letter-spacing: 0.08em;
     }
 
     &:active {
-      background-color: rgba(196, 182, 166, 0.1);
-      transform: scale(0.97);
+      .cart-action-text {
+        color: $color-surface;
+      }
     }
   }
 
-  .buy-btn {
+  .buy-action {
     flex: 1;
-    height: 88rpx;
-    @include flex-center;
-    border-radius: $radius-base;
-    background-color: $color-accent;
-    transition: $transition-base;
+    height: 80rpx;
+    @include btn-primary;
+    max-width: 50%;
 
-    .buy-btn-text {
-      font-size: $font-base;
-      color: $color-white;
-      letter-spacing: 2rpx;
+    .buy-action-text {
+      @include sans-body;
+      font-size: $font-sm;
+      color: $color-surface;
       font-weight: 500;
-    }
-
-    &:active {
-      opacity: 0.85;
-      transform: scale(0.97);
+      letter-spacing: 0.08em;
     }
   }
 }

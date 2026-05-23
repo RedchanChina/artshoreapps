@@ -15,22 +15,17 @@
         @favorite="handleItemFavorite"
       />
 
-      <view
+      <ArtworkCard
         v-for="i in skeletonCount"
         v-if="loading"
         :key="`skeleton-${i}`"
-        class="gallery-grid__skeleton-item"
-      >
-        <ArtworkCard :artwork="null" />
-      </view>
+        :artwork="null"
+      />
     </view>
 
-    <EmptyState
-      v-if="!loading && artworks.length === 0"
-      icon="🖼️"
-      title="暂无作品"
-      description="这里还没有作品，去看看其他分类吧"
-    />
+    <view v-if="!loading && artworks.length === 0" class="gallery-grid__empty">
+      <text class="gallery-grid__empty-text">No works found</text>
+    </view>
   </view>
 </template>
 
@@ -38,7 +33,6 @@
 import { computed } from 'vue'
 import type { Artwork } from '@/types/artwork'
 import ArtworkCard from './ArtworkCard.vue'
-import EmptyState from './EmptyState.vue'
 
 const props = withDefaults(defineProps<{
   artworks: Artwork[]
@@ -66,14 +60,14 @@ const handleItemFavorite = (artwork: Artwork) => {
 </script>
 
 <style lang="scss" scoped>
-@import '@/styles/variables.scss';
+@import '@/styles/mixins.scss';
 
 .gallery-grid {
   width: 100%;
 
   &__container {
     display: grid;
-    gap: $spacing-base;
+    gap: $space-xs;
 
     &--2 {
       grid-template-columns: repeat(2, 1fr);
@@ -84,8 +78,16 @@ const handleItemFavorite = (artwork: Artwork) => {
     }
   }
 
-  &__skeleton-item {
-    break-inside: avoid;
+  &__empty {
+    @include flex-center;
+    padding: $space-3xl 0;
+  }
+
+  &__empty-text {
+    @include sans-body;
+    font-size: $font-sm;
+    color: $color-ink-tertiary;
+    letter-spacing: 0.04em;
   }
 }
 </style>

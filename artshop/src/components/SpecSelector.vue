@@ -1,7 +1,7 @@
 <template>
   <view class="spec-selector">
     <view class="spec-selector__group">
-      <text class="spec-selector__label">尺寸</text>
+      <text class="spec-selector__label">SIZE</text>
       <view class="spec-selector__options">
         <view
           v-for="size in specs.sizes"
@@ -16,7 +16,7 @@
     </view>
 
     <view class="spec-selector__group">
-      <text class="spec-selector__label">材质</text>
+      <text class="spec-selector__label">MATERIAL</text>
       <view class="spec-selector__options">
         <view
           v-for="material in specs.materials"
@@ -31,7 +31,7 @@
     </view>
 
     <view class="spec-selector__group">
-      <text class="spec-selector__label">装裱</text>
+      <text class="spec-selector__label">FRAME</text>
       <view class="spec-selector__options">
         <view
           v-for="frame in specs.frameStyles"
@@ -54,7 +54,7 @@ export interface SpecConfig {
   frameStyles: string[]
 }
 
-const props = defineProps<{
+defineProps<{
   specs: SpecConfig
   selectedSize: string
   selectedMaterial: string
@@ -81,11 +81,11 @@ const handleFrameSelect = (frame: string) => {
 </script>
 
 <style lang="scss" scoped>
-@import '@/styles/variables.scss';
+@import '@/styles/mixins.scss';
 
 .spec-selector {
   &__group {
-    margin-bottom: $spacing-md;
+    margin-bottom: $space-lg;
 
     &:last-child {
       margin-bottom: 0;
@@ -94,39 +94,41 @@ const handleFrameSelect = (frame: string) => {
 
   &__label {
     display: block;
-    font-size: $font-sm;
-    color: $color-text-secondary;
-    margin-bottom: $spacing-sm;
-    letter-spacing: 2rpx;
+    @include sans-body;
+    font-size: $font-xxs;
+    color: $color-ink-secondary;
+    margin-bottom: $space-sm;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
   }
 
   &__options {
     display: flex;
     flex-wrap: wrap;
-    gap: $spacing-sm;
+    gap: $space-sm;
   }
 
   &__chip {
-    padding: $spacing-xs $spacing-base;
-    background-color: $color-bg-secondary;
-    border: 2rpx solid transparent;
-    border-radius: $radius-base;
-    transition: $transition-base;
+    padding: $space-xs $space-md;
+    border: 1rpx solid $color-rule;
+    background-color: transparent;
+    transition: all $duration-base $ease-out;
 
     &--active {
-      background-color: rgba(139, 115, 85, 0.08);
-      border-color: $color-accent;
+      background-color: $color-ink;
+      border-color: $color-ink;
     }
   }
 
   &__chip-text {
-    font-size: $font-sm;
-    color: $color-text-secondary;
-    letter-spacing: 1rpx;
+    @include sans-body;
+    font-size: $font-xs;
+    color: $color-ink;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
 
     .spec-selector__chip--active & {
-      color: $color-accent;
-      font-weight: 500;
+      color: $color-surface;
     }
   }
 }

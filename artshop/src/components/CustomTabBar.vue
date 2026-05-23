@@ -8,7 +8,6 @@
         :class="{ 'custom-tab-bar__item--active': current === index }"
         @tap="handleTabChange(index)"
       >
-        <text class="custom-tab-bar__icon">{{ tab.icon }}</text>
         <text class="custom-tab-bar__label">{{ tab.label }}</text>
       </view>
     </view>
@@ -25,10 +24,10 @@ const emit = defineEmits<{
 }>()
 
 const tabs = [
-  { icon: '🏠', label: '首页', path: '/pages/index/index' },
-  { icon: '🖼️', label: '作品', path: '/pages/artwork/index' },
-  { icon: '🎨', label: '艺术家', path: '/pages/artist/index' },
-  { icon: '👤', label: '我的', path: '/pages/profile/index' },
+  { label: '首页', path: '/pages/index/index' },
+  { label: '作品', path: '/pages/gallery/index' },
+  { label: '艺术家', path: '/pages/artist/index' },
+  { label: '我的', path: '/pages/user/index' },
 ]
 
 const handleTabChange = (index: number) => {
@@ -39,7 +38,6 @@ const handleTabChange = (index: number) => {
 </script>
 
 <style lang="scss" scoped>
-@import '@/styles/variables.scss';
 @import '@/styles/mixins.scss';
 
 .custom-tab-bar {
@@ -48,44 +46,31 @@ const handleTabChange = (index: number) => {
   left: 0;
   right: 0;
   z-index: 999;
-  background-color: $color-white;
-  border-top: 1rpx solid $color-border;
+  background-color: $color-surface;
+  border-top: 1rpx solid $color-rule;
 
   &__inner {
     display: flex;
     align-items: center;
     justify-content: space-around;
-    height: 110rpx;
-    padding-bottom: constant(safe-area-inset-bottom);
-    padding-bottom: env(safe-area-inset-bottom);
+    height: 100rpx;
+    @include safe-area-bottom;
   }
 
   &__item {
     @include flex-center;
-    flex-direction: column;
     flex: 1;
-    gap: 4rpx;
-    transition: $transition-base;
-
-    &--active {
-      .custom-tab-bar__icon {
-        transform: scale(1.1);
-      }
-    }
-  }
-
-  &__icon {
-    font-size: 44rpx;
-    transition: $transition-base;
+    height: 100%;
   }
 
   &__label {
+    @include sans-body;
     font-size: $font-xs;
-    color: $color-text-tertiary;
-    letter-spacing: 1rpx;
+    color: $color-ink-tertiary;
+    letter-spacing: 0.06em;
 
     .custom-tab-bar__item--active & {
-      color: $color-accent;
+      color: $color-ink;
       font-weight: 500;
     }
   }

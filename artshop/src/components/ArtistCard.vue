@@ -11,22 +11,12 @@
         mode="aspectFill"
       />
     </view>
-
-    <view class="artist-card__content">
-      <text class="artist-card__name">{{ artist.name }}</text>
-      <text class="artist-card__bio">{{ artist.bio }}</text>
-      <text class="artist-card__followers">{{ artist.followerCount }} 人关注</text>
-    </view>
-
-    <view
-      class="artist-card__follow-btn"
-      :class="{ 'artist-card__follow-btn--followed': artist.isFollowing }"
+    <text class="artist-card__name">{{ artist.name }}</text>
+    <text
+      class="artist-card__follow"
+      :class="{ 'artist-card__follow--following': artist.isFollowing }"
       @tap.stop="handleFollow"
-    >
-      <text class="artist-card__follow-text">
-        {{ artist.isFollowing ? '已关注' : '+ 关注' }}
-      </text>
-    </view>
+    >{{ artist.isFollowing ? 'Following' : 'Follow' }}</text>
   </view>
 </template>
 
@@ -52,90 +42,48 @@ const handleFollow = () => {
 </script>
 
 <style lang="scss" scoped>
-@import '@/styles/variables.scss';
 @import '@/styles/mixins.scss';
 
 .artist-card {
   display: flex;
   align-items: center;
-  padding: $spacing-base;
-  background-color: $color-white;
-  border-radius: $radius-lg;
-  transition: $transition-base;
+  padding: $space-md 0;
+  transition: opacity $duration-base $ease-out;
 
   &--active {
-    transform: scale(0.98);
-    background-color: $color-bg-secondary;
+    opacity: 0.85;
   }
 
   &__avatar-wrapper {
-    width: 96rpx;
-    height: 96rpx;
-    border-radius: $radius-full;
+    width: 120rpx;
+    height: 120rpx;
+    border-radius: 50%;
     overflow: hidden;
     flex-shrink: 0;
-    border: 2rpx solid $color-border;
   }
 
   &__avatar {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  &__content {
-    flex: 1;
-    margin-left: $spacing-base;
-    overflow: hidden;
+    @include image-cover;
   }
 
   &__name {
-    display: block;
+    flex: 1;
+    margin-left: $space-md;
+    @include serif-heading;
     font-size: $font-md;
-    font-weight: 500;
-    color: $color-text-primary;
     @include ellipsis;
-    letter-spacing: 1rpx;
   }
 
-  &__bio {
-    display: block;
-    margin-top: $spacing-xs;
-    font-size: $font-sm;
-    color: $color-text-secondary;
-    @include ellipsis(2);
-    line-height: 1.5;
-  }
-
-  &__followers {
-    display: block;
-    margin-top: $spacing-xs;
-    font-size: $font-xs;
-    color: $color-text-tertiary;
-  }
-
-  &__follow-btn {
+  &__follow {
     flex-shrink: 0;
-    margin-left: $spacing-sm;
-    padding: $spacing-xs $spacing-base;
-    border: 2rpx solid $morandi-beige;
-    border-radius: $radius-full;
-    background-color: transparent;
-    transition: $transition-base;
+    @include sans-body;
+    font-size: $font-xs;
+    color: $color-ink;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
 
-    &--followed {
-      border-color: $color-border;
-      background-color: $color-bg-secondary;
-    }
-  }
-
-  &__follow-text {
-    font-size: $font-sm;
-    color: $morandi-beige;
-    letter-spacing: 1rpx;
-
-    .artist-card__follow-btn--followed & {
-      color: $color-text-tertiary;
+    &--following {
+      color: $color-ink-tertiary;
     }
   }
 }

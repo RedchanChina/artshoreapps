@@ -11,8 +11,8 @@
         @refresherrefresh="onRefresh"
       >
         <view class="cart-header">
-          <text class="cart-title">购物车</text>
-          <text class="cart-count">({{ cartStore.totalCount }})</text>
+          <text class="cart-title">Cart</text>
+          <text class="cart-count">{{ cartStore.totalCount }}</text>
         </view>
 
         <view class="cart-list">
@@ -29,39 +29,21 @@
               @touchend="onSwipeEnd(item.artworkId)"
             >
               <view class="cart-item">
-                <view
-                  :class="['checkbox', { 'checkbox--checked': isSelected(item.artworkId) }]"
-                  @tap="cartStore.toggleSelect(item.artworkId)"
-                >
-                  <text v-if="isSelected(item.artworkId)" class="checkbox-icon">✓</text>
+                <view class="item-select" @tap="cartStore.toggleSelect(item.artworkId)">
+                  <text class="select-radio">{{ isSelected(item.artworkId) ? '●' : '○' }}</text>
                 </view>
 
                 <image :src="item.image" mode="aspectFill" class="item-thumb" />
 
                 <view class="item-info">
                   <text class="item-title">{{ item.title }}</text>
-                  <text class="item-artist">{{ item.artistName }}</text>
-                  <view class="item-specs">
-                    <text class="spec-tag">{{ item.spec.size }}</text>
-                    <text class="spec-tag">{{ item.spec.material }}</text>
-                    <text class="spec-tag">{{ item.spec.frameStyle }}</text>
-                  </view>
+                  <text class="item-spec">{{ item.spec.size }} · {{ item.spec.material }} · {{ item.spec.frameStyle }}</text>
                   <view class="item-bottom">
                     <text class="item-price">¥{{ formatPrice(item.unitPrice) }}</text>
                     <view class="quantity-stepper">
-                      <view
-                        :class="['stepper-btn', { 'stepper-btn--disabled': item.quantity <= 1 }]"
-                        @tap="decreaseQuantity(item.artworkId)"
-                      >
-                        <text class="stepper-btn-text">−</text>
-                      </view>
+                      <text class="stepper-btn" @tap="decreaseQuantity(item.artworkId)">−</text>
                       <text class="stepper-value">{{ item.quantity }}</text>
-                      <view
-                        class="stepper-btn"
-                        @tap="increaseQuantity(item.artworkId)"
-                      >
-                        <text class="stepper-btn-text">+</text>
-                      </view>
+                      <text class="stepper-btn" @tap="increaseQuantity(item.artworkId)">+</text>
                     </view>
                   </view>
                 </view>
@@ -69,47 +51,40 @@
             </view>
 
             <view class="swipe-action" @tap="onDelete(item.artworkId)">
-              <text class="swipe-action-text">删除</text>
+              <text class="swipe-action-text">DELETE</text>
             </view>
           </view>
         </view>
 
-        <view class="continue-shopping" @tap="goToGallery">
-          <text class="continue-shopping-text">继续逛逛 ›</text>
+        <view class="continue-link" @tap="goToGallery">
+          <text class="continue-link-text">Continue Browsing →</text>
         </view>
       </scroll-view>
 
       <view class="bottom-bar" :style="{ paddingBottom: safeAreaBottom + 'px' }">
         <view class="select-all" @tap="cartStore.selectAll()">
-          <view :class="['checkbox', { 'checkbox--checked': cartStore.allSelected }]">
-            <text v-if="cartStore.allSelected" class="checkbox-icon">✓</text>
-          </view>
-          <text class="select-all-text">全选</text>
+          <text class="select-radio">{{ cartStore.allSelected ? '●' : '○' }}</text>
+          <text class="select-all-text">Select All</text>
         </view>
 
         <view class="bottom-right">
           <view class="total-info">
-            <text class="total-label">合计：</text>
+            <text class="total-label">Total</text>
             <text class="total-price">¥{{ formatPrice(cartStore.selectedTotalPrice) }}</text>
           </view>
           <view
             :class="['checkout-btn', { 'checkout-btn--disabled': cartStore.selectedCount === 0 }]"
             @tap="goToCheckout"
           >
-            <text class="checkout-btn-text">结算({{ cartStore.selectedCount }})</text>
+            <text class="checkout-btn-text">Checkout</text>
           </view>
         </view>
       </view>
     </view>
 
     <view v-else class="cart-empty">
-      <EmptyState
-        icon="🛒"
-        title="购物车空空如也"
-        description="快去挑选心仪的艺术品吧"
-        actionText="去逛逛"
-        @action="goToGallery"
-      />
+      <text class="empty-title">Your cart is empty</text>
+      <text class="empty-link" @tap="goToGallery">Browse Works →</text>
     </view>
   </view>
 </template>
@@ -118,12 +93,10 @@
 import { ref, reactive } from 'vue'
 import { onPullDownRefresh } from '@dcloudio/uni-app'
 import { useCartStore } from '@/stores/cart'
-import EmptyState from '@/components/EmptyState.vue'
 
 const cartStore = useCartStore()
 const isRefreshing = ref(false)
 const safeAreaBottom = ref(0)
-const swipeOffset = 0
 const DELETE_WIDTH = 160
 const swipeOffsets = reactive<Record<string, number>>({})
 const swipeStartX = reactive<Record<string, number>>({})
@@ -153,13 +126,12 @@ function decreaseQuantity(artworkId: string) {
 
 function onDelete(artworkId: string) {
   uni.showModal({
-    title: '提示',
-    content: '确定要删除该商品吗？',
+    title: '',
+    content: 'Remove this item?',
     success: (res) => {
       if (res.confirm) {
         cartStore.removeItem(artworkId)
         delete swipeOffsets[artworkId]
-        uni.showToast({ title: '已删除', icon: 'none', duration: 1000 })
       }
     },
   })
@@ -193,10 +165,7 @@ function goToGallery() {
 }
 
 function goToCheckout() {
-  if (cartStore.selectedCount === 0) {
-    uni.showToast({ title: '请选择商品', icon: 'none' })
-    return
-  }
+  if (cartStore.selectedCount === 0) return
   uni.navigateTo({ url: '/pages/checkout/index' })
 }
 
@@ -220,12 +189,10 @@ safeAreaBottom.value = systemInfo.safeArea?.bottom
 </script>
 
 <style lang="scss" scoped>
-@import '@/styles/variables.scss';
 @import '@/styles/mixins.scss';
-
 .cart-page {
   min-height: 100vh;
-  background-color: $color-bg;
+  background-color: $color-surface;
 }
 
 .cart-content {
@@ -241,78 +208,61 @@ safeAreaBottom.value = systemInfo.safeArea?.bottom
 
 .cart-header {
   @include flex-between;
-  padding: $spacing-md $spacing-lg $spacing-sm;
+  padding: $space-xl $space-lg $space-md;
 
   .cart-title {
-    font-size: $font-lg;
-    font-weight: 600;
-    color: $color-text-primary;
-    letter-spacing: 4rpx;
+    @include serif-heading;
+    font-size: $font-xl;
   }
 
   .cart-count {
+    @include sans-body;
     font-size: $font-sm;
-    color: $color-text-tertiary;
-    letter-spacing: 1rpx;
   }
 }
 
 .cart-list {
-  padding: 0 $spacing-base;
+  padding: 0 $space-lg;
 }
 
 .cart-item-wrapper {
   position: relative;
   overflow: hidden;
-  margin-bottom: $spacing-sm;
-  border-radius: $radius-lg;
+  margin-bottom: $space-md;
 }
 
 .cart-item-swipe {
   position: relative;
   z-index: 2;
-  background-color: $color-white;
-  transition: transform 0.15s ease;
-  border-radius: $radius-lg;
-  box-shadow: $shadow-sm;
+  background-color: $color-surface;
+  transition: transform $duration-base $ease-out-expo;
 }
 
 .cart-item {
   display: flex;
   align-items: flex-start;
-  padding: $spacing-base;
-  gap: $spacing-sm;
+  padding: $space-lg 0;
+  border-bottom: 1rpx solid $color-rule;
+  gap: $space-md;
 }
 
-.checkbox {
+.item-select {
   flex-shrink: 0;
-  width: 44rpx;
-  height: 44rpx;
-  border-radius: $radius-full;
-  border: 2rpx solid $color-border;
-  background-color: $color-white;
-  @include flex-center;
-  margin-top: 40rpx;
-  transition: $transition-base;
+  padding-top: $space-xs;
 
-  &--checked {
-    background-color: $color-accent;
-    border-color: $color-accent;
-
-    .checkbox-icon {
-      color: $color-white;
-      font-size: $font-sm;
-      font-weight: 600;
-    }
+  .select-radio {
+    font-size: $font-md;
+    color: $color-ink-tertiary;
+    letter-spacing: 0;
   }
 }
 
 .item-thumb {
   flex-shrink: 0;
-  width: 180rpx;
-  height: 180rpx;
-  border-radius: $radius-base;
-  background-color: $color-bg-secondary;
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: $radius-xs;
+  background-color: $color-surface-warm;
 }
 
 .item-info {
@@ -320,91 +270,52 @@ safeAreaBottom.value = systemInfo.safeArea?.bottom
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 6rpx;
+  gap: $space-xs;
 }
 
 .item-title {
+  @include serif-heading;
   font-size: $font-base;
-  font-weight: 500;
-  color: $color-text-primary;
-  letter-spacing: 1rpx;
   @include ellipsis;
 }
 
-.item-artist {
+.item-spec {
+  @include sans-body;
   font-size: $font-xs;
-  color: $color-text-tertiary;
-  letter-spacing: 1rpx;
-}
-
-.item-specs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8rpx;
-  margin-top: 4rpx;
-}
-
-.spec-tag {
-  font-size: $font-xs;
-  color: $color-text-secondary;
-  background-color: $color-bg-secondary;
-  padding: 4rpx 12rpx;
-  border-radius: $radius-sm;
-  letter-spacing: 1rpx;
 }
 
 .item-bottom {
   @include flex-between;
-  margin-top: 8rpx;
+  margin-top: $space-xs;
 }
 
 .item-price {
-  font-size: $font-md;
-  color: $color-accent;
-  font-weight: 600;
-  letter-spacing: 1rpx;
+  font-family: $font-sans;
+  font-size: $font-base;
+  color: $color-ink;
+  font-weight: 500;
+  letter-spacing: 0.02em;
 }
 
 .quantity-stepper {
   display: flex;
   align-items: center;
-  gap: 0;
-  border: 2rpx solid $color-border;
-  border-radius: $radius-sm;
-  overflow: hidden;
-}
+  gap: $space-md;
 
-.stepper-btn {
-  width: 56rpx;
-  height: 52rpx;
-  @include flex-center;
-  background-color: $color-bg-secondary;
-  transition: $transition-base;
-
-  &:active {
-    background-color: $color-border;
+  .stepper-btn {
+    @include sans-body;
+    font-size: $font-base;
+    color: $color-ink-secondary;
+    letter-spacing: 0;
   }
 
-  &--disabled {
-    opacity: 0.4;
-    pointer-events: none;
+  .stepper-value {
+    @include sans-body;
+    font-size: $font-sm;
+    color: $color-ink;
+    min-width: 32rpx;
+    text-align: center;
   }
-
-  .stepper-btn-text {
-    font-size: $font-md;
-    color: $color-text-secondary;
-    font-weight: 500;
-  }
-}
-
-.stepper-value {
-  min-width: 56rpx;
-  height: 52rpx;
-  @include flex-center;
-  font-size: $font-sm;
-  color: $color-text-primary;
-  font-weight: 500;
-  background-color: $color-white;
 }
 
 .swipe-action {
@@ -415,29 +326,30 @@ safeAreaBottom.value = systemInfo.safeArea?.bottom
   width: 160rpx;
   z-index: 1;
   @include flex-center;
-  background-color: $color-error;
-  border-radius: 0 $radius-lg $radius-lg 0;
+  background-color: $color-ink;
 
   .swipe-action-text {
-    font-size: $font-base;
-    color: $color-white;
-    letter-spacing: 2rpx;
-    font-weight: 500;
+    font-family: $font-sans;
+    font-size: $font-xs;
+    color: $color-surface;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
   }
 }
 
-.continue-shopping {
+.continue-link {
   @include flex-center;
-  padding: $spacing-lg 0 $spacing-xl;
+  padding: $space-xl 0 $space-3xl;
 
-  .continue-shopping-text {
+  .continue-link-text {
+    @include sans-body;
     font-size: $font-sm;
-    color: $morandi-beige;
-    letter-spacing: 2rpx;
+    color: $color-ink-secondary;
+    letter-spacing: 0.04em;
   }
 
   &:active {
-    opacity: 0.7;
+    opacity: 0.6;
   }
 }
 
@@ -447,87 +359,96 @@ safeAreaBottom.value = systemInfo.safeArea?.bottom
   right: 0;
   bottom: 0;
   z-index: 100;
-  display: flex;
-  align-items: center;
-  padding: $spacing-sm $spacing-base;
-  background: rgba(255, 255, 255, 0.96);
-  backdrop-filter: blur(30px);
-  -webkit-backdrop-filter: blur(30px);
-  border-top: 1rpx solid $color-border;
-  gap: $spacing-base;
+  @include flex-between;
+  padding: $space-md $space-lg;
+  background-color: $color-surface;
+  border-top: 1rpx solid $color-rule;
 }
 
 .select-all {
   display: flex;
   align-items: center;
-  gap: $spacing-xs;
+  gap: $space-sm;
+
+  .select-radio {
+    font-size: $font-md;
+    color: $color-ink-tertiary;
+  }
 
   .select-all-text {
+    @include sans-body;
     font-size: $font-sm;
-    color: $color-text-secondary;
-    letter-spacing: 1rpx;
+    letter-spacing: 0.04em;
   }
 }
 
 .bottom-right {
-  flex: 1;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  gap: $spacing-base;
+  gap: $space-lg;
 }
 
 .total-info {
   display: flex;
-  align-items: baseline;
+  flex-direction: column;
+  align-items: flex-end;
 
   .total-label {
-    font-size: $font-sm;
-    color: $color-text-secondary;
-    letter-spacing: 1rpx;
+    @include sans-body;
+    font-size: $font-xs;
+    letter-spacing: 0.04em;
   }
 
   .total-price {
+    font-family: $font-serif;
     font-size: $font-lg;
-    color: $color-accent;
-    font-weight: 700;
-    letter-spacing: 1rpx;
+    color: $color-ink;
+    font-weight: 400;
+    letter-spacing: 0.02em;
   }
 }
 
 .checkout-btn {
+  @include btn-primary;
   height: 80rpx;
-  padding: 0 $spacing-lg;
-  @include flex-center;
-  background-color: $color-accent;
-  border-radius: $radius-full;
-  transition: $transition-base;
-
-  &:active {
-    opacity: 0.85;
-    transform: scale(0.97);
-  }
+  padding: 0 $space-xl;
 
   &--disabled {
-    background-color: $color-border;
+    background-color: $color-rule;
     pointer-events: none;
 
     .checkout-btn-text {
-      color: $color-text-tertiary;
+      color: $color-ink-tertiary;
     }
   }
 
   .checkout-btn-text {
-    font-size: $font-base;
-    color: $color-white;
-    letter-spacing: 2rpx;
-    font-weight: 500;
+    font-size: $font-sm;
+    letter-spacing: 0.08em;
   }
 }
 
 .cart-empty {
   @include flex-center;
+  flex-direction: column;
   min-height: 100vh;
-  background-color: $color-bg;
+  background-color: $color-surface;
+  gap: $space-lg;
+
+  .empty-title {
+    @include serif-heading;
+    font-size: $font-lg;
+  }
+
+  .empty-link {
+    @include sans-body;
+    font-size: $font-sm;
+    color: $color-ink-secondary;
+    letter-spacing: 0.04em;
+
+    &:active {
+      opacity: 0.6;
+    }
+  }
 }
 </style>

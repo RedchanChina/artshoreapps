@@ -1,129 +1,66 @@
 <template>
   <view class="gallery-page">
-    <view class="gallery-header safe-area-top">
-      <view class="search-bar">
-        <view class="search-bar__inner" @tap="focusSearch">
-          <view class="search-bar__icon">
-            <text class="iconfont">&#xe60a;</text>
-          </view>
-          <input
-            class="search-bar__input"
-            v-model="searchKeyword"
-            placeholder="搜索作品、艺术家..."
-            placeholder-class="search-bar__placeholder"
-            confirm-type="search"
-            @confirm="onSearch"
-            @input="onSearchInput"
-          />
-          <view
-            class="search-bar__clear"
-            v-if="searchKeyword"
-            @tap.stop="clearSearch"
-          >
-            <text class="iconfont">&#xe60c;</text>
-          </view>
-        </view>
-      </view>
-
-      <scroll-view
-        class="category-tabs"
-        scroll-x
-        :scroll-into-view="primaryTabId"
-        :show-scrollbar="false"
-        enhanced
-      >
-        <view
-          v-for="tab in primaryCategories"
-          :key="tab.value"
-          :id="'tab-' + tab.value"
-          class="category-tabs__item"
-          :class="{ 'category-tabs__item--active': activePrimary === tab.value }"
-          @tap="onPrimaryTab(tab.value)"
-        >
-          <text class="category-tabs__text">{{ tab.label }}</text>
-          <view
-            class="category-tabs__indicator"
-            v-if="activePrimary === tab.value"
-          />
-        </view>
-      </scroll-view>
-
-      <scroll-view
-        class="sub-category-tabs"
-        scroll-x
-        :show-scrollbar="false"
-        enhanced
-        v-if="subCategories.length"
-      >
-        <view
-          v-for="sub in subCategories"
-          :key="sub.value"
-          class="sub-category-tabs__item"
-          :class="{
-            'sub-category-tabs__item--active': activeSub === sub.value,
-          }"
-          @tap="onSubTab(sub.value)"
-        >
-          <text class="sub-category-tabs__text">{{ sub.label }}</text>
-        </view>
-      </scroll-view>
+    <view class="gallery-header">
+      <text class="gallery-title">Works</text>
+      <view class="gallery-rule" />
     </view>
 
-    <view class="filter-sort-bar">
-      <view class="filter-sort-bar__left">
-        <view class="filter-btn" @tap="openFilterPopup">
-          <text class="filter-btn__icon">⌖</text>
-          <text class="filter-btn__text">筛选</text>
-          <view class="filter-btn__badge" v-if="activeFilterCount > 0">
-            {{ activeFilterCount }}
-          </view>
-        </view>
+    <scroll-view
+      class="category-tabs"
+      scroll-x
+      :scroll-into-view="primaryTabId"
+      :show-scrollbar="false"
+      enhanced
+    >
+      <view
+        v-for="tab in primaryCategories"
+        :key="tab.value"
+        :id="'tab-' + tab.value"
+        class="category-tabs__item"
+        :class="{ 'category-tabs__item--active': activePrimary === tab.value }"
+        @tap="onPrimaryTab(tab.value)"
+      >
+        <text class="category-tabs__text">{{ tab.label }}</text>
+        <view
+          class="category-tabs__underline"
+          v-if="activePrimary === tab.value"
+        />
       </view>
-      <view class="filter-sort-bar__center">
-        <scroll-view scroll-x :show-scrollbar="false" enhanced>
-          <view class="sort-options">
-            <view
-              v-for="opt in sortOptions"
-              :key="opt.value"
-              class="sort-option"
-              :class="{ 'sort-option--active': activeSort === opt.value }"
-              @tap="onSortChange(opt.value)"
-            >
-              <text class="sort-option__text">{{ opt.label }}</text>
-            </view>
-          </view>
-        </scroll-view>
+    </scroll-view>
+
+    <scroll-view
+      class="sub-tabs"
+      scroll-x
+      :show-scrollbar="false"
+      enhanced
+      v-if="subCategories.length"
+    >
+      <view
+        v-for="sub in subCategories"
+        :key="sub.value"
+        class="sub-tabs__item"
+        :class="{ 'sub-tabs__item--active': activeSub === sub.value }"
+        @tap="onSubTab(sub.value)"
+      >
+        <text class="sub-tabs__text">{{ sub.label }}</text>
       </view>
-      <view class="filter-sort-bar__right">
-        <view class="view-toggle">
-          <view
-            class="view-toggle__item"
-            :class="{ 'view-toggle__item--active': viewMode === 'grid-2' }"
-            @tap="setViewMode('grid-2')"
-          >
-            <view class="view-icon view-icon--grid-2">
-              <view /><view /><view /><view />
-            </view>
-          </view>
-          <view
-            class="view-toggle__item"
-            :class="{ 'view-toggle__item--active': viewMode === 'grid-3' }"
-            @tap="setViewMode('grid-3')"
-          >
-            <view class="view-icon view-icon--grid-3">
-              <view /><view /><view /><view /><view /><view />
-            </view>
-          </view>
-          <view
-            class="view-toggle__item"
-            :class="{ 'view-toggle__item--active': viewMode === 'list' }"
-            @tap="setViewMode('list')"
-          >
-            <view class="view-icon view-icon--list">
-              <view /><view /><view />
-            </view>
-          </view>
-        </view>
+    </scroll-view>
+
+    <view class="toolbar">
+      <view class="toolbar__sort" @tap="cycleSort">
+        <text class="toolbar__sort-text">{{ currentSortLabel }}</text>
+      </view>
+      <view class="toolbar__view">
+        <text
+          class="toolbar__view-icon"
+          :class="{ 'toolbar__view-icon--active': viewMode === 'grid' }"
+          @tap="viewMode = 'grid'"
+        >▦</text>
+        <text
+          class="toolbar__view-icon"
+          :class="{ 'toolbar__view-icon--active': viewMode === 'list' }"
+          @tap="viewMode = 'list'"
+        >≡</text>
       </view>
     </view>
 
@@ -132,98 +69,63 @@
       scroll-y
       refresher-enabled
       :refresher-triggered="isRefreshing"
-      @refresherrefresh="onPullDownRefresh"
-      @scrolltolower="onReachBottom"
+      @refresherrefresh="onPullDownRefreshHandler"
+      @scrolltolower="onReachBottomHandler"
       enhanced
       :bounces="false"
     >
       <view
         class="artwork-grid"
-        :class="{
-          'artwork-grid--2': viewMode === 'grid-2',
-          'artwork-grid--3': viewMode === 'grid-3',
-          'artwork-grid--list': viewMode === 'list',
-        }"
+        :class="{ 'artwork-grid--list': viewMode === 'list' }"
+        v-if="!loading || displayArtworks.length > 0"
       >
         <view
-          v-for="(item, index) in displayArtworks"
+          v-for="item in displayArtworks"
           :key="item.id"
-          class="artwork-card"
-          :class="{
-            'artwork-card--list': viewMode === 'list',
-            'fade-in-up': !loading,
-          }"
-          :style="{ animationDelay: (index % 6) * 0.06 + 's' }"
+          class="artwork-item"
+          :class="{ 'artwork-item--list': viewMode === 'list' }"
           @tap="onArtworkTap(item.id)"
         >
-          <view class="artwork-card__image-wrap">
+          <view class="artwork-item__image-wrap">
             <image
-              class="artwork-card__image"
+              class="artwork-item__image"
               :src="item.image"
               mode="aspectFill"
               lazy-load
             />
-            <view class="artwork-card__limited" v-if="item.isLimited">
-              <text class="artwork-card__limited-text"
-                >限量 {{ item.limitedNumber }}</text
-              >
-            </view>
-            <view
-              class="artwork-card__fav"
-              @tap.stop="onToggleFav(item.id)"
-            >
-              <text class="artwork-card__fav-icon">{{
-                favorites.has(item.id) ? '♥' : '♡'
-              }}</text>
-            </view>
           </view>
-          <view class="artwork-card__info">
-            <text class="artwork-card__title">{{ item.title }}</text>
-            <text class="artwork-card__artist">{{ item.artistName }}</text>
-            <view class="artwork-card__price-row">
-              <text class="artwork-card__price">¥{{ item.price }}</text>
-              <text
-                class="artwork-card__original-price"
-                v-if="item.originalPrice"
-                >¥{{ item.originalPrice }}</text
-              >
-            </view>
+          <view class="artwork-item__info">
+            <text class="artwork-item__title">{{ item.title }}</text>
+            <text class="artwork-item__artist">{{ item.artistName }}</text>
+            <text class="artwork-item__price">¥{{ item.price }}</text>
           </view>
         </view>
       </view>
 
-      <view class="skeleton-grid" v-if="loading && displayArtworks.length === 0">
+      <view
+        class="skeleton-grid"
+        v-if="loading && displayArtworks.length === 0"
+      >
         <view
-          v-for="i in skeletonCount"
+          v-for="i in 6"
           :key="'sk-' + i"
-          class="skeleton-card"
-          :class="{
-            'skeleton-card--list': viewMode === 'list',
-          }"
+          class="skeleton-item"
         >
-          <view class="skeleton-card__image skeleton" />
-          <view class="skeleton-card__info">
-            <view class="skeleton-card__title skeleton" />
-            <view class="skeleton-card__subtitle skeleton" />
-            <view class="skeleton-card__price skeleton" />
-          </view>
+          <view class="skeleton-item__image skeleton" />
+          <view class="skeleton-item__title skeleton" />
+          <view class="skeleton-item__subtitle skeleton" />
+          <view class="skeleton-item__price skeleton" />
         </view>
       </view>
 
       <view class="load-more" v-if="displayArtworks.length > 0">
-        <view class="load-more__loading" v-if="loadingMore">
-          <view class="load-more__spinner" />
-          <text class="load-more__text">加载中...</text>
-        </view>
+        <text class="load-more__text" v-if="loadingMore">加载中...</text>
         <text class="load-more__end" v-else-if="!hasMore">— 已浏览全部作品 —</text>
       </view>
 
       <view class="empty-state" v-if="!loading && displayArtworks.length === 0">
-        <text class="empty-state__icon">🖼</text>
         <text class="empty-state__text">暂无相关作品</text>
-        <view class="empty-state__btn" @tap="resetAllFilters">
-          <text class="empty-state__btn-text">清除筛选</text>
-        </view>
+        <text class="empty-state__reset" @tap="resetAllFilters">清除筛选</text>
       </view>
     </scroll-view>
 
@@ -237,103 +139,97 @@
       :class="{ 'filter-popup--visible': filterPopupVisible }"
     >
       <view class="filter-popup__header">
-        <text class="filter-popup__title">筛选条件</text>
+        <text class="filter-popup__title">筛选</text>
         <view class="filter-popup__close" @tap="closeFilterPopup">
-          <text>✕</text>
+          <text class="filter-popup__close-text">✕</text>
         </view>
       </view>
       <scroll-view class="filter-popup__body" scroll-y enhanced>
         <view class="filter-section">
-          <text class="filter-section__title">尺寸</text>
-          <view class="filter-chips">
+          <text class="filter-section__label">尺寸</text>
+          <view class="filter-section__options">
             <view
               v-for="opt in sizeOptions"
               :key="opt.value"
-              class="filter-chip"
-              :class="{ 'filter-chip--active': tempFilters.size === opt.value }"
+              class="filter-option"
+              :class="{ 'filter-option--active': tempFilters.size === opt.value }"
               @tap="onFilterChip('size', opt.value)"
             >
-              <text class="filter-chip__text">{{ opt.label }}</text>
+              <text class="filter-option__text">{{ opt.label }}</text>
             </view>
           </view>
         </view>
         <view class="filter-section">
-          <text class="filter-section__title">材质</text>
-          <view class="filter-chips">
+          <text class="filter-section__label">材质</text>
+          <view class="filter-section__options">
             <view
               v-for="opt in materialOptions"
               :key="opt.value"
-              class="filter-chip"
-              :class="{
-                'filter-chip--active': tempFilters.material === opt.value,
-              }"
+              class="filter-option"
+              :class="{ 'filter-option--active': tempFilters.material === opt.value }"
               @tap="onFilterChip('material', opt.value)"
             >
-              <text class="filter-chip__text">{{ opt.label }}</text>
+              <text class="filter-option__text">{{ opt.label }}</text>
             </view>
           </view>
         </view>
         <view class="filter-section">
-          <text class="filter-section__title">装裱风格</text>
-          <view class="filter-chips">
+          <text class="filter-section__label">装裱</text>
+          <view class="filter-section__options">
             <view
               v-for="opt in frameOptions"
               :key="opt.value"
-              class="filter-chip"
-              :class="{
-                'filter-chip--active': tempFilters.frameStyle === opt.value,
-              }"
+              class="filter-option"
+              :class="{ 'filter-option--active': tempFilters.frameStyle === opt.value }"
               @tap="onFilterChip('frameStyle', opt.value)"
             >
-              <text class="filter-chip__text">{{ opt.label }}</text>
+              <text class="filter-option__text">{{ opt.label }}</text>
             </view>
           </view>
         </view>
         <view class="filter-section">
-          <text class="filter-section__title">价格区间</text>
-          <view class="filter-chips">
+          <text class="filter-section__label">价格</text>
+          <view class="filter-section__options">
             <view
               v-for="opt in pricePresets"
               :key="opt.label"
-              class="filter-chip"
+              class="filter-option"
               :class="{
-                'filter-chip--active':
+                'filter-option--active':
                   tempFilters.priceRange &&
                   tempFilters.priceRange[0] === opt.range[0] &&
                   tempFilters.priceRange[1] === opt.range[1],
               }"
               @tap="onPricePreset(opt.range)"
             >
-              <text class="filter-chip__text">{{ opt.label }}</text>
+              <text class="filter-option__text">{{ opt.label }}</text>
             </view>
           </view>
         </view>
         <view class="filter-section">
-          <text class="filter-section__title">限量</text>
-          <view class="filter-chips">
+          <text class="filter-section__label">限量</text>
+          <view class="filter-section__options">
             <view
-              class="filter-chip"
-              :class="{ 'filter-chip--active': tempFilters.limited === true }"
+              class="filter-option"
+              :class="{ 'filter-option--active': tempFilters.limited === true }"
               @tap="onFilterChip('limited', true)"
             >
-              <text class="filter-chip__text">仅限量</text>
+              <text class="filter-option__text">仅限量</text>
             </view>
             <view
-              class="filter-chip"
-              :class="{ 'filter-chip--active': tempFilters.limited === false }"
+              class="filter-option"
+              :class="{ 'filter-option--active': tempFilters.limited === false }"
               @tap="onFilterChip('limited', false)"
             >
-              <text class="filter-chip__text">非限量</text>
+              <text class="filter-option__text">非限量</text>
             </view>
           </view>
         </view>
       </scroll-view>
-      <view class="filter-popup__footer safe-area-bottom">
-        <view class="filter-popup__reset" @tap="resetFilters">
-          <text class="filter-popup__reset-text">重置</text>
-        </view>
-        <view class="filter-popup__confirm" @tap="confirmFilters">
-          <text class="filter-popup__confirm-text">确认</text>
+      <view class="filter-popup__footer">
+        <text class="filter-popup__reset" @tap="resetFilters">重置</text>
+        <view class="filter-popup__apply" @tap="confirmFilters">
+          <text class="filter-popup__apply-text">应用</text>
         </view>
       </view>
     </view>
@@ -349,33 +245,32 @@ import type { Artwork } from '@/types/artwork'
 const artworkStore = useArtworkStore()
 
 const primaryCategories = [
-  { label: '全部', value: '' },
-  { label: '摄影', value: 'photography' },
-  { label: '插画', value: 'illustration' },
-  { label: '艺术周边', value: 'merchandise' },
-  { label: '装裱材料', value: 'framing' },
+  { label: 'All', value: '' },
+  { label: 'Photography', value: 'photography' },
+  { label: 'Illustration', value: 'illustration' },
+  { label: 'Merchandise', value: 'merchandise' },
+  { label: 'Framing', value: 'framing' },
 ]
 
 const subCategoryMap: Record<string, { label: string; value: string }[]> = {
   photography: [
-    { label: '风光', value: 'landscape' },
-    { label: '人像', value: 'portrait' },
-    { label: '抽象', value: 'abstract' },
-    { label: '复古', value: 'vintage' },
+    { label: 'Landscape', value: 'landscape' },
+    { label: 'Portrait', value: 'portrait' },
+    { label: 'Abstract', value: 'abstract' },
+    { label: 'Vintage', value: 'vintage' },
   ],
   illustration: [
-    { label: '潮流', value: 'trendy' },
-    { label: '治愈', value: 'healing' },
-    { label: '手绘', value: 'handdrawn' },
+    { label: 'Trendy', value: 'trendy' },
+    { label: 'Healing', value: 'healing' },
+    { label: 'Hand-drawn', value: 'handdrawn' },
   ],
 }
 
-const sortOptions = [
-  { label: '最新上架', value: 'newest' },
-  { label: '价格高→低', value: 'price_desc' },
-  { label: '价格低→高', value: 'price_asc' },
-  { label: '热门', value: 'sales' },
-  { label: '限量优先', value: 'limited' },
+const sortCycle = [
+  { label: 'Latest ↓', value: 'newest' },
+  { label: 'Price ↓', value: 'price_desc' },
+  { label: 'Price ↑', value: 'price_asc' },
+  { label: 'Popular ↓', value: 'sales' },
 ]
 
 const sizeOptions = [
@@ -398,10 +293,10 @@ const frameOptions = [
 ]
 
 const pricePresets = [
-  { label: '¥0-500', range: [0, 500] as [number, number] },
-  { label: '¥500-2000', range: [500, 2000] as [number, number] },
-  { label: '¥2000-5000', range: [2000, 5000] as [number, number] },
-  { label: '¥5000+', range: [5000, 999999] as [number, number] },
+  { label: '¥0–500', range: [0, 500] as [number, number] },
+  { label: '¥500–2k', range: [500, 2000] as [number, number] },
+  { label: '¥2k–5k', range: [2000, 5000] as [number, number] },
+  { label: '¥5k+', range: [5000, 999999] as [number, number] },
 ]
 
 const imgBase = 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt='
@@ -527,17 +422,15 @@ const mockArtworks: (Artwork & { isLimited?: boolean; limitedNumber?: number; su
   },
 ]
 
-const searchKeyword = ref('')
 const activePrimary = ref('')
 const activeSub = ref('')
-const activeSort = ref('newest')
-const viewMode = ref<'grid-2' | 'grid-3' | 'list'>('grid-2')
+const sortIndex = ref(0)
+const viewMode = ref<'grid' | 'list'>('grid')
 const filterPopupVisible = ref(false)
 const loading = ref(false)
 const loadingMore = ref(false)
 const isRefreshing = ref(false)
 const hasMore = ref(true)
-const favorites = ref<Set<string>>(new Set())
 
 const tempFilters = reactive({
   size: '' as string,
@@ -562,21 +455,8 @@ const subCategories = computed(() => {
   return subCategoryMap[activePrimary.value] || []
 })
 
-const skeletonCount = computed(() => {
-  if (viewMode.value === 'list') return 4
-  if (viewMode.value === 'grid-3') return 9
-  return 6
-})
-
-const activeFilterCount = computed(() => {
-  let count = 0
-  if (appliedFilters.size) count++
-  if (appliedFilters.material) count++
-  if (appliedFilters.frameStyle) count++
-  if (appliedFilters.priceRange) count++
-  if (appliedFilters.limited !== null) count++
-  return count
-})
+const currentSortLabel = computed(() => sortCycle[sortIndex.value].label)
+const currentSortValue = computed(() => sortCycle[sortIndex.value].value)
 
 const displayArtworks = computed(() => {
   let result = [...mockArtworks]
@@ -587,16 +467,6 @@ const displayArtworks = computed(() => {
 
   if (activeSub.value) {
     result = result.filter((item) => (item as any).subCategory === activeSub.value)
-  }
-
-  if (searchKeyword.value) {
-    const kw = searchKeyword.value.toLowerCase()
-    result = result.filter(
-      (item) =>
-        item.title.toLowerCase().includes(kw) ||
-        item.artistName.toLowerCase().includes(kw) ||
-        item.tags.some((tag) => tag.toLowerCase().includes(kw)),
-    )
   }
 
   if (appliedFilters.size) {
@@ -628,7 +498,7 @@ const displayArtworks = computed(() => {
     result = result.filter((item) => !(item as any).isLimited)
   }
 
-  switch (activeSort.value) {
+  switch (currentSortValue.value) {
     case 'newest':
       result.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
       break
@@ -640,13 +510,6 @@ const displayArtworks = computed(() => {
       break
     case 'sales':
       result.sort((a, b) => b.sales - a.sales)
-      break
-    case 'limited':
-      result.sort((a, b) => {
-        const aL = (a as any).isLimited ? 0 : 1
-        const bL = (b as any).isLimited ? 0 : 1
-        return aL - bL
-      })
       break
   }
 
@@ -662,29 +525,8 @@ function onSubTab(value: string) {
   activeSub.value = activeSub.value === value ? '' : value
 }
 
-function onSearch() {
-  artworkStore.setFilter({ keyword: searchKeyword.value })
-}
-
-function onSearchInput() {
-  if (!searchKeyword.value) {
-    artworkStore.setFilter({ keyword: '' })
-  }
-}
-
-function clearSearch() {
-  searchKeyword.value = ''
-  artworkStore.setFilter({ keyword: '' })
-}
-
-function focusSearch() {}
-
-function onSortChange(value: string) {
-  activeSort.value = value
-}
-
-function setViewMode(mode: 'grid-2' | 'grid-3' | 'list') {
-  viewMode.value = mode
+function cycleSort() {
+  sortIndex.value = (sortIndex.value + 1) % sortCycle.length
 }
 
 function openFilterPopup() {
@@ -744,8 +586,7 @@ function confirmFilters() {
 function resetAllFilters() {
   activePrimary.value = ''
   activeSub.value = ''
-  searchKeyword.value = ''
-  activeSort.value = 'newest'
+  sortIndex.value = 0
   resetFilters()
   appliedFilters.size = ''
   appliedFilters.material = ''
@@ -758,22 +599,14 @@ function onArtworkTap(id: string) {
   uni.navigateTo({ url: `/pages/artwork/detail?id=${id}` })
 }
 
-function onToggleFav(id: string) {
-  if (favorites.value.has(id)) {
-    favorites.value.delete(id)
-  } else {
-    favorites.value.add(id)
-  }
-}
-
-function onPullDownRefresh() {
+function onPullDownRefreshHandler() {
   isRefreshing.value = true
   setTimeout(() => {
     isRefreshing.value = false
   }, 1000)
 }
 
-function onReachBottom() {
+function onReachBottomHandler() {
   if (loadingMore.value || !hasMore.value) return
   loadingMore.value = true
   setTimeout(() => {
@@ -782,278 +615,167 @@ function onReachBottom() {
   }, 800)
 }
 
+onPullDownRefreshHook(() => {
+  isRefreshing.value = true
+  setTimeout(() => {
+    isRefreshing.value = false
+    uni.stopPullDownRefresh()
+  }, 1000)
+})
+
+onReachBottomHook(() => {
+  onReachBottomHandler()
+})
+
 onMounted(() => {
   artworkStore.fetchArtworks()
 })
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import '@/styles/variables.scss';
 @import '@/styles/mixins.scss';
 
 .gallery-page {
   min-height: 100vh;
-  background-color: $color-bg;
+  background-color: $color-surface;
   display: flex;
   flex-direction: column;
 }
 
 .gallery-header {
-  background-color: $color-white;
-  padding-bottom: $spacing-sm;
+  padding: $space-xl $space-lg $space-md;
+  background-color: $color-surface;
   position: sticky;
   top: 0;
   z-index: 100;
 }
 
-.search-bar {
-  padding: $spacing-sm $spacing-base;
+.gallery-title {
+  @include serif-heading;
+  font-size: $font-xl;
+  letter-spacing: 0.06em;
+}
 
-  &__inner {
-    @include flex-center;
-    background-color: $color-bg-secondary;
-    border-radius: $radius-full;
-    padding: $spacing-sm $spacing-base;
-    height: 72rpx;
-  }
-
-  &__icon {
-    margin-right: $spacing-sm;
-    color: $color-text-tertiary;
-    font-size: $font-md;
-  }
-
-  &__input {
-    flex: 1;
-    font-size: $font-base;
-    color: $color-text-primary;
-    height: 48rpx;
-    line-height: 48rpx;
-  }
-
-  &__placeholder {
-    color: $color-text-placeholder;
-    font-size: $font-base;
-  }
-
-  &__clear {
-    margin-left: $spacing-sm;
-    color: $color-text-tertiary;
-    font-size: $font-sm;
-    padding: 4rpx 8rpx;
-  }
+.gallery-rule {
+  height: 1rpx;
+  background-color: $color-rule;
+  margin-top: $space-md;
 }
 
 .category-tabs {
   white-space: nowrap;
-  padding: 0 $spacing-base;
-  height: 80rpx;
+  padding: 0 $space-lg;
+  height: 88rpx;
+  background-color: $color-surface;
 
   &__item {
     display: inline-flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 0 $spacing-md;
-    height: 80rpx;
+    padding: 0 $space-md;
+    height: 88rpx;
     position: relative;
 
     &--active {
       .category-tabs__text {
-        color: $color-accent;
-        font-weight: 600;
+        color: $color-ink;
       }
     }
   }
 
   &__text {
-    font-size: $font-base;
-    color: $color-text-secondary;
-    transition: $transition-base;
+    @include sans-body;
+    font-size: $font-sm;
+    color: $color-ink-tertiary;
+    letter-spacing: 0.04em;
+    transition: color $duration-fast $ease-out;
   }
 
-  &__indicator {
+  &__underline {
     position: absolute;
-    bottom: 4rpx;
-    width: 40rpx;
-    height: 6rpx;
-    background-color: $color-accent;
-    border-radius: $radius-full;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 32rpx;
+    height: 2rpx;
+    background-color: $color-ink;
   }
 }
 
-.sub-category-tabs {
+.sub-tabs {
   white-space: nowrap;
-  padding: 0 $spacing-base;
+  padding: 0 $space-lg;
   height: 72rpx;
-  border-top: 1rpx solid $color-bg-secondary;
+  border-bottom: 1rpx solid $color-rule;
+  background-color: $color-surface;
 
   &__item {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 0 $spacing-md;
+    padding: 0 $space-sm;
     height: 72rpx;
-    margin-right: $spacing-xs;
+    margin-right: $space-xs;
+    position: relative;
 
     &--active {
-      .sub-category-tabs__text {
-        color: $color-white;
-        background-color: $morandi-beige;
-        border-color: $morandi-beige;
+      .sub-tabs__text {
+        color: $color-ink;
+      }
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 24rpx;
+        height: 2rpx;
+        background-color: $color-ink;
       }
     }
   }
 
   &__text {
-    font-size: $font-sm;
-    color: $color-text-secondary;
-    padding: $spacing-xs $spacing-base;
-    border-radius: $radius-full;
-    border: 1rpx solid $color-border;
-    transition: $transition-base;
+    @include sans-body;
+    font-size: $font-xs;
+    color: $color-ink-tertiary;
+    letter-spacing: 0.03em;
+    transition: color $duration-fast $ease-out;
   }
 }
 
-.filter-sort-bar {
+.toolbar {
   @include flex-between;
-  padding: $spacing-sm $spacing-base;
-  background-color: $color-white;
-  border-bottom: 1rpx solid $color-bg-secondary;
-  position: sticky;
-  top: 0;
-  z-index: 99;
+  padding: $space-sm $space-lg;
+  background-color: $color-surface;
+  border-bottom: 1rpx solid $color-rule;
 
-  &__left {
-    flex-shrink: 0;
-  }
-
-  &__center {
-    flex: 1;
-    overflow: hidden;
-    margin: 0 $spacing-sm;
-  }
-
-  &__right {
-    flex-shrink: 0;
-  }
-}
-
-.filter-btn {
-  @include flex-center;
-  padding: $spacing-xs $spacing-sm;
-  border: 1rpx solid $color-border;
-  border-radius: $radius-base;
-  position: relative;
-
-  &__icon {
-    font-size: $font-sm;
-    margin-right: 4rpx;
-    color: $color-text-secondary;
-  }
-
-  &__text {
-    font-size: $font-sm;
-    color: $color-text-secondary;
-  }
-
-  &__badge {
-    position: absolute;
-    top: -8rpx;
-    right: -8rpx;
-    min-width: 28rpx;
-    height: 28rpx;
-    @include flex-center;
-    background-color: $morandi-rose;
-    color: $color-white;
-    font-size: 18rpx;
-    border-radius: $radius-full;
-    padding: 0 6rpx;
-  }
-}
-
-.sort-options {
-  display: flex;
-  align-items: center;
-  white-space: nowrap;
-}
-
-.sort-option {
-  padding: $spacing-xs $spacing-sm;
-  margin-right: $spacing-xs;
-
-  &--active {
-    .sort-option__text {
-      color: $color-accent;
-      font-weight: 600;
+  &__sort {
+    &-text {
+      @include sans-body;
+      font-size: $font-xs;
+      color: $color-ink-secondary;
+      letter-spacing: 0.02em;
     }
   }
 
-  &__text {
-    font-size: $font-sm;
-    color: $color-text-tertiary;
-    transition: $transition-base;
-    white-space: nowrap;
+  &__view {
+    display: flex;
+    align-items: center;
+    gap: $space-sm;
   }
-}
 
-.view-toggle {
-  display: flex;
-  align-items: center;
-  gap: 4rpx;
-  padding: 4rpx;
-  background-color: $color-bg-secondary;
-  border-radius: $radius-sm;
-
-  &__item {
-    @include flex-center;
-    width: 52rpx;
-    height: 52rpx;
-    border-radius: $radius-sm;
-    transition: $transition-base;
+  &__view-icon {
+    font-size: $font-md;
+    color: $color-ink-faint;
+    transition: color $duration-fast $ease-out;
+    line-height: 1;
 
     &--active {
-      background-color: $color-white;
-      box-shadow: $shadow-sm;
-    }
-  }
-}
-
-.view-icon {
-  display: grid;
-  gap: 3rpx;
-
-  &--grid-2 {
-    grid-template-columns: repeat(2, 10rpx);
-
-    view {
-      width: 10rpx;
-      height: 10rpx;
-      background-color: $color-text-tertiary;
-      border-radius: 2rpx;
-    }
-  }
-
-  &--grid-3 {
-    grid-template-columns: repeat(3, 8rpx);
-
-    view {
-      width: 8rpx;
-      height: 8rpx;
-      background-color: $color-text-tertiary;
-      border-radius: 2rpx;
-    }
-  }
-
-  &--list {
-    grid-template-columns: 1fr;
-    gap: 4rpx;
-
-    view {
-      width: 20rpx;
-      height: 4rpx;
-      background-color: $color-text-tertiary;
-      border-radius: 2rpx;
+      color: $color-ink;
     }
   }
 }
@@ -1064,71 +786,50 @@ onMounted(() => {
 }
 
 .artwork-grid {
-  padding: $spacing-base;
+  padding: $space-xs;
   display: grid;
-  gap: $spacing-base;
-
-  &--2 {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  &--3 {
-    grid-template-columns: repeat(3, 1fr);
-    gap: $spacing-sm;
-
-    .artwork-card__title {
-      font-size: $font-xs;
-    }
-
-    .artwork-card__artist {
-      font-size: 18rpx;
-    }
-
-    .artwork-card__price {
-      font-size: $font-sm;
-    }
-
-    .artwork-card__info {
-      padding: $spacing-xs $spacing-sm $spacing-sm;
-    }
-  }
+  grid-template-columns: repeat(2, 1fr);
+  gap: $space-xs;
 
   &--list {
     grid-template-columns: 1fr;
-    gap: $spacing-sm;
+    gap: 0;
+
+    .artwork-item {
+      display: flex;
+      flex-direction: row;
+      padding: $space-md $space-lg;
+      border-bottom: 1rpx solid $color-rule;
+
+      &__image-wrap {
+        width: 200rpx;
+        height: 268rpx;
+        padding-bottom: 0;
+        flex-shrink: 0;
+      }
+
+      &__info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 0 0 0 $space-md;
+      }
+
+      &__title {
+        -webkit-line-clamp: 2;
+      }
+    }
   }
 }
 
-.artwork-card {
-  @include gallery-card;
-
-  &--list {
-    display: flex;
-    flex-direction: row;
-
-    .artwork-card__image-wrap {
-      width: 240rpx;
-      height: 240rpx;
-      flex-shrink: 0;
-    }
-
-    .artwork-card__info {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: $spacing-base;
-    }
-
-    .artwork-card__title {
-      -webkit-line-clamp: 2;
-    }
-  }
+.artwork-item {
+  @include gallery-item;
 
   &__image-wrap {
     position: relative;
     width: 100%;
-    padding-bottom: 133%;
+    padding-bottom: 133.33%;
     overflow: hidden;
   }
 
@@ -1140,199 +841,108 @@ onMounted(() => {
     height: 100%;
   }
 
-  &__limited {
-    position: absolute;
-    top: $spacing-sm;
-    left: $spacing-sm;
-    background-color: rgba($morandi-rose, 0.9);
-    padding: 4rpx $spacing-sm;
-    border-radius: $radius-sm;
-
-    &-text {
-      font-size: 18rpx;
-      color: $color-white;
-      letter-spacing: 1rpx;
-    }
-  }
-
-  &__fav {
-    position: absolute;
-    top: $spacing-sm;
-    right: $spacing-sm;
-    width: 52rpx;
-    height: 52rpx;
-    @include flex-center;
-    background-color: rgba($color-white, 0.85);
-    border-radius: $radius-full;
-
-    &-icon {
-      font-size: $font-md;
-      color: $morandi-rose;
-    }
-  }
-
   &__info {
-    padding: $spacing-sm $spacing-sm $spacing-base;
+    padding: $space-sm $space-xs $space-md;
   }
 
   &__title {
-    font-size: $font-sm;
-    color: $color-text-primary;
+    @include sans-body;
+    font-size: $font-xs;
+    color: $color-ink;
     font-weight: 500;
     @include ellipsis(2);
-    line-height: 1.4;
-    margin-bottom: 4rpx;
+    line-height: 1.5;
+    margin-bottom: $space-xxs;
   }
 
   &__artist {
-    font-size: $font-xs;
-    color: $color-text-tertiary;
-    margin-bottom: $spacing-xs;
-  }
-
-  &__price-row {
-    display: flex;
-    align-items: baseline;
-    gap: $spacing-xs;
+    @include sans-body;
+    font-size: $font-xxs;
+    color: $color-ink-tertiary;
+    margin-bottom: $space-xxs;
   }
 
   &__price {
-    font-size: $font-base;
-    color: $color-accent;
-    font-weight: 600;
-  }
-
-  &__original-price {
-    font-size: $font-xs;
-    color: $color-text-placeholder;
-    text-decoration: line-through;
+    font-family: $font-sans;
+    font-size: $font-sm;
+    color: $color-ink;
+    font-weight: 500;
+    letter-spacing: 0.01em;
   }
 }
 
 .skeleton-grid {
-  padding: $spacing-base;
+  padding: $space-xs;
   display: grid;
-  gap: $spacing-base;
   grid-template-columns: repeat(2, 1fr);
-
-  &--list {
-    grid-template-columns: 1fr;
-  }
+  gap: $space-xs;
 }
 
-.skeleton-card {
+.skeleton-item {
   &__image {
     width: 100%;
-    padding-bottom: 133%;
+    padding-bottom: 133.33%;
     @include skeleton-loading;
   }
 
-  &__info {
-    padding: $spacing-sm;
-  }
-
   &__title {
-    height: 28rpx;
+    height: 24rpx;
     width: 70%;
-    margin-bottom: $spacing-xs;
+    margin: $space-sm $space-xs 0;
     @include skeleton-loading;
   }
 
   &__subtitle {
-    height: 22rpx;
+    height: 20rpx;
     width: 50%;
-    margin-bottom: $spacing-xs;
+    margin: $space-xxs $space-xs 0;
     @include skeleton-loading;
   }
 
   &__price {
-    height: 28rpx;
+    height: 24rpx;
     width: 40%;
+    margin: $space-xxs $space-xs $space-sm;
     @include skeleton-loading;
-  }
-
-  &--list {
-    display: flex;
-    flex-direction: row;
-
-    .skeleton-card__image {
-      width: 240rpx;
-      height: 240rpx;
-      padding-bottom: 0;
-      flex-shrink: 0;
-    }
-
-    .skeleton-card__info {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: $spacing-base;
-    }
   }
 }
 
 .load-more {
   @include flex-center;
-  padding: $spacing-lg 0 $spacing-xl;
-
-  &__loading {
-    @include flex-center;
-    gap: $spacing-sm;
-  }
-
-  &__spinner {
-    width: 32rpx;
-    height: 32rpx;
-    border: 3rpx solid $color-border;
-    border-top-color: $morandi-beige;
-    border-radius: $radius-full;
-    animation: spin 0.8s linear infinite;
-  }
+  padding: $space-xl 0 $space-3xl;
 
   &__text {
-    font-size: $font-sm;
-    color: $color-text-tertiary;
+    @include sans-body;
+    font-size: $font-xs;
+    color: $color-ink-tertiary;
   }
 
   &__end {
-    font-size: $font-sm;
-    color: $color-text-placeholder;
-    letter-spacing: 2rpx;
-  }
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
+    @include sans-body;
+    font-size: $font-xs;
+    color: $color-ink-faint;
+    letter-spacing: 0.08em;
   }
 }
 
 .empty-state {
   @include flex-center;
   flex-direction: column;
-  padding: 160rpx 0;
-
-  &__icon {
-    font-size: 80rpx;
-    margin-bottom: $spacing-base;
-  }
+  padding: $space-4xl 0;
 
   &__text {
-    font-size: $font-base;
-    color: $color-text-tertiary;
-    margin-bottom: $spacing-lg;
+    @include sans-body;
+    font-size: $font-sm;
+    color: $color-ink-tertiary;
+    margin-bottom: $space-lg;
   }
 
-  &__btn {
-    padding: $spacing-sm $spacing-lg;
-    border: 1rpx solid $color-accent;
-    border-radius: $radius-full;
-
-    &-text {
-      font-size: $font-sm;
-      color: $color-accent;
-    }
+  &__reset {
+    @include sans-body;
+    font-size: $font-xs;
+    color: $color-ink-secondary;
+    text-decoration: underline;
+    text-underline-offset: 4rpx;
   }
 }
 
@@ -1342,11 +952,11 @@ onMounted(() => {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgba($color-ink, 0.3);
   z-index: 200;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
+  transition: opacity $duration-base $ease-out, visibility $duration-base $ease-out;
 
   &--visible {
     opacity: 1;
@@ -1360,10 +970,9 @@ onMounted(() => {
   right: 0;
   bottom: 0;
   z-index: 201;
-  background-color: $color-white;
-  border-radius: $radius-xl $radius-xl 0 0;
+  background-color: $color-surface;
   transform: translateY(100%);
-  transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+  transition: transform $duration-slow $ease-out-expo;
   max-height: 80vh;
   display: flex;
   flex-direction: column;
@@ -1374,103 +983,107 @@ onMounted(() => {
 
   &__header {
     @include flex-between;
-    padding: $spacing-base $spacing-md;
-    border-bottom: 1rpx solid $color-bg-secondary;
+    padding: $space-md $space-lg;
+    border-bottom: 1rpx solid $color-rule;
   }
 
   &__title {
+    @include serif-heading;
     font-size: $font-md;
-    font-weight: 600;
-    color: $color-text-primary;
-    letter-spacing: 2rpx;
+    letter-spacing: 0.04em;
   }
 
   &__close {
-    width: 52rpx;
-    height: 52rpx;
+    width: 56rpx;
+    height: 56rpx;
     @include flex-center;
-    color: $color-text-tertiary;
-    font-size: $font-md;
+
+    &-text {
+      @include sans-body;
+      font-size: $font-md;
+      color: $color-ink-tertiary;
+    }
   }
 
   &__body {
     flex: 1;
-    padding: $spacing-base $spacing-md;
+    padding: $space-lg;
     overflow-y: auto;
   }
 
   &__footer {
     display: flex;
-    gap: $spacing-base;
-    padding: $spacing-base $spacing-md;
-    border-top: 1rpx solid $color-bg-secondary;
+    align-items: center;
+    gap: $space-md;
+    padding: $space-md $space-lg;
+    border-top: 1rpx solid $color-rule;
+    @include safe-area-bottom;
   }
 
   &__reset {
+    @include sans-body;
+    font-size: $font-sm;
+    color: $color-ink-secondary;
+    letter-spacing: 0.02em;
+    padding: $space-sm 0;
+  }
+
+  &__apply {
     flex: 1;
     height: 80rpx;
     @include flex-center;
-    border: 1rpx solid $color-border;
-    border-radius: $radius-base;
+    background-color: $color-ink;
 
     &-text {
-      font-size: $font-base;
-      color: $color-text-secondary;
-    }
-  }
-
-  &__confirm {
-    flex: 2;
-    height: 80rpx;
-    @include flex-center;
-    background-color: $color-accent;
-    border-radius: $radius-base;
-
-    &-text {
-      font-size: $font-base;
-      color: $color-white;
-      letter-spacing: 2rpx;
+      font-family: $font-sans;
+      font-size: $font-sm;
+      color: $color-surface;
+      font-weight: 500;
+      letter-spacing: 0.08em;
     }
   }
 }
 
 .filter-section {
-  margin-bottom: $spacing-lg;
+  margin-bottom: $space-xl;
 
-  &__title {
-    font-size: $font-base;
-    color: $color-text-primary;
-    font-weight: 500;
-    margin-bottom: $spacing-sm;
-    letter-spacing: 1rpx;
+  &__label {
+    @include sans-body;
+    font-size: $font-xs;
+    color: $color-ink-secondary;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: $space-sm;
+    display: block;
+  }
+
+  &__options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-sm;
   }
 }
 
-.filter-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: $spacing-sm;
-}
-
-.filter-chip {
-  padding: $spacing-xs $spacing-md;
-  border: 1rpx solid $color-border;
-  border-radius: $radius-full;
-  background-color: $color-bg;
-  transition: $transition-base;
+.filter-option {
+  padding: $space-xs $space-md;
+  border: 1rpx solid $color-rule;
+  background-color: $color-surface;
+  transition: all $duration-fast $ease-out;
 
   &--active {
-    background-color: $morandi-beige;
-    border-color: $morandi-beige;
+    background-color: $color-ink;
+    border-color: $color-ink;
 
-    .filter-chip__text {
-      color: $color-white;
+    .filter-option__text {
+      color: $color-surface;
     }
   }
 
   &__text {
-    font-size: $font-sm;
-    color: $color-text-secondary;
+    @include sans-body;
+    font-size: $font-xs;
+    color: $color-ink-secondary;
+    letter-spacing: 0.02em;
   }
 }
 </style>

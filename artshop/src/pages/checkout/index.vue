@@ -2,53 +2,30 @@
   <view class="checkout-page">
     <view v-if="!paymentSuccess" class="checkout-content">
       <scroll-view class="checkout-scroll" scroll-y enhanced :show-scrollbar="false">
-        <view class="section shipping-section" @tap="onAddressTap">
-          <view class="section-header">
-            <text class="section-title">收货信息</text>
-            <text class="section-action">›</text>
-          </view>
-
+        <view class="shipping-section" @tap="onAddressTap">
           <view v-if="currentAddress" class="address-info">
             <view class="address-top">
               <text class="address-name">{{ currentAddress.name }}</text>
               <text class="address-phone">{{ currentAddress.phone }}</text>
-              <view v-if="currentAddress.isDefault" class="default-badge">
-                <text class="default-badge-text">默认</text>
-              </view>
             </view>
             <text class="address-detail">
               {{ currentAddress.province }}{{ currentAddress.city }}{{ currentAddress.district }}{{ currentAddress.detail }}
             </text>
           </view>
-
           <view v-else class="address-empty" @tap="onAddAddress">
-            <text class="address-empty-icon">📍</text>
-            <text class="address-empty-text">添加收货地址</text>
+            <text class="address-empty-text">Add Shipping Address →</text>
           </view>
-
-          <view class="address-divider">
-            <view class="divider-line" />
-            <view class="divider-dots">
-              <view v-for="i in 12" :key="i" class="divider-dot" />
-            </view>
-            <view class="divider-line" />
-          </view>
+          <view class="section-divider" />
         </view>
 
-        <view v-if="showAddressPicker" class="section address-picker">
-          <view class="picker-header">
-            <text class="picker-title">选择收货地址</text>
-            <view class="picker-close" @tap="showAddressPicker = false">
-              <text class="picker-close-text">✕</text>
-            </view>
-          </view>
+        <view v-if="showAddressPicker" class="address-picker">
           <view
             v-for="addr in userStore.addresses"
             :key="addr.id"
-            :class="['address-option', { 'address-option--active': selectedAddressId === addr.id }]"
+            class="address-option"
             @tap="selectAddress(addr.id)"
           >
-            <view :class="['radio-dot', { 'radio-dot--checked': selectedAddressId === addr.id }]" />
+            <text class="address-radio">{{ selectedAddressId === addr.id ? '●' : '○' }}</text>
             <view class="address-option-info">
               <view class="address-option-top">
                 <text class="address-option-name">{{ addr.name }}</text>
@@ -61,8 +38,8 @@
           </view>
         </view>
 
-        <view class="section order-section">
-          <text class="section-title">订单商品</text>
+        <view class="items-section">
+          <text class="section-label">Order Items</text>
           <view class="order-items">
             <view
               v-for="item in selectedItems"
@@ -72,10 +49,7 @@
               <image :src="item.image" mode="aspectFill" class="order-item-thumb" />
               <view class="order-item-info">
                 <text class="order-item-title">{{ item.title }}</text>
-                <view class="order-item-specs">
-                  <text class="order-item-spec">{{ item.spec.size }}</text>
-                  <text class="order-item-spec">{{ item.spec.material }}</text>
-                </view>
+                <text class="order-item-spec">{{ item.spec.size }} · {{ item.spec.material }}</text>
                 <view class="order-item-bottom">
                   <text class="order-item-price">¥{{ formatPrice(item.unitPrice) }}</text>
                   <text class="order-item-qty">×{{ item.quantity }}</text>
@@ -85,18 +59,19 @@
           </view>
         </view>
 
-        <view class="section fee-section">
+        <view class="section-divider" />
+
+        <view class="fee-section">
           <view class="fee-row">
-            <text class="fee-label">运费</text>
-            <text class="fee-value">{{ shippingFee > 0 ? '¥' + formatPrice(shippingFee) : '免运费' }}</text>
+            <text class="fee-label">Shipping</text>
+            <text class="fee-value">{{ shippingFee > 0 ? '¥' + formatPrice(shippingFee) : 'Free' }}</text>
           </view>
 
           <view class="fee-row coupon-row" @tap="showCouponPicker = !showCouponPicker">
-            <text class="fee-label">优惠券</text>
+            <text class="fee-label">Coupon</text>
             <view class="coupon-right">
               <text v-if="selectedCoupon" class="coupon-discount">-¥{{ formatPrice(selectedCoupon.discount) }}</text>
-              <text v-else class="coupon-placeholder">{{ availableCoupons.length }}张可用</text>
-              <text :class="['coupon-arrow', { 'coupon-arrow--open': showCouponPicker }]">›</text>
+              <text v-else class="coupon-link">Apply Coupon →</text>
             </view>
           </view>
 
@@ -104,66 +79,58 @@
             <view
               v-for="coupon in availableCoupons"
               :key="coupon.id"
-              :class="['coupon-card', { 'coupon-card--selected': selectedCouponId === coupon.id }]"
+              class="coupon-item"
               @tap="selectCoupon(coupon)"
             >
-              <view class="coupon-card-left">
-                <text class="coupon-amount">¥{{ formatPrice(coupon.discount) }}</text>
-                <text class="coupon-condition">满{{ formatPrice(coupon.minAmount) }}可用</text>
+              <text class="coupon-radio">{{ selectedCouponId === coupon.id ? '●' : '○' }}</text>
+              <view class="coupon-item-info">
+                <text class="coupon-item-amount">¥{{ formatPrice(coupon.discount) }}</text>
+                <text class="coupon-item-name">{{ coupon.name }}</text>
+                <text class="coupon-item-condition">Min. ¥{{ formatPrice(coupon.minAmount) }}</text>
               </view>
-              <view class="coupon-card-right">
-                <text class="coupon-name">{{ coupon.name }}</text>
-                <text class="coupon-date">{{ coupon.endDate }}到期</text>
-              </view>
-              <view v-if="selectedCouponId === coupon.id" class="coupon-check">✓</view>
             </view>
             <view class="coupon-none" @tap="selectCoupon(null)">
-              <text class="coupon-none-text">不使用优惠券</text>
+              <text class="coupon-none-text">No Coupon</text>
             </view>
           </view>
 
           <view v-if="discountAmount > 0" class="fee-row">
-            <text class="fee-label">优惠金额</text>
+            <text class="fee-label">Discount</text>
             <text class="fee-value fee-value--discount">-¥{{ formatPrice(discountAmount) }}</text>
           </view>
 
           <view class="fee-row fee-row--total">
-            <text class="fee-label">实付金额</text>
-            <text class="fee-value fee-value--accent">¥{{ formatPrice(actualPrice) }}</text>
+            <text class="fee-label">Total</text>
+            <text class="fee-value fee-value--total">¥{{ formatPrice(actualPrice) }}</text>
           </view>
         </view>
 
-        <view class="section payment-section">
-          <text class="section-title">支付方式</text>
+        <view class="section-divider" />
+
+        <view class="payment-section">
+          <text class="section-label">Payment</text>
           <view class="payment-options">
-            <view
-              :class="['payment-option', { 'payment-option--active': paymentMethod === 'WECHAT' }]"
-              @tap="paymentMethod = 'WECHAT'"
-            >
-              <text class="payment-icon payment-icon--wechat">💳</text>
-              <text class="payment-name">微信支付</text>
-              <view :class="['radio-dot', { 'radio-dot--checked': paymentMethod === 'WECHAT' }]" />
+            <view class="payment-option" @tap="paymentMethod = 'WECHAT'">
+              <text class="payment-radio">{{ paymentMethod === 'WECHAT' ? '●' : '○' }}</text>
+              <text class="payment-name">WeChat Pay</text>
             </view>
-            <view
-              :class="['payment-option', { 'payment-option--active': paymentMethod === 'ALIPAY' }]"
-              @tap="paymentMethod = 'ALIPAY'"
-            >
-              <text class="payment-icon payment-icon--alipay">🔵</text>
-              <text class="payment-name">支付宝</text>
-              <view :class="['radio-dot', { 'radio-dot--checked': paymentMethod === 'ALIPAY' }]" />
+            <view class="payment-option" @tap="paymentMethod = 'ALIPAY'">
+              <text class="payment-radio">{{ paymentMethod === 'ALIPAY' ? '●' : '○' }}</text>
+              <text class="payment-name">Alipay</text>
             </view>
           </view>
         </view>
 
-        <view class="section remark-section">
-          <text class="section-title">订单备注</text>
-          <textarea
+        <view class="section-divider" />
+
+        <view class="remark-section">
+          <text class="section-label">Remark</text>
+          <input
             v-model="remark"
             class="remark-input"
-            placeholder="选填，请输入特殊要求"
+            placeholder="Optional"
             placeholder-class="remark-placeholder"
             :maxlength="200"
-            auto-height
           />
         </view>
 
@@ -172,40 +139,26 @@
 
       <view class="bottom-bar" :style="{ paddingBottom: safeAreaBottom + 'px' }">
         <view class="bottom-total">
-          <text class="bottom-total-label">合计：</text>
+          <text class="bottom-total-label">Total</text>
           <text class="bottom-total-price">¥{{ formatPrice(actualPrice) }}</text>
         </view>
         <view
           :class="['pay-btn', { 'pay-btn--loading': isPaying }]"
           @tap="onPay"
         >
-          <text class="pay-btn-text">{{ isPaying ? '支付中...' : '确认支付' }}</text>
+          <text class="pay-btn-text">{{ isPaying ? 'Processing...' : 'Pay Now' }}</text>
         </view>
       </view>
     </view>
 
     <view v-else class="success-page">
       <view class="success-content">
-        <view class="success-icon-wrap">
-          <view class="success-circle" />
-          <text class="success-check">✓</text>
-        </view>
-
-        <text class="success-title">支付成功</text>
-        <text class="success-order-no">订单号：{{ orderNo }}</text>
-
+        <text class="success-check">✓</text>
+        <text class="success-title">Order Confirmed</text>
+        <text class="success-order-no">{{ orderNo }}</text>
         <view class="success-actions">
-          <view class="success-btn success-btn--primary" @tap="goToOrderDetail">
-            <text class="success-btn-text success-btn-text--primary">查看订单</text>
-          </view>
-          <view class="success-btn success-btn--outline" @tap="goToHome">
-            <text class="success-btn-text success-btn-text--outline">返回首页</text>
-          </view>
-        </view>
-
-        <view class="share-btn" @tap="onShareOrder">
-          <text class="share-btn-icon">↗</text>
-          <text class="share-btn-text">分享订单</text>
+          <text class="success-link" @tap="goToOrderDetail">View Order →</text>
+          <text class="success-link" @tap="goToHome">Back to Home →</text>
         </view>
       </view>
     </view>
@@ -286,7 +239,7 @@ function selectAddress(id: string) {
 }
 
 function onAddAddress() {
-  uni.navigateTo({ url: '/pages/address/edit' })
+  uni.navigateTo({ url: '/pages/user/addresses' })
 }
 
 function selectCoupon(coupon: Coupon | null) {
@@ -296,39 +249,28 @@ function selectCoupon(coupon: Coupon | null) {
 
 function onPay() {
   if (isPaying.value) return
-
   if (!currentAddress.value) {
-    uni.showToast({ title: '请添加收货地址', icon: 'none' })
+    uni.showToast({ title: 'Please add address', icon: 'none' })
     return
   }
-
-  if (selectedItems.value.length === 0) {
-    uni.showToast({ title: '请选择商品', icon: 'none' })
-    return
-  }
+  if (selectedItems.value.length === 0) return
 
   isPaying.value = true
-
   setTimeout(() => {
     orderNo.value = 'AS' + Date.now().toString().slice(-10)
     isPaying.value = false
     paymentSuccess.value = true
-
     const purchasedIds = selectedItems.value.map((item) => item.artworkId)
     purchasedIds.forEach((id) => cartStore.removeItem(id))
   }, 2000)
 }
 
 function goToOrderDetail() {
-  uni.navigateTo({ url: `/pages/order/detail?id=${orderNo.value}` })
+  uni.navigateTo({ url: `/pages/order/index` })
 }
 
 function goToHome() {
   uni.switchTab({ url: '/pages/index/index' })
-}
-
-function onShareOrder() {
-  uni.showToast({ title: '分享功能开发中', icon: 'none' })
 }
 
 onLoad(() => {
@@ -336,7 +278,6 @@ onLoad(() => {
   safeAreaBottom.value = systemInfo.safeArea?.bottom
     ? systemInfo.windowHeight - systemInfo.safeArea.bottom
     : 0
-
   if (userStore.defaultAddress) {
     selectedAddressId.value = userStore.defaultAddress.id
   }
@@ -344,12 +285,10 @@ onLoad(() => {
 </script>
 
 <style lang="scss" scoped>
-@import '@/styles/variables.scss';
 @import '@/styles/mixins.scss';
-
 .checkout-page {
   min-height: 100vh;
-  background-color: $color-bg;
+  background-color: $color-surface;
 }
 
 .checkout-content {
@@ -360,198 +299,70 @@ onLoad(() => {
 
 .checkout-scroll {
   flex: 1;
-  padding-bottom: 160rpx;
-}
-
-.section {
-  margin: $spacing-sm $spacing-base;
-  padding: $spacing-base;
-  background-color: $color-white;
-  border-radius: $radius-lg;
-  box-shadow: $shadow-sm;
-}
-
-.section-header {
-  @include flex-between;
-}
-
-.section-title {
-  @include section-title;
-  margin-bottom: $spacing-base;
-}
-
-.section-action {
-  font-size: $font-lg;
-  color: $color-text-tertiary;
+  padding: 0 $space-lg;
+  padding-bottom: 180rpx;
 }
 
 .shipping-section {
-  padding-bottom: 0;
+  padding: $space-xl 0 $space-md;
 }
 
 .address-info {
-  padding-bottom: $spacing-base;
-
   .address-top {
     display: flex;
     align-items: center;
-    gap: $spacing-sm;
-    margin-bottom: $spacing-xs;
+    gap: $space-sm;
+    margin-bottom: $space-xs;
   }
 
   .address-name {
+    @include serif-heading;
     font-size: $font-md;
-    font-weight: 600;
-    color: $color-text-primary;
-    letter-spacing: 2rpx;
   }
 
   .address-phone {
-    font-size: $font-base;
-    color: $color-text-secondary;
-    letter-spacing: 1rpx;
-  }
-
-  .default-badge {
-    height: 32rpx;
-    padding: 0 12rpx;
-    border-radius: $radius-full;
-    background-color: rgba(139, 115, 85, 0.1);
-    @include flex-center;
-
-    .default-badge-text {
-      font-size: $font-xs;
-      color: $color-accent;
-      letter-spacing: 1rpx;
-    }
+    @include sans-body;
+    font-size: $font-sm;
   }
 
   .address-detail {
+    @include sans-body;
     font-size: $font-sm;
-    color: $color-text-secondary;
     line-height: 1.6;
-    letter-spacing: 1rpx;
   }
 }
 
 .address-empty {
-  @include flex-center;
-  flex-direction: column;
-  padding: $spacing-lg 0;
-  gap: $spacing-xs;
-
-  .address-empty-icon {
-    font-size: 48rpx;
-  }
+  padding: $space-lg 0;
 
   .address-empty-text {
+    @include sans-body;
     font-size: $font-base;
-    color: $morandi-beige;
-    letter-spacing: 2rpx;
-  }
-
-  &:active {
-    opacity: 0.7;
+    color: $color-ink-secondary;
+    letter-spacing: 0.04em;
   }
 }
 
-.address-divider {
-  display: flex;
-  align-items: center;
-  margin-top: $spacing-sm;
-
-  .divider-line {
-    flex: 1;
-    height: 2rpx;
-    background-color: $color-border;
-  }
-
-  .divider-dots {
-    display: flex;
-    gap: 8rpx;
-    padding: 0 $spacing-xs;
-  }
-
-  .divider-dot {
-    width: 6rpx;
-    height: 6rpx;
-    border-radius: $radius-full;
-    background-color: $morandi-beige;
-    opacity: 0.4;
-  }
+.section-divider {
+  @include divider;
+  margin: $space-md 0;
 }
 
 .address-picker {
-  .picker-header {
-    @include flex-between;
-    margin-bottom: $spacing-base;
-  }
-
-  .picker-title {
-    font-size: $font-md;
-    font-weight: 600;
-    color: $color-text-primary;
-    letter-spacing: 2rpx;
-  }
-
-  .picker-close {
-    width: 48rpx;
-    height: 48rpx;
-    @include flex-center;
-    border-radius: $radius-full;
-    background-color: $color-bg-secondary;
-
-    .picker-close-text {
-      font-size: $font-sm;
-      color: $color-text-tertiary;
-    }
-  }
+  padding: $space-md 0;
 }
 
 .address-option {
   display: flex;
   align-items: flex-start;
-  gap: $spacing-sm;
-  padding: $spacing-base;
-  border-radius: $radius-base;
-  border: 2rpx solid transparent;
-  transition: $transition-base;
-  margin-bottom: $spacing-xs;
+  gap: $space-md;
+  padding: $space-md 0;
+  border-bottom: 1rpx solid $color-rule;
 
-  &:last-child {
-    margin-bottom: 0;
-  }
-
-  &--active {
-    border-color: $color-accent;
-    background-color: rgba(139, 115, 85, 0.04);
-  }
-
-  &:active {
-    background-color: $color-bg-secondary;
-  }
-}
-
-.radio-dot {
-  flex-shrink: 0;
-  width: 40rpx;
-  height: 40rpx;
-  border-radius: $radius-full;
-  border: 2rpx solid $color-border;
-  @include flex-center;
-  margin-top: 4rpx;
-  transition: $transition-base;
-
-  &--checked {
-    border-color: $color-accent;
-    background-color: $color-accent;
-
-    &::after {
-      content: '✓';
-      font-size: $font-xs;
-      color: $color-white;
-      font-weight: 600;
-    }
+  .address-radio {
+    font-size: $font-md;
+    color: $color-ink-tertiary;
+    padding-top: $space-xs;
   }
 }
 
@@ -563,45 +374,55 @@ onLoad(() => {
 .address-option-top {
   display: flex;
   align-items: center;
-  gap: $spacing-sm;
-  margin-bottom: 4rpx;
+  gap: $space-sm;
+  margin-bottom: $space-xs;
 
   .address-option-name {
+    @include serif-heading;
     font-size: $font-base;
-    font-weight: 500;
-    color: $color-text-primary;
   }
 
   .address-option-phone {
+    @include sans-body;
     font-size: $font-sm;
-    color: $color-text-tertiary;
   }
 }
 
 .address-option-detail {
+  @include sans-body;
   font-size: $font-sm;
-  color: $color-text-secondary;
   line-height: 1.5;
   @include ellipsis(2);
+}
+
+.items-section {
+  padding: $space-md 0;
+
+  .section-label {
+    @include serif-heading;
+    font-size: $font-md;
+    display: block;
+    margin-bottom: $space-md;
+  }
 }
 
 .order-items {
   display: flex;
   flex-direction: column;
-  gap: $spacing-sm;
+  gap: $space-md;
 }
 
 .order-item {
   display: flex;
-  gap: $spacing-sm;
+  gap: $space-md;
 }
 
 .order-item-thumb {
   flex-shrink: 0;
-  width: 120rpx;
-  height: 120rpx;
-  border-radius: $radius-sm;
-  background-color: $color-bg-secondary;
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: $radius-xs;
+  background-color: $color-surface-warm;
 }
 
 .order-item-info {
@@ -613,22 +434,14 @@ onLoad(() => {
 }
 
 .order-item-title {
+  @include serif-heading;
   font-size: $font-sm;
-  color: $color-text-primary;
-  font-weight: 500;
   @include ellipsis;
-  letter-spacing: 1rpx;
-}
-
-.order-item-specs {
-  display: flex;
-  gap: 8rpx;
 }
 
 .order-item-spec {
+  @include sans-body;
   font-size: $font-xs;
-  color: $color-text-tertiary;
-  letter-spacing: 1rpx;
 }
 
 .order-item-bottom {
@@ -636,245 +449,195 @@ onLoad(() => {
 }
 
 .order-item-price {
+  font-family: $font-sans;
   font-size: $font-sm;
-  color: $color-accent;
-  font-weight: 600;
+  color: $color-ink;
+  font-weight: 500;
 }
 
 .order-item-qty {
+  @include sans-body;
   font-size: $font-xs;
-  color: $color-text-tertiary;
 }
 
 .fee-section {
+  padding: $space-md 0;
   display: flex;
   flex-direction: column;
-  gap: $spacing-sm;
+  gap: $space-sm;
 }
 
 .fee-row {
   @include flex-between;
-  padding: $spacing-xs 0;
+  padding: $space-xs 0;
 
   &--total {
-    padding-top: $spacing-sm;
-    border-top: 1rpx solid $color-border;
-    margin-top: $spacing-xs;
+    padding-top: $space-md;
+    border-top: 1rpx solid $color-rule;
+    margin-top: $space-xs;
   }
 }
 
 .fee-label {
+  @include sans-body;
   font-size: $font-sm;
-  color: $color-text-secondary;
-  letter-spacing: 1rpx;
+  letter-spacing: 0.04em;
 }
 
 .fee-value {
+  @include sans-body;
   font-size: $font-sm;
-  color: $color-text-primary;
-  letter-spacing: 1rpx;
+  color: $color-ink;
 
   &--discount {
     color: $color-error;
   }
 
-  &--accent {
+  &--total {
+    @include serif-heading;
     font-size: $font-md;
-    color: $color-accent;
-    font-weight: 700;
   }
 }
 
 .coupon-row {
   &:active {
-    opacity: 0.7;
+    opacity: 0.6;
   }
 }
 
 .coupon-right {
   display: flex;
   align-items: center;
-  gap: $spacing-xs;
+  gap: $space-xs;
 }
 
 .coupon-discount {
+  @include sans-body;
   font-size: $font-sm;
   color: $color-error;
-  font-weight: 500;
 }
 
-.coupon-placeholder {
+.coupon-link {
+  @include sans-body;
   font-size: $font-sm;
-  color: $morandi-beige;
-}
-
-.coupon-arrow {
-  font-size: $font-lg;
-  color: $color-text-tertiary;
-  transition: $transition-base;
-
-  &--open {
-    transform: rotate(90deg);
-  }
+  color: $color-ink-secondary;
+  letter-spacing: 0.04em;
 }
 
 .coupon-list {
-  padding: $spacing-sm 0 0;
+  padding: $space-md 0 0;
   display: flex;
   flex-direction: column;
-  gap: $spacing-sm;
+  gap: $space-md;
 }
 
-.coupon-card {
+.coupon-item {
   display: flex;
-  align-items: center;
-  padding: $spacing-sm;
-  background-color: $color-bg-secondary;
-  border-radius: $radius-base;
-  border: 2rpx solid transparent;
-  transition: $transition-base;
-  position: relative;
+  align-items: flex-start;
+  gap: $space-md;
+  padding: $space-md 0;
+  border-bottom: 1rpx solid $color-rule;
 
-  &--selected {
-    border-color: $color-accent;
-    background-color: rgba(139, 115, 85, 0.06);
-  }
-
-  &:active {
-    transform: scale(0.98);
+  .coupon-radio {
+    font-size: $font-md;
+    color: $color-ink-tertiary;
+    padding-top: $space-xs;
   }
 }
 
-.coupon-card-left {
-  flex-shrink: 0;
-  width: 140rpx;
-  @include flex-center;
-  flex-direction: column;
-  border-right: 2rpx dashed $color-border;
-  padding-right: $spacing-sm;
-  margin-right: $spacing-sm;
-
-  .coupon-amount {
-    font-size: $font-lg;
-    color: $color-accent;
-    font-weight: 700;
-    letter-spacing: 1rpx;
-  }
-
-  .coupon-condition {
-    font-size: $font-xs;
-    color: $color-text-tertiary;
-    margin-top: 4rpx;
-  }
-}
-
-.coupon-card-right {
+.coupon-item-info {
   flex: 1;
-  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $space-xxs;
 
-  .coupon-name {
-    display: block;
+  .coupon-item-amount {
+    @include serif-heading;
+    font-size: $font-md;
+  }
+
+  .coupon-item-name {
+    @include sans-body;
     font-size: $font-sm;
-    color: $color-text-primary;
-    font-weight: 500;
-    @include ellipsis;
   }
 
-  .coupon-date {
-    display: block;
+  .coupon-item-condition {
+    @include sans-body;
     font-size: $font-xs;
-    color: $color-text-tertiary;
-    margin-top: 4rpx;
   }
-}
-
-.coupon-check {
-  position: absolute;
-  top: $spacing-xs;
-  right: $spacing-xs;
-  width: 36rpx;
-  height: 36rpx;
-  border-radius: $radius-full;
-  background-color: $color-accent;
-  @include flex-center;
-  font-size: $font-xs;
-  color: $color-white;
-  font-weight: 600;
 }
 
 .coupon-none {
   @include flex-center;
-  padding: $spacing-sm;
+  padding: $space-sm 0;
 
   .coupon-none-text {
+    @include sans-body;
     font-size: $font-sm;
-    color: $color-text-tertiary;
-    letter-spacing: 1rpx;
+    letter-spacing: 0.04em;
   }
+}
 
-  &:active {
-    opacity: 0.7;
+.payment-section {
+  padding: $space-md 0;
+
+  .section-label {
+    @include serif-heading;
+    font-size: $font-md;
+    display: block;
+    margin-bottom: $space-md;
   }
 }
 
 .payment-options {
   display: flex;
   flex-direction: column;
-  gap: $spacing-sm;
+  gap: $space-md;
 }
 
 .payment-option {
   display: flex;
   align-items: center;
-  gap: $spacing-sm;
-  padding: $spacing-base;
-  border-radius: $radius-base;
-  border: 2rpx solid $color-border;
-  transition: $transition-base;
+  gap: $space-md;
 
-  &--active {
-    border-color: $color-accent;
-    background-color: rgba(139, 115, 85, 0.04);
+  .payment-radio {
+    font-size: $font-md;
+    color: $color-ink-tertiary;
   }
 
-  &:active {
-    background-color: $color-bg-secondary;
-  }
-}
-
-.payment-icon {
-  font-size: 40rpx;
-
-  &--wechat {
-    opacity: 0.9;
-  }
-
-  &--alipay {
-    opacity: 0.9;
+  .payment-name {
+    @include sans-body;
+    font-size: $font-base;
+    color: $color-ink;
+    letter-spacing: 0.04em;
   }
 }
 
-.payment-name {
-  flex: 1;
-  font-size: $font-base;
-  color: $color-text-primary;
-  letter-spacing: 2rpx;
+.remark-section {
+  padding: $space-md 0;
+
+  .section-label {
+    @include serif-heading;
+    font-size: $font-md;
+    display: block;
+    margin-bottom: $space-md;
+  }
 }
 
 .remark-input {
   width: 100%;
-  min-height: 120rpx;
-  padding: $spacing-sm;
-  background-color: $color-bg-secondary;
-  border-radius: $radius-base;
+  height: 72rpx;
+  font-family: $font-sans;
   font-size: $font-sm;
-  color: $color-text-primary;
-  line-height: 1.6;
-  letter-spacing: 1rpx;
+  color: $color-ink;
+  border: none;
+  border-bottom: 1rpx solid $color-rule;
+  background: transparent;
+  letter-spacing: 0.01em;
 }
 
 .remark-placeholder {
-  color: $color-text-placeholder;
+  color: $color-ink-tertiary;
   font-size: $font-sm;
 }
 
@@ -888,215 +651,88 @@ onLoad(() => {
   right: 0;
   bottom: 0;
   z-index: 100;
-  display: flex;
-  align-items: center;
-  padding: $spacing-sm $spacing-base;
-  background: rgba(255, 255, 255, 0.96);
-  backdrop-filter: blur(30px);
-  -webkit-backdrop-filter: blur(30px);
-  border-top: 1rpx solid $color-border;
-  gap: $spacing-base;
+  @include flex-between;
+  padding: $space-md $space-lg;
+  background-color: $color-surface;
+  border-top: 1rpx solid $color-rule;
 }
 
 .bottom-total {
-  flex: 1;
   display: flex;
-  align-items: baseline;
+  flex-direction: column;
 
   .bottom-total-label {
-    font-size: $font-sm;
-    color: $color-text-secondary;
-    letter-spacing: 1rpx;
+    @include sans-body;
+    font-size: $font-xs;
+    letter-spacing: 0.04em;
   }
 
   .bottom-total-price {
-    font-size: $font-xl;
-    color: $color-accent;
-    font-weight: 700;
-    letter-spacing: 1rpx;
+    @include serif-heading;
+    font-size: $font-lg;
   }
 }
 
 .pay-btn {
-  flex: 1;
-  height: 88rpx;
-  @include flex-center;
-  background-color: $color-accent;
-  border-radius: $radius-full;
-  transition: $transition-base;
-
-  &:active {
-    opacity: 0.85;
-    transform: scale(0.97);
-  }
+  @include btn-primary;
+  height: 80rpx;
+  padding: 0 $space-xl;
 
   &--loading {
-    background-color: $morandi-brown;
+    background-color: $color-ink-tertiary;
     pointer-events: none;
   }
 
   .pay-btn-text {
-    font-size: $font-md;
-    color: $color-white;
-    letter-spacing: 4rpx;
-    font-weight: 600;
+    font-size: $font-sm;
+    letter-spacing: 0.08em;
   }
 }
 
 .success-page {
   @include flex-center;
   min-height: 100vh;
-  background-color: $color-bg;
+  background-color: $color-surface;
 }
 
 .success-content {
   @include flex-center;
   flex-direction: column;
-  padding: $spacing-xl $spacing-lg;
-  animation: fadeInUp 0.6s ease both;
+  gap: $space-lg;
 }
 
-.success-icon-wrap {
-  position: relative;
-  width: 160rpx;
-  height: 160rpx;
-  @include flex-center;
-  margin-bottom: $spacing-lg;
-
-  .success-circle {
-    position: absolute;
-    width: 160rpx;
-    height: 160rpx;
-    border-radius: $radius-full;
-    background-color: $color-success;
-    opacity: 0.15;
-    animation: pulse 2s ease infinite;
-  }
-
-  .success-check {
-    position: relative;
-    z-index: 2;
-    font-size: 72rpx;
-    color: $color-success;
-    font-weight: 700;
-    animation: fadeInScale 0.5s ease 0.3s both;
-  }
+.success-check {
+  font-size: $font-display;
+  color: $color-ink;
+  font-weight: 300;
 }
 
 .success-title {
+  @include serif-heading;
   font-size: $font-xl;
-  font-weight: 600;
-  color: $color-text-primary;
-  letter-spacing: 4rpx;
-  margin-bottom: $spacing-sm;
 }
 
 .success-order-no {
+  @include sans-body;
   font-size: $font-sm;
-  color: $color-text-tertiary;
-  letter-spacing: 1rpx;
-  margin-bottom: $spacing-xl;
 }
 
 .success-actions {
   display: flex;
-  gap: $spacing-base;
-  width: 100%;
-  margin-bottom: $spacing-lg;
-}
-
-.success-btn {
-  flex: 1;
-  height: 88rpx;
-  @include flex-center;
-  border-radius: $radius-full;
-  transition: $transition-base;
-
-  &:active {
-    transform: scale(0.97);
-  }
-
-  &--primary {
-    background-color: $color-accent;
-
-    .success-btn-text--primary {
-      color: $color-white;
-      font-weight: 600;
-    }
-  }
-
-  &--outline {
-    background-color: transparent;
-    border: 2rpx solid $morandi-beige;
-
-    .success-btn-text--outline {
-      color: $morandi-beige;
-    }
-  }
-
-  .success-btn-text {
-    font-size: $font-base;
-    letter-spacing: 2rpx;
-  }
-}
-
-.share-btn {
-  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: $spacing-xs;
-  padding: $spacing-sm $spacing-md;
-  border-radius: $radius-full;
-  border: 2rpx solid $color-border;
-  transition: $transition-base;
+  gap: $space-md;
+  margin-top: $space-xl;
+}
+
+.success-link {
+  @include sans-body;
+  font-size: $font-sm;
+  color: $color-ink-secondary;
+  letter-spacing: 0.04em;
 
   &:active {
-    background-color: $color-bg-secondary;
-    transform: scale(0.97);
-  }
-
-  .share-btn-icon {
-    font-size: $font-md;
-    color: $morandi-beige;
-  }
-
-  .share-btn-text {
-    font-size: $font-sm;
-    color: $color-text-secondary;
-    letter-spacing: 2rpx;
-  }
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(40rpx);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeInScale {
-  from {
-    opacity: 0;
-    transform: scale(0.5);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 0.15;
-  }
-  50% {
-    transform: scale(1.15);
-    opacity: 0.08;
+    opacity: 0.6;
   }
 }
 </style>

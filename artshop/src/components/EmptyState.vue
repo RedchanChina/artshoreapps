@@ -1,27 +1,21 @@
 <template>
   <view class="empty-state">
-    <text class="empty-state__icon">{{ icon }}</text>
     <text class="empty-state__title">{{ title }}</text>
     <text v-if="description" class="empty-state__description">{{ description }}</text>
-    <view
+    <text
       v-if="actionText"
       class="empty-state__action"
       @tap="handleAction"
-    >
-      <text class="empty-state__action-text">{{ actionText }}</text>
-    </view>
+    >{{ actionText }}</text>
   </view>
 </template>
 
 <script setup lang="ts">
-withDefaults(defineProps<{
-  icon?: string
+defineProps<{
   title: string
   description?: string
   actionText?: string
-}>(), {
-  icon: '🎨',
-})
+}>()
 
 const emit = defineEmits<{
   action: []
@@ -33,53 +27,36 @@ const handleAction = () => {
 </script>
 
 <style lang="scss" scoped>
-@import '@/styles/variables.scss';
 @import '@/styles/mixins.scss';
 
 .empty-state {
   @include flex-center;
   flex-direction: column;
-  padding: $spacing-xl $spacing-lg;
+  padding: $space-3xl $space-lg;
   text-align: center;
 
-  &__icon {
-    font-size: 96rpx;
-    margin-bottom: $spacing-md;
-  }
-
   &__title {
+    @include serif-heading;
     font-size: $font-md;
-    font-weight: 500;
-    color: $color-text-primary;
-    letter-spacing: 2rpx;
-    margin-bottom: $spacing-xs;
+    letter-spacing: 0.04em;
   }
 
   &__description {
+    @include sans-body;
     font-size: $font-sm;
-    color: $color-text-tertiary;
+    margin-top: $space-sm;
     line-height: 1.6;
     max-width: 480rpx;
   }
 
   &__action {
-    margin-top: $spacing-md;
-    padding: $spacing-sm $spacing-lg;
-    background-color: transparent;
-    border: 2rpx solid $morandi-beige;
-    border-radius: $radius-full;
-    transition: $transition-base;
-
-    &:active {
-      opacity: 0.85;
-      transform: scale(0.97);
-    }
-  }
-
-  &__action-text {
+    @include sans-body;
     font-size: $font-sm;
-    color: $morandi-beige;
-    letter-spacing: 2rpx;
+    color: $color-ink;
+    margin-top: $space-lg;
+    letter-spacing: 0.06em;
+    text-decoration: underline;
+    text-underline-offset: 4rpx;
   }
 }
 </style>

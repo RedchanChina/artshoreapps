@@ -2,19 +2,19 @@
 @import './mixins';
 @import './animations';
 
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap');
+
 page {
-  background-color: $color-bg;
-  font-family: 'Georgia', 'Noto Serif SC', 'PingFang SC', 'Microsoft YaHei',
-    sans-serif;
-  color: $color-text-primary;
+  background-color: $color-surface;
+  font-family: $font-sans;
+  color: $color-ink;
   font-size: $font-base;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-view,
-text {
+view, text {
   box-sizing: border-box;
 }
 
@@ -25,41 +25,17 @@ image {
 }
 
 ::-webkit-scrollbar {
-  width: 6rpx;
-  height: 6rpx;
+  width: 0;
+  height: 0;
+  display: none;
 }
 
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: $color-border;
-  border-radius: $radius-full;
-}
-
-.text-center {
-  text-align: center;
-}
-
-.text-ellipsis {
-  @include ellipsis;
-}
-
-.morandi-text {
-  color: $color-text-secondary;
-  font-size: $font-sm;
-  letter-spacing: 1rpx;
-}
-
-.section-gap {
-  padding: $spacing-lg 0;
-}
+.text-center { text-align: center; }
+.text-ellipsis { @include ellipsis; }
 
 .page-container {
   min-height: 100vh;
-  padding: $spacing-base;
-  background-color: $color-bg;
+  background-color: $color-surface;
 }
 
 .safe-area-bottom {
@@ -71,16 +47,10 @@ image {
   padding-top: env(safe-area-inset-top);
 }
 
-.uni-tabbar {
-  background-color: $color-white;
-  border-top: 1rpx solid $color-border;
+.heading-serif {
+  @include serif-heading;
+}
 
-  .uni-tabbar__item {
-    color: $color-text-tertiary;
-    transition: $transition-base;
-
-    &--active {
-      color: $color-accent;
-    }
-  }
+.body-sans {
+  @include sans-body;
 }
