@@ -1,0 +1,176 @@
+{
+	"pages": [
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationStyle": "custom",
+				"enablePullDownRefresh": true,
+				"navigationBarTitleText": "ArtShop"
+			}
+		},
+		{
+			"path": "pages/gallery/index",
+			"style": {
+				"navigationBarTitleText": "作品",
+				"navigationStyle": "custom",
+				"enablePullDownRefresh": true,
+				"backgroundColor": "#FAFAF8"
+			}
+		},
+		{
+			"path": "pages/artist/index",
+			"style": {
+				"navigationStyle": "custom",
+				"enablePullDownRefresh": true,
+				"navigationBarTitleText": "艺术家",
+				"backgroundColor": "#FAFAF8"
+			}
+		},
+		{
+			"path": "pages/user/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "我的",
+				"backgroundColor": "#FAFAF8"
+			}
+		},
+		{
+			"path": "pages/detail/index",
+			"style": {
+				"navigationStyle": "custom",
+				"enableShareAppMessage": true,
+				"navigationBarTitleText": "作品详情"
+			}
+		},
+		{
+			"path": "pages/cart/index",
+			"style": {
+				"navigationBarTitleText": "购物车",
+				"enablePullDownRefresh": true,
+				"backgroundColor": "#FAFAF8"
+			}
+		},
+		{
+			"path": "pages/checkout/index",
+			"style": {
+				"navigationBarTitleText": "确认订单",
+				"backgroundColor": "#FAFAF8"
+			}
+		},
+		{
+			"path": "pages/order/index",
+			"style": {
+				"navigationBarTitleText": "我的订单",
+				"enablePullDownRefresh": true,
+				"backgroundColor": "#FAFAF8"
+			}
+		},
+		{
+			"path": "pages/community/index",
+			"style": {
+				"navigationStyle": "custom",
+				"enablePullDownRefresh": true,
+				"navigationBarTitleText": "艺术社区",
+				"backgroundColor": "#FAFAF8"
+			}
+		},
+		{
+			"path": "pages/marketing/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "营销中心",
+				"backgroundColor": "#FAFAF8"
+			}
+		},
+		{
+			"path": "pages/offline/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "线下体验",
+				"backgroundColor": "#FAFAF8"
+			}
+		},
+		{
+			"path": "pages/ar-preview/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "3D/AR预览",
+				"backgroundColor": "#F0ECE8"
+			}
+		},
+		{
+			"path": "pages/search/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "搜索",
+				"backgroundColor": "#FAFAF8"
+			}
+		},
+		{
+			"path": "pages/user/collections",
+			"style": {
+				"navigationBarTitleText": "我的收藏",
+				"backgroundColor": "#FAFAF8"
+			}
+		},
+		{
+			"path": "pages/user/addresses",
+			"style": {
+				"navigationBarTitleText": "地址管理",
+				"backgroundColor": "#FAFAF8"
+			}
+		},
+		{
+			"path": "pages/user/messages",
+			"style": {
+				"navigationBarTitleText": "消息中心",
+				"backgroundColor": "#FAFAF8"
+			}
+		}
+	],
+	"tabBar": {
+		"color": "#999999",
+		"selectedColor": "#8B7355",
+		"backgroundColor": "#FFFFFF",
+		"borderStyle": "white",
+		"list": [
+			{
+				"pagePath": "pages/index/index",
+				"text": "首页",
+				"iconPath": "static/tab/home.png",
+				"selectedIconPath": "static/tab/home-active.png"
+			},
+			{
+				"pagePath": "pages/gallery/index",
+				"text": "作品",
+				"iconPath": "static/tab/gallery.png",
+				"selectedIconPath": "static/tab/gallery-active.png"
+			},
+			{
+				"pagePath": "pages/artist/index",
+				"text": "艺术家",
+				"iconPath": "static/tab/artist.png",
+				"selectedIconPath": "static/tab/artist-active.png"
+			},
+			{
+				"pagePath": "pages/user/index",
+				"text": "我的",
+				"iconPath": "static/tab/user.png",
+				"selectedIconPath": "static/tab/user-active.png"
+			}
+		]
+	},
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "ArtShop",
+		"navigationBarBackgroundColor": "#FAFAF8",
+		"backgroundColor": "#FAFAF8",
+		"app-plus": {
+			"titleNView": {
+				"titleColor": "#2C2C2C",
+				"backgroundColor": "#FAFAF8",
+				"buttons": []
+			}
+		}
+	}
+}
