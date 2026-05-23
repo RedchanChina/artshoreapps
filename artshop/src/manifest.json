@@ -4,12 +4,12 @@
     "description": "让生活多一点艺术 / More Art In Life",
     "versionName": "1.0.0",
     "versionCode": "100",
-    "transformPx": false,
+    "transformPx": true,
     "h5": {
         "title": "ArtShop — More Art In Life",
         "template": "index.html",
         "router": {
-            "mode": "history",
+            "mode": "hash",
             "base": "/"
         },
         "sdkConfigs": {},
@@ -26,7 +26,7 @@
             "responsive": true,
             "deviceRatio": {}
         },
-        "flexible": true,
+        "flexible": false,
         "resetViewport": false
     },
     "app-plus": {
