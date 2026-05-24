@@ -2,7 +2,7 @@
   <view class="home-page">
     <view class="hero">
       <view class="desktop-nav">
-        <image class="nav-logo" :src="appStore.logoUrl" mode="heightFix" />
+        <image class="nav-logo" :src="appStore.logoUrl" mode="aspectFit" />
         <view class="nav-links">
           <text class="nav-link">作品</text>
           <text class="nav-link">艺术家</text>
@@ -20,7 +20,7 @@
         mode="aspectFill"
       />
       <view class="hero-brand">
-        <image class="brand-logo" :src="appStore.logoUrl" mode="heightFix" />
+        <image class="brand-logo" :src="appStore.logoUrl" mode="aspectFit" />
       </view>
       <view class="hero-slogan">
         <text class="slogan-text">让生活多一点艺术</text>
@@ -255,6 +255,7 @@ onPullDownRefresh(() => {
 
   .brand-logo {
     height: 48rpx;
+    max-width: 360rpx;
   }
 
   .hero-slogan {
@@ -553,6 +554,7 @@ onPullDownRefresh(() => {
 
     .nav-logo {
       height: 28px;
+      max-width: 140px;
     }
 
     .nav-links {

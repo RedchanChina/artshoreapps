@@ -135,6 +135,7 @@ onMounted(() => {
 .sidebar-logo {
   display: block;
   height: 36px;
+  max-width: 180px;
   margin-bottom: $space-xs;
 }
 
@@ -202,6 +203,7 @@ onMounted(() => {
 
 .topbar-logo {
   height: 28px;
+  max-width: 140px;
   margin-right: $space-sm;
 }
 
