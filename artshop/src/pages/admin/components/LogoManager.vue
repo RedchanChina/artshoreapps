@@ -10,19 +10,15 @@
       <view class="preview-box">
         <image :src="appStore.logoUrl" class="preview-logo" mode="aspectFit" />
       </view>
-      <text class="logo-status" v-if="appStore.isUsingCustomLogo">
-        正在使用自定义 LOGO
-      </text>
-      <text class="logo-status" v-else>
-        正在使用默认 LOGO
-      </text>
+      <text class="logo-status" v-if="appStore.isUsingCustomLogo">正在使用自定义 LOGO</text>
+      <text class="logo-status" v-else>正在使用默认 LOGO</text>
     </view>
 
     <view class="upload-section">
       <text class="label">上传新 LOGO</text>
-      <view class="upload-area" @tap="chooseImage">
+      <view class="upload-area" @tap="handleUpload">
         <view class="upload-placeholder" v-if="!tempImage">
-          <text class="upload-icon">📷</text>
+          <text class="upload-icon">上传图片</text>
           <text class="upload-text">点击选择图片</text>
           <text class="upload-hint">推荐比例 4:1，支持 PNG、JPG</text>
         </view>
@@ -31,17 +27,13 @@
 
       <view class="upload-actions" v-if="tempImage">
         <text class="cancel-btn" @tap="clearTempImage">取消</text>
-        <text class="save-btn" @tap="saveLogo" :class="{ disabled: uploading }">
-          {{ uploading ? '保存中...' : '保存并应用' }}
-        </text>
+        <text class="save-btn" @tap="saveLogo" :class="{ disabled: uploading }">{{ uploading ? '保存中...' : '保存并应用' }}</text>
       </view>
     </view>
 
     <view class="reset-section" v-if="appStore.isUsingCustomLogo">
       <text class="label">重置为默认</text>
-      <text class="reset-btn" @tap="confirmReset">
-        恢复默认 LOGO
-      </text>
+      <text class="reset-btn" @tap="confirmReset">恢复默认 LOGO</text>
     </view>
 
     <view class="tips-section">
@@ -63,33 +55,26 @@ const appStore = useAppStore()
 const tempImage = ref<string>('')
 const uploading = ref(false)
 
-function chooseImage() {
-  console.log('选择图片被点击')
-  
-  uni.chooseImage({
-    count: 1,
-    sizeType: ['original', 'compressed'],
-    sourceType: ['album', 'camera'],
-    success: (res) => {
-      console.log('选择图片成功', res)
-      if (res.tempFilePaths && res.tempFilePaths.length > 0) {
-        tempImage.value = res.tempFilePaths[0]
+function handleUpload() {
+  const input = document.createElement('input')
+  input.type = 'file'
+  input.accept = 'image/png,image/jpeg,image/jpg'
+  input.onchange = (e: any) => {
+    const file = e.target.files[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onload = (event: any) => {
+        tempImage.value = event.target.result
         uni.showToast({
           title: '已选择图片',
           icon: 'success',
           duration: 1500,
         })
       }
-    },
-    fail: (err) => {
-      console.error('选择图片失败', err)
-      uni.showToast({
-        title: '选择图片失败，请重试',
-        icon: 'none',
-        duration: 2000,
-      })
-    },
-  })
+      reader.readAsDataURL(file)
+    }
+  }
+  input.click()
 }
 
 function clearTempImage() {
@@ -242,7 +227,10 @@ onMounted(() => {
 }
 
 .upload-icon {
-  font-size: 40px;
+  font-family: $font-sans;
+  font-size: $font-lg;
+  font-weight: 500;
+  color: $color-accent;
   margin-bottom: $space-sm;
 }
 
