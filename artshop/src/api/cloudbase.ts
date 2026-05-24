@@ -29,7 +29,7 @@ export async function initCloudBase(envId?: string): Promise<cloudbase.app.App |
           cloudAvailable = false
           resolve(app)
         })
-    } catch () {
+    } catch (_e) {
       cloudAvailable = false
       resolve(null)
     }
