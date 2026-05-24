@@ -10,6 +10,11 @@ export async function initCloudBase(envId?: string): Promise<cloudbase.app.App |
   if (app) return app
   if (initPromise) return initPromise
 
+  const originalError = console.error
+  const originalWarn = console.warn
+  console.error = (..._args: any[]) => {}
+  console.warn = (..._args: any[]) => {}
+
   initPromise = new Promise((resolve) => {
     try {
       const instance = cloudbase.init({
@@ -22,15 +27,21 @@ export async function initCloudBase(envId?: string): Promise<cloudbase.app.App |
         .then(() => {
           app = instance
           cloudAvailable = true
+          console.error = originalError
+          console.warn = originalWarn
           resolve(app)
         })
         .catch(() => {
           app = instance
           cloudAvailable = false
+          console.error = originalError
+          console.warn = originalWarn
           resolve(app)
         })
     } catch (_e) {
       cloudAvailable = false
+      console.error = originalError
+      console.warn = originalWarn
       resolve(null)
     }
   })
