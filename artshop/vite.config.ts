@@ -4,6 +4,10 @@ import { resolve } from 'path'
 
 export default defineConfig({
   plugins: [uni()],
+  server: {
+    port: 5173,
+    host: true,
+  },
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src'),
