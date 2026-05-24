@@ -249,7 +249,7 @@ onPullDownRefresh(() => {
     position: absolute;
     top: 0;
     left: 0;
-    padding: 80rpx 48rpx 0;
+    padding: 60rpx 24rpx 0;
     z-index: 2;
   }
 
@@ -546,7 +546,7 @@ onPullDownRefresh(() => {
       left: 0;
       right: 0;
       z-index: 10;
-      padding: 20px 48px;
+      padding: 16px 24px;
       background: rgba(26, 26, 26, 0.35);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
@@ -600,7 +600,7 @@ onPullDownRefresh(() => {
     }
 
     .hero-slogan {
-      left: 48px;
+      left: 24px;
       bottom: 64px;
     }
 
