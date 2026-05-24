@@ -64,23 +64,56 @@ const tempImage = ref<string>('')
 const uploading = ref(false)
 
 function chooseImage() {
+  // #ifdef H5
+  // H5 环境使用原生 input
+  const input = document.createElement('input')
+  input.type = 'file'
+  input.accept = 'image/png,image/jpeg,image/jpg'
+  input.onchange = (e: any) => {
+    const file = e.target.files[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onload = (event: any) => {
+        tempImage.value = event.target.result
+        uni.showToast({
+          title: '已选择图片',
+          icon: 'success',
+          duration: 1500,
+        })
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+  input.click()
+  // #endif
+  
+  // #ifndef H5
+  // App 和小程序环境使用 uni.chooseImage
   uni.chooseImage({
     count: 1,
-    sizeType: ['compressed'],
+    sizeType: ['original', 'compressed'],
     sourceType: ['album', 'camera'],
     success: (res) => {
-      if (res.tempFilePaths && res.tempFilePaths[0]) {
+      console.log('选择图片成功', res)
+      if (res.tempFilePaths && res.tempFilePaths.length > 0) {
         tempImage.value = res.tempFilePaths[0]
+        uni.showToast({
+          title: '已选择图片',
+          icon: 'success',
+          duration: 1500,
+        })
       }
     },
     fail: (err) => {
       console.error('选择图片失败', err)
       uni.showToast({
-        title: '选择图片失败',
+        title: '请允许访问相册',
         icon: 'none',
+        duration: 2000,
       })
     },
   })
+  // #endif
 }
 
 function clearTempImage() {
@@ -88,20 +121,34 @@ function clearTempImage() {
 }
 
 function saveLogo() {
-  if (!tempImage.value) return
+  if (!tempImage.value) {
+    uni.showToast({
+      title: '请先选择图片',
+      icon: 'none',
+    })
+    return
+  }
+  
   if (uploading.value) return
 
   uploading.value = true
+
+  uni.showLoading({
+    title: '保存中...',
+    mask: true,
+  })
 
   setTimeout(() => {
     appStore.setCustomLogo(tempImage.value)
     tempImage.value = ''
     uploading.value = false
+    uni.hideLoading()
     uni.showToast({
       title: 'LOGO 已更新',
       icon: 'success',
+      duration: 2000,
     })
-  }, 500)
+  }, 800)
 }
 
 function confirmReset() {
