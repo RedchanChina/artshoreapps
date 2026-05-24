@@ -130,6 +130,7 @@ onMounted(() => {
 @import '@/styles/mixins.scss';
 
 .logo-manager {
+  width: 100%;
   max-width: 800px;
   margin: 0 auto;
 }

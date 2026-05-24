@@ -29,7 +29,7 @@
       </view>
       <view class="admin-content">
         <view v-if="!isDesktop" class="mobile-tabs">
-          <scroll-view scroll-x class="tabs-scroll">
+          <view class="tabs-scroll">
             <view
               v-for="item in menuItems"
               :key="item.key"
@@ -38,9 +38,9 @@
             >
               <text>{{ item.label }}</text>
             </view>
-          </scroll-view>
+          </view>
         </view>
-        <AdminDashboard v-if="currentTab === 'dashboard'" />
+        <AdminDashboard v-if="currentTab === 'dashboard'" @navigate="handleNavigate" />
         <AdminArtworks v-else-if="currentTab === 'artworks'" />
         <AdminArtists v-else-if="currentTab === 'artists'" />
         <AdminOrders v-else-if="currentTab === 'orders'" />
@@ -91,6 +91,10 @@ function goBack() {
   uni.switchTab({ url: '/pages/index/index' })
 }
 
+function handleNavigate(key: string) {
+  currentTab.value = key
+}
+
 onMounted(() => {
   appStore.loadStoredLogo()
   checkDesktop()
@@ -106,6 +110,7 @@ onMounted(() => {
   display: flex;
   min-height: 100vh;
   background-color: $color-bg;
+  width: 100%;
 }
 
 .admin-sidebar {
@@ -169,10 +174,12 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  width: 100%;
 }
 
 .admin-sidebar + .admin-main {
   margin-left: 240px;
+  width: calc(100% - 240px);
 }
 
 .admin-topbar {
@@ -184,6 +191,8 @@ onMounted(() => {
   justify-content: space-between;
   padding: 0 $space-xl;
   flex-shrink: 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .topbar-left {
@@ -226,6 +235,8 @@ onMounted(() => {
   flex: 1;
   padding: $space-xl;
   overflow-y: auto;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .mobile-tabs {
@@ -233,7 +244,11 @@ onMounted(() => {
 }
 
 .tabs-scroll {
+  display: flex;
+  overflow-x: auto;
   white-space: nowrap;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .tab-item {
@@ -245,6 +260,7 @@ onMounted(() => {
   cursor: pointer;
   border-bottom: 2px solid transparent;
   transition: all $duration-fast;
+  flex-shrink: 0;
 }
 
 .tab-item-active {
@@ -259,6 +275,7 @@ onMounted(() => {
 
   .admin-sidebar + .admin-main {
     margin-left: 0;
+    width: 100%;
   }
 }
 </style>

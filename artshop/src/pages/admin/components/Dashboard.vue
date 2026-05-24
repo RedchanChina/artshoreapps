@@ -9,20 +9,16 @@
     <view class="quick-actions">
       <text class="section-title">快捷操作</text>
       <view class="action-grid">
-        <view class="action-card" @tap="$emit('navigate', 'artworks')">
-          <text class="action-icon">🖼️</text>
+        <view class="action-card" @click="navigateTo('artworks')">
           <text class="action-text">管理作品</text>
         </view>
-        <view class="action-card" @tap="$emit('navigate', 'artists')">
-          <text class="action-icon">🎨</text>
+        <view class="action-card" @click="navigateTo('artists')">
           <text class="action-text">管理艺术家</text>
         </view>
-        <view class="action-card" @tap="$emit('navigate', 'orders')">
-          <text class="action-icon">📦</text>
+        <view class="action-card" @click="navigateTo('orders')">
           <text class="action-text">处理订单</text>
         </view>
-        <view class="action-card" @tap="$emit('navigate', 'community')">
-          <text class="action-icon">💬</text>
+        <view class="action-card" @click="navigateTo('community')">
           <text class="action-text">社区内容</text>
         </view>
       </view>
@@ -34,12 +30,18 @@
 import { ref, onMounted } from 'vue'
 import { getDashboardStats } from '@/api/admin'
 
+const emit = defineEmits(['navigate'])
+
 const stats = ref([
   { label: '作品总数', value: '-' },
   { label: '艺术家', value: '-' },
   { label: '订单数', value: '-' },
   { label: '用户数', value: '-' },
 ])
+
+function navigateTo(key: string) {
+  emit('navigate', key)
+}
 
 onMounted(async () => {
   try {
@@ -57,6 +59,13 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
+@import '@/styles/variables.scss';
+@import '@/styles/mixins.scss';
+
+.dashboard {
+  width: 100%;
+}
+
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -65,33 +74,35 @@ onMounted(async () => {
 }
 
 .stat-card {
-  background: #fff;
+  background: $color-surface;
   border-radius: 12px;
   padding: 20px;
   text-align: center;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  box-shadow: $shadow-subtle;
 }
 
 .stat-value {
   display: block;
+  font-family: $font-serif;
   font-size: 28px;
-  font-weight: 700;
-  color: #1a1a2e;
-  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  color: $color-text-primary;
 }
 
 .stat-label {
   display: block;
-  font-size: 13px;
-  color: #999;
+  font-family: $font-sans;
+  font-size: $font-sm;
+  color: $color-text-secondary;
   margin-top: 4px;
 }
 
 .section-title {
   display: block;
-  font-size: 16px;
+  font-family: $font-serif;
+  font-size: $font-lg;
   font-weight: 600;
-  color: #1a1a1a;
+  color: $color-text-primary;
   margin-bottom: 12px;
 }
 
@@ -102,27 +113,23 @@ onMounted(async () => {
 }
 
 .action-card {
-  background: #fff;
+  background: $color-surface;
   border-radius: 12px;
   padding: 20px 16px;
   text-align: center;
   cursor: pointer;
-  transition: box-shadow 0.2s;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  transition: all $duration-fast;
+  box-shadow: $shadow-subtle;
 }
 
 .action-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.action-icon {
-  display: block;
-  font-size: 28px;
-  margin-bottom: 8px;
+  box-shadow: $shadow-float;
+  transform: translateY(-2px);
 }
 
 .action-text {
-  font-size: 13px;
-  color: #666;
+  font-family: $font-sans;
+  font-size: $font-sm;
+  color: $color-accent;
 }
 </style>
