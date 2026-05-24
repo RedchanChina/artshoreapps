@@ -39,8 +39,7 @@
       >
         <image class="category-image" :src="cat.image" mode="aspectFill" />
         <view class="category-text">
-          <text class="category-name-en">{{ cat.nameEn }}</text>
-          <text class="category-name-cn">{{ cat.nameCn }}</text>
+          <text class="category-name">{{ cat.nameCn }}</text>
         </view>
       </view>
     </view>
@@ -107,12 +106,10 @@ const heroImage = 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prom
 
 const categories = [
   {
-    nameEn: 'Photography',
     nameCn: '摄影',
     image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=artistic%20photography%20black%20white%20moody%20film%20grain&image_size=landscape_16_9',
   },
   {
-    nameEn: 'Illustration',
     nameCn: '插画',
     image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=delicate%20illustration%20botanical%20soft%20watercolor%20pastel&image_size=landscape_16_9',
   },
@@ -344,20 +341,12 @@ onPullDownRefresh(() => {
       flex-direction: column;
     }
 
-    .category-name-en {
+    .category-name {
       @include serif-heading;
       font-size: $font-xxl;
       color: #ffffff;
       letter-spacing: 0.02em;
       line-height: 1.1;
-    }
-
-    .category-name-cn {
-      font-family: $font-sans;
-      font-size: $font-sm;
-      color: rgba(255, 255, 255, 0.65);
-      letter-spacing: 0.1em;
-      margin-top: 12rpx;
     }
   }
 }
