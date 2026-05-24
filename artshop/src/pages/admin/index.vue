@@ -11,7 +11,6 @@
         :class="['sidebar-item', currentTab === item.key && 'sidebar-item-active']"
         @tap="currentTab = item.key"
       >
-        <text class="sidebar-item-icon">{{ item.icon }}</text>
         <text class="sidebar-item-text">{{ item.label }}</text>
       </view>
     </view>
@@ -28,7 +27,7 @@
           <text class="topbar-back" @tap="goBack">返回前台</text>
         </view>
       </view>
-      <scroll-view scroll-y class="admin-content">
+      <view class="admin-content">
         <view v-if="!isDesktop" class="mobile-tabs">
           <scroll-view scroll-x class="tabs-scroll">
             <view
@@ -48,13 +47,13 @@
         <AdminCommunity v-else-if="currentTab === 'community'" />
         <AdminStores v-else-if="currentTab === 'stores'" />
         <AdminLogoManager v-else-if="currentTab === 'logo'" />
-      </scroll-view>
+      </view>
     </view>
   </view>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useAppStore } from '@/stores/app'
 import AdminDashboard from './components/Dashboard.vue'
 import AdminArtworks from './components/Artworks.vue'
@@ -65,19 +64,17 @@ import AdminStores from './components/Stores.vue'
 import AdminLogoManager from './components/LogoManager.vue'
 
 const appStore = useAppStore()
-appStore.loadStoredLogo()
-
 const currentTab = ref('dashboard')
 const isDesktop = ref(false)
 
 const menuItems = [
-  { key: 'dashboard', label: '数据概览', icon: '📊' },
-  { key: 'artworks', label: '作品管理', icon: '🖼️' },
-  { key: 'artists', label: '艺术家管理', icon: '🎨' },
-  { key: 'orders', label: '订单管理', icon: '📦' },
-  { key: 'community', label: '社区管理', icon: '💬' },
-  { key: 'stores', label: '门店管理', icon: '🏪' },
-  { key: 'logo', label: 'LOGO 管理', icon: '🎯' },
+  { key: 'dashboard', label: '数据概览' },
+  { key: 'artworks', label: '作品管理' },
+  { key: 'artists', label: '艺术家管理' },
+  { key: 'orders', label: '订单管理' },
+  { key: 'community', label: '社区管理' },
+  { key: 'stores', label: '门店管理' },
+  { key: 'logo', label: 'LOGO 管理' },
 ]
 
 const currentLabel = computed(() => {
@@ -94,73 +91,77 @@ function goBack() {
   uni.switchTab({ url: '/pages/index/index' })
 }
 
-checkDesktop()
-uni.onWindowResize(() => checkDesktop())
+onMounted(() => {
+  appStore.loadStoredLogo()
+  checkDesktop()
+  uni.onWindowResize(() => checkDesktop())
+})
 </script>
 
 <style lang="scss" scoped>
+@import '@/styles/variables.scss';
 @import '@/styles/mixins.scss';
 
 .admin-layout {
   display: flex;
   min-height: 100vh;
-  background: #f5f5f5;
+  background-color: $color-bg;
 }
 
 .admin-sidebar {
-  width: 220px;
-  background: #1a1a2e;
-  color: #fff;
+  width: 240px;
+  background-color: $color-surface;
+  border-right: 1px solid $color-border;
   flex-shrink: 0;
   position: fixed;
   left: 0;
   top: 0;
   bottom: 0;
   z-index: 100;
+  display: flex;
+  flex-direction: column;
 }
 
 .sidebar-header {
-  padding: 24px 20px 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: $space-xl $space-lg;
+  border-bottom: 1px solid $color-border;
 }
 
 .sidebar-logo {
   display: block;
   height: 36px;
-  margin-bottom: 4px;
+  margin-bottom: $space-xs;
 }
 
 .sidebar-subtitle {
   display: block;
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.5);
-  margin-top: 4px;
+  font-family: $font-sans;
+  font-size: $font-sm;
+  color: $color-text-secondary;
+  margin-top: $space-xs;
 }
 
 .sidebar-item {
   display: flex;
   align-items: center;
-  padding: 14px 20px;
+  padding: $space-md $space-lg;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all $duration-base $ease-out;
 }
 
 .sidebar-item:hover {
-  background: rgba(255, 255, 255, 0.06);
+  background-color: $color-bg-secondary;
 }
 
 .sidebar-item-active {
-  background: rgba(255, 255, 255, 0.1);
-  border-right: 3px solid #8b7355;
-}
-
-.sidebar-item-icon {
-  font-size: 18px;
-  margin-right: 12px;
+  background-color: $color-bg-secondary;
+  border-left: 2px solid $color-accent;
 }
 
 .sidebar-item-text {
-  font-size: 14px;
+  font-family: $font-sans;
+  font-size: $font-sm;
+  color: $color-text-primary;
 }
 
 .admin-main {
@@ -171,21 +172,18 @@ uni.onWindowResize(() => checkDesktop())
 }
 
 .admin-sidebar + .admin-main {
-  margin-left: 220px;
+  margin-left: 240px;
 }
 
 .admin-topbar {
-  height: 56px;
-  background: #fff;
-  border-bottom: 1px solid #e8e8e8;
+  height: 64px;
+  background-color: $color-surface;
+  border-bottom: 1px solid $color-border;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 24px;
+  padding: 0 $space-xl;
   flex-shrink: 0;
-  position: sticky;
-  top: 0;
-  z-index: 50;
 }
 
 .topbar-left {
@@ -195,35 +193,43 @@ uni.onWindowResize(() => checkDesktop())
 
 .topbar-logo {
   height: 28px;
-  margin-right: 8px;
+  margin-right: $space-sm;
 }
 
 .topbar-title-text {
-  font-size: 16px;
+  font-family: $font-sans;
+  font-size: $font-md;
   font-weight: 500;
-  color: #1a1a1a;
+  color: $color-text-primary;
 }
 
 .topbar-page-title {
-  font-size: 16px;
-  font-weight: 500;
-  color: #1a1a1a;
+  font-family: $font-serif;
+  font-size: $font-lg;
+  font-weight: 400;
+  color: $color-text-primary;
 }
 
 .topbar-back {
-  font-size: 13px;
-  color: #8b7355;
+  font-family: $font-sans;
+  font-size: $font-sm;
+  color: $color-accent;
   cursor: pointer;
+  transition: color $duration-fast;
+}
+
+.topbar-back:hover {
+  color: $color-accent-hover;
 }
 
 .admin-content {
   flex: 1;
-  padding: 20px;
+  padding: $space-xl;
   overflow-y: auto;
 }
 
 .mobile-tabs {
-  margin-bottom: 16px;
+  margin-bottom: $space-lg;
 }
 
 .tabs-scroll {
@@ -232,16 +238,18 @@ uni.onWindowResize(() => checkDesktop())
 
 .tab-item {
   display: inline-block;
-  padding: 10px 16px;
-  font-size: 14px;
-  color: #666;
+  padding: $space-sm $space-md;
+  font-family: $font-sans;
+  font-size: $font-sm;
+  color: $color-text-secondary;
   cursor: pointer;
   border-bottom: 2px solid transparent;
+  transition: all $duration-fast;
 }
 
 .tab-item-active {
-  color: #8b7355;
-  border-bottom-color: #8b7355;
+  color: $color-accent;
+  border-bottom-color: $color-accent;
 }
 
 @media (max-width: 1023px) {

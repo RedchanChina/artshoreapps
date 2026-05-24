@@ -1,64 +1,62 @@
 <template>
   <view class="logo-manager">
-    <view class="card">
-      <view class="card-header">
-        <text class="card-title">LOGO 管理</text>
-        <text class="card-desc">上传并管理商店 LOGO，将自动应用到整个应用</text>
+    <view class="section-header">
+      <text class="section-title">LOGO 管理</text>
+      <text class="section-desc">上传并管理商店 LOGO，将自动应用到整个应用</text>
+    </view>
+
+    <view class="preview-section">
+      <text class="label">当前 LOGO</text>
+      <view class="preview-box">
+        <image :src="appStore.logoUrl" class="preview-logo" mode="aspectFit" />
+      </view>
+      <text class="logo-status" v-if="appStore.isUsingCustomLogo">
+        正在使用自定义 LOGO
+      </text>
+      <text class="logo-status" v-else>
+        正在使用默认 LOGO
+      </text>
+    </view>
+
+    <view class="upload-section">
+      <text class="label">上传新 LOGO</text>
+      <view class="upload-area" @tap="chooseImage">
+        <view class="upload-placeholder" v-if="!tempImage">
+          <text class="upload-icon">上传图片</text>
+          <text class="upload-text">点击选择图片</text>
+          <text class="upload-hint">推荐比例 4:1，支持 PNG、JPG</text>
+        </view>
+        <image v-else :src="tempImage" class="upload-preview" mode="aspectFit" />
       </view>
 
-      <view class="preview-section">
-        <text class="section-label">当前 LOGO 预览</text>
-        <view class="preview-box">
-          <image :src="appStore.logoUrl" class="preview-logo" mode="aspectFit" />
-        </view>
-        <text class="logo-status" v-if="appStore.isUsingCustomLogo">
-          ✨ 正在使用自定义 LOGO
-        </text>
-        <text class="logo-status" v-else>
-          📄 正在使用默认 LOGO
-        </text>
-      </view>
-
-      <view class="upload-section">
-        <text class="section-label">上传新 LOGO</text>
-        <view class="upload-area" @tap="chooseImage">
-          <view class="upload-placeholder" v-if="!tempImage">
-            <text class="upload-icon">📷</text>
-            <text class="upload-text">点击选择图片</text>
-            <text class="upload-hint">推荐比例 4:1，支持 PNG、JPG</text>
-          </view>
-          <image v-else :src="tempImage" class="upload-preview" mode="aspectFit" />
-        </view>
-
-        <view class="upload-actions" v-if="tempImage">
-          <text class="cancel-btn" @tap="clearTempImage">取消</text>
-          <text class="save-btn" @tap="saveLogo" :class="{ disabled: uploading }">
-            {{ uploading ? '上传中...' : '保存并应用' }}
-          </text>
-        </view>
-      </view>
-
-      <view class="reset-section" v-if="appStore.isUsingCustomLogo">
-        <text class="section-label">重置为默认 LOGO</text>
-        <text class="reset-btn" @tap="confirmReset">
-          恢复默认 LOGO
+      <view class="upload-actions" v-if="tempImage">
+        <text class="cancel-btn" @tap="clearTempImage">取消</text>
+        <text class="save-btn" @tap="saveLogo" :class="{ disabled: uploading }">
+          {{ uploading ? '保存中...' : '保存并应用' }}
         </text>
       </view>
+    </view>
 
-      <view class="tips-section">
-        <text class="tips-title">使用提示</text>
-        <view class="tips-list">
-          <text class="tip-item">• 上传后将立即更新应用内所有 LOGO 显示</text>
-          <text class="tip-item">• 建议使用透明背景的 PNG 格式图片</text>
-          <text class="tip-item">• 图片尺寸建议：宽度 1200px，高度 300px</text>
-        </view>
+    <view class="reset-section" v-if="appStore.isUsingCustomLogo">
+      <text class="label">重置为默认</text>
+      <text class="reset-btn" @tap="confirmReset">
+        恢复默认 LOGO
+      </text>
+    </view>
+
+    <view class="tips-section">
+      <text class="tips-title">使用提示</text>
+      <view class="tips-list">
+        <text class="tip-item">上传后将立即更新应用内所有 LOGO 显示</text>
+        <text class="tip-item">建议使用透明背景的 PNG 格式图片</text>
+        <text class="tip-item">图片尺寸建议：宽度 1200px，高度 300px</text>
       </view>
     </view>
   </view>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useAppStore } from '@/stores/app'
 
 const appStore = useAppStore()
@@ -74,6 +72,13 @@ function chooseImage() {
       if (res.tempFilePaths && res.tempFilePaths[0]) {
         tempImage.value = res.tempFilePaths[0]
       }
+    },
+    fail: (err) => {
+      console.error('选择图片失败', err)
+      uni.showToast({
+        title: '选择图片失败',
+        icon: 'none',
+      })
     },
   })
 }
@@ -114,58 +119,64 @@ function confirmReset() {
     },
   })
 }
+
+onMounted(() => {
+  appStore.loadStoredLogo()
+})
 </script>
 
 <style lang="scss" scoped>
+@import '@/styles/variables.scss';
+@import '@/styles/mixins.scss';
+
 .logo-manager {
-  padding: 8px;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
-.card {
-  background: #fff;
-  border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 16px;
+.section-header {
+  margin-bottom: $space-2xl;
 }
 
-.card-header {
-  margin-bottom: 28px;
-}
-
-.card-title {
+.section-title {
   display: block;
-  font-size: 18px;
-  font-weight: 600;
-  color: #1a1a1a;
-  margin-bottom: 8px;
+  font-family: $font-serif;
+  font-size: $font-xl;
+  font-weight: 400;
+  color: $color-text-primary;
+  margin-bottom: $space-sm;
 }
 
-.card-desc {
+.section-desc {
   display: block;
-  font-size: 13px;
-  color: #8c8c8c;
+  font-family: $font-sans;
+  font-size: $font-sm;
+  color: $color-text-secondary;
 }
 
-.section-label {
+.preview-section,
+.upload-section,
+.reset-section {
+  margin-bottom: $space-2xl;
+}
+
+.label {
   display: block;
-  font-size: 14px;
+  font-family: $font-sans;
+  font-size: $font-sm;
   font-weight: 500;
-  color: #262626;
-  margin-bottom: 12px;
-}
-
-.preview-section {
-  margin-bottom: 32px;
+  color: $color-text-primary;
+  margin-bottom: $space-md;
 }
 
 .preview-box {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 32px;
-  background: #fafafa;
-  border-radius: 8px;
-  border: 1px dashed #d9d9d9;
+  padding: $space-xl;
+  background-color: $color-bg-secondary;
+  border-radius: $radius-lg;
+  border: 1px dashed $color-border;
 }
 
 .preview-logo {
@@ -176,13 +187,10 @@ function confirmReset() {
 .logo-status {
   display: block;
   text-align: center;
-  margin-top: 12px;
-  font-size: 13px;
-  color: #52c41a;
-}
-
-.upload-section {
-  margin-bottom: 32px;
+  margin-top: $space-md;
+  font-family: $font-sans;
+  font-size: $font-sm;
+  color: $color-success;
 }
 
 .upload-area {
@@ -190,17 +198,17 @@ function confirmReset() {
   justify-content: center;
   align-items: center;
   min-height: 200px;
-  background: #fafafa;
-  border-radius: 8px;
-  border: 1px dashed #d9d9d9;
+  background-color: $color-bg-secondary;
+  border-radius: $radius-lg;
+  border: 1px dashed $color-border;
   cursor: pointer;
-  transition: all 0.2s;
-  margin-bottom: 16px;
+  transition: all $duration-fast;
+  margin-bottom: $space-md;
 }
 
 .upload-area:hover {
-  border-color: #8b7355;
-  background: #fffaf5;
+  border-color: $color-accent;
+  background-color: #FAFAF8;
 }
 
 .upload-placeholder {
@@ -210,19 +218,24 @@ function confirmReset() {
 }
 
 .upload-icon {
-  font-size: 40px;
-  margin-bottom: 12px;
+  font-family: $font-sans;
+  font-size: $font-lg;
+  font-weight: 500;
+  color: $color-accent;
+  margin-bottom: $space-sm;
 }
 
 .upload-text {
-  font-size: 14px;
-  color: #262626;
-  margin-bottom: 4px;
+  font-family: $font-sans;
+  font-size: $font-sm;
+  color: $color-text-primary;
+  margin-bottom: $space-xs;
 }
 
 .upload-hint {
-  font-size: 12px;
-  color: #8c8c8c;
+  font-family: $font-sans;
+  font-size: $font-xs;
+  color: $color-text-tertiary;
 }
 
 .upload-preview {
@@ -233,28 +246,35 @@ function confirmReset() {
 .upload-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
+  gap: $space-md;
 }
 
 .cancel-btn {
-  padding: 10px 24px;
-  font-size: 14px;
-  color: #595959;
+  padding: $space-sm $space-lg;
+  font-family: $font-sans;
+  font-size: $font-sm;
+  color: $color-text-secondary;
   cursor: pointer;
+  transition: color $duration-fast;
+}
+
+.cancel-btn:hover {
+  color: $color-text-primary;
 }
 
 .save-btn {
-  padding: 10px 24px;
-  font-size: 14px;
-  color: #fff;
-  background: #8b7355;
-  border-radius: 6px;
+  padding: $space-sm $space-lg;
+  font-family: $font-sans;
+  font-size: $font-sm;
+  color: $color-white;
+  background-color: $color-accent;
+  border-radius: $radius-base;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all $duration-fast;
 }
 
 .save-btn:hover {
-  background: #7a6449;
+  background-color: $color-accent-hover;
 }
 
 .save-btn.disabled {
@@ -262,48 +282,47 @@ function confirmReset() {
   cursor: not-allowed;
 }
 
-.reset-section {
-  margin-bottom: 32px;
-}
-
 .reset-btn {
   display: inline-block;
-  padding: 10px 24px;
-  font-size: 14px;
-  color: #ff4d4f;
-  border: 1px solid #ff4d4f;
-  border-radius: 6px;
+  padding: $space-sm $space-lg;
+  font-family: $font-sans;
+  font-size: $font-sm;
+  color: $color-error;
+  border: 1px solid $color-error;
+  border-radius: $radius-base;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all $duration-fast;
 }
 
 .reset-btn:hover {
-  background: #fff2f0;
+  background-color: #FFF5F5;
 }
 
 .tips-section {
-  padding: 16px;
-  background: #f6ffed;
-  border: 1px solid #b7eb8f;
-  border-radius: 8px;
+  padding: $space-md;
+  background-color: #F5F9F5;
+  border: 1px solid #D4E5D4;
+  border-radius: $radius-lg;
 }
 
 .tips-title {
   display: block;
-  font-size: 14px;
+  font-family: $font-sans;
+  font-size: $font-sm;
   font-weight: 500;
-  color: #389e0d;
-  margin-bottom: 8px;
+  color: $color-success;
+  margin-bottom: $space-sm;
 }
 
 .tips-list {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: $space-xs;
 }
 
 .tip-item {
-  font-size: 12px;
-  color: #52c41a;
+  font-family: $font-sans;
+  font-size: $font-xs;
+  color: $color-success;
 }
 </style>
