@@ -247,15 +247,16 @@ onPullDownRefresh(() => {
 
   .hero-brand {
     position: absolute;
-    top: 0;
-    left: 0;
-    padding: 60rpx 24rpx 0;
+    top: 60rpx;
+    left: 24rpx;
     z-index: 2;
+    width: fit-content;
   }
 
   .brand-logo {
     height: 48rpx;
     max-width: 360rpx;
+    display: block;
   }
 
   .hero-slogan {
@@ -555,6 +556,7 @@ onPullDownRefresh(() => {
     .nav-logo {
       height: 28px;
       max-width: 140px;
+      display: block;
     }
 
     .nav-links {
