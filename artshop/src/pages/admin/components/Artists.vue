@@ -79,7 +79,7 @@ async function loadList() {
   try {
     const res = await getArtistList({ page: 1, pageSize: 100 })
     list.value = res.list
-  } catch (e) { console.error(e) }
+  } catch (e) {}
   loading.value = false
 }
 

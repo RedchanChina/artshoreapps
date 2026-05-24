@@ -136,7 +136,7 @@ async function loadArtists() {
   try {
     const res = await getArtistList({ page: 1, pageSize: 100 })
     artists.value = res.list
-  } catch (e) { console.error(e) }
+  } catch (e) {}
 }
 
 async function loadList() {
@@ -153,7 +153,7 @@ async function loadList() {
       list.value.push(...res.list)
     }
     hasMore.value = list.value.length < res.total
-  } catch (e) { console.error(e) }
+  } catch (e) {}
   loading.value = false
 }
 

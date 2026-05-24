@@ -90,8 +90,8 @@ const editingId = ref('')
 const storeForm = ref<any>({ name: '', address: '', businessHours: '', phone: '', latitude: '', longitude: '' })
 const exhibitionForm = ref<any>({ title: '', location: '', startDate: '', endDate: '', ticketPrice: '', description: '' })
 
-async function loadStores() { try { stores.value = await getStoreLocations() } catch (e) { console.error(e) } }
-async function loadExhibitions() { try { const res = await getExhibitions({ page: 1, pageSize: 50 }); exhibitions.value = res.list } catch (e) { console.error(e) } }
+async function loadStores() { try { stores.value = await getStoreLocations() } catch (e) {} }
+async function loadExhibitions() { try { const res = await getExhibitions({ page: 1, pageSize: 50 }); exhibitions.value = res.list } catch (e) {} }
 
 function openStoreForm(item?: any) {
   formType.value = 'store'

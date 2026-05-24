@@ -71,7 +71,7 @@ async function loadList() {
     const res = await adminGetOrders(params)
     if (page.value === 1) { list.value = res.list } else { list.value.push(...res.list) }
     hasMore.value = list.value.length < res.total
-  } catch (e) { console.error(e) }
+  } catch (e) {}
   loading.value = false
 }
 

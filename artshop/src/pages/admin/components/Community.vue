@@ -65,7 +65,7 @@ async function loadArticles() {
   try {
     const res = await getArticles({ page: 1, pageSize: 50 })
     articles.value = res.list
-  } catch (e) { console.error(e) }
+  } catch (e) {}
 }
 
 function openArticleForm(item?: any) {

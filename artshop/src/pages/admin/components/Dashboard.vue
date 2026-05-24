@@ -52,8 +52,8 @@ onMounted(async () => {
       { label: '订单数', value: String(data.orderCount) },
       { label: '用户数', value: String(data.userCount) },
     ]
-  } catch (e) {
-    console.error('获取统计数据失败', e)
+  } catch {
+    // CloudBase 不可用时保持默认值
   }
 })
 </script>
