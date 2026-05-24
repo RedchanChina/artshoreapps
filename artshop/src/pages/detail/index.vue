@@ -47,7 +47,7 @@
 
       <view class="specs">
         <view class="spec-group">
-          <text class="spec-label">SIZE</text>
+          <text class="spec-label">尺寸</text>
           <view class="spec-chips">
             <view
               v-for="size in uniqueSizes"
@@ -61,7 +61,7 @@
         </view>
 
         <view class="spec-group">
-          <text class="spec-label">MATERIAL</text>
+          <text class="spec-label">材质</text>
           <view class="spec-chips">
             <view
               v-for="material in uniqueMaterials"
@@ -75,7 +75,7 @@
         </view>
 
         <view class="spec-group">
-          <text class="spec-label">FRAME</text>
+          <text class="spec-label">装裱</text>
           <view class="spec-chips">
             <view
               v-for="frame in uniqueFrames"
@@ -90,12 +90,12 @@
       </view>
 
       <view class="preview-links">
-        <text class="preview-link" @click="goTo3DPreview">View in 3D →</text>
-        <text class="preview-link" @click="goToARPreview">View in AR →</text>
+        <text class="preview-link" @click="goTo3DPreview">3D预览 →</text>
+        <text class="preview-link" @click="goToARPreview">AR预览 →</text>
       </view>
 
       <view class="section">
-        <text class="section-heading">More by {{ artwork.artistName }}</text>
+        <text class="section-heading">更多{{ artwork.artistName }}的作品</text>
         <scroll-view class="artist-scroll" scroll-x :show-scrollbar="false">
           <view class="artist-scroll-inner">
             <view
@@ -113,7 +113,7 @@
       </view>
 
       <view class="section">
-        <text class="section-heading">You may also like</text>
+        <text class="section-heading">猜你也喜欢</text>
         <view class="related-grid">
           <view
             v-for="item in relatedWorks"
@@ -137,10 +137,10 @@
         <text :class="['fav-text', { 'fav-text--active': isFavorited }]">♡</text>
       </view>
       <view class="cart-action" @click="addToCart">
-        <text class="cart-action-text">ADD TO CART</text>
+        <text class="cart-action-text">加入购物车</text>
       </view>
       <view class="buy-action" @click="buyNow">
-        <text class="buy-action-text">BUY NOW</text>
+        <text class="buy-action-text">立即购买</text>
       </view>
     </view>
   </view>

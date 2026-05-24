@@ -19,11 +19,11 @@
         <image class="artist-avatar" :src="artist.avatar" mode="aspectFill" />
         <text class="artist-name">{{ artist.name }}</text>
         <text class="artist-bio">{{ artist.bio }}</text>
-        <text class="follow-link" @click="toggleFollow">{{ artist.isFollowing ? 'Following' : 'Follow →' }}</text>
+        <text class="follow-link" @click="toggleFollow">{{ artist.isFollowing ? '已关注' : '关注 →' }}</text>
       </view>
 
       <view class="artist-stats">
-        <text class="stats-text">{{ artistWorks.length }} Works · {{ formatCount(artist.followerCount) }} Followers</text>
+        <text class="stats-text">{{ artistWorks.length }} 作品 · {{ formatCount(artist.followerCount) }} 粉丝</text>
       </view>
 
       <view class="section-divider" />
@@ -64,17 +64,17 @@
         <view v-show="activeTab === 'story'" class="tab-panel">
           <view class="story-content">
             <view class="story-section">
-              <text class="story-heading">Philosophy</text>
+              <text class="story-heading">艺术理念</text>
               <text class="story-paragraph">{{ storyContent.philosophy }}</text>
             </view>
 
             <view class="story-section">
-              <text class="story-heading">Journey</text>
+              <text class="story-heading">艺术历程</text>
               <text class="story-paragraph">{{ storyContent.journey }}</text>
             </view>
 
             <view class="story-section">
-              <text class="story-heading">Interview</text>
+              <text class="story-heading">访谈</text>
               <view class="interview-block">
                 <view class="interview-item" v-for="(qa, index) in interviewQA" :key="index">
                   <text class="interview-question">Q: {{ qa.question }}</text>
@@ -119,12 +119,12 @@
             <input
               class="message-input"
               v-model="inputText"
-              placeholder="Type a message..."
+              placeholder="输入消息..."
               placeholder-class="message-input-placeholder"
               confirm-type="send"
               @confirm="sendMessage"
             />
-            <text class="send-link" @click="sendMessage">Send →</text>
+            <text class="send-link" @click="sendMessage">发送 →</text>
           </view>
         </view>
       </view>
@@ -271,9 +271,9 @@ const inputText = ref('')
 const safeAreaBottom = ref(0)
 
 const messages = ref([
-  { from: 'artist', text: 'Hello! Glad you\'re interested in my work. Feel free to ask anything.', time: '14:30' },
-  { from: 'user', text: 'I really love "Serene Hours". Could you tell me about the creative background?', time: '14:32' },
-  { from: 'artist', text: 'Thank you! "Serene Hours" was created in early 2024, during a period when I meditated every morning in my studio. This painting is a visual expression of that tranquil state.', time: '14:35' },
+  { from: 'artist', text: '您好！很高兴您对我的作品感兴趣，有什么问题随时问我。', time: '14:30' },
+  { from: 'user', text: '我非常喜欢《静谧时光》，能讲讲创作背景吗？', time: '14:32' },
+  { from: 'artist', text: '谢谢！《静谧时光》创作于2024年初，那时我每天早晨在工作室冥想。这幅画是那种宁静状态的视觉表达。', time: '14:35' },
 ])
 
 const filteredWorks = computed(() => {
@@ -330,7 +330,7 @@ function sendMessage() {
     const replyTimeStr = replyTime.getHours().toString().padStart(2, '0') + ':' + replyTime.getMinutes().toString().padStart(2, '0')
     messages.value.push({
       from: 'artist',
-      text: 'Thank you for your message. I\'ll get back to you shortly.',
+      text: '感谢您的留言，我会尽快回复您。',
       time: replyTimeStr,
     })
   }, 1000)

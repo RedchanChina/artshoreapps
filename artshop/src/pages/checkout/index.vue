@@ -13,7 +13,7 @@
             </text>
           </view>
           <view v-else class="address-empty" @tap="onAddAddress">
-            <text class="address-empty-text">Add Shipping Address →</text>
+            <text class="address-empty-text">添加收货地址 →</text>
           </view>
           <view class="section-divider" />
         </view>
@@ -39,7 +39,7 @@
         </view>
 
         <view class="items-section">
-          <text class="section-label">Order Items</text>
+          <text class="section-label">订单商品</text>
           <view class="order-items">
             <view
               v-for="item in selectedItems"
@@ -63,15 +63,15 @@
 
         <view class="fee-section">
           <view class="fee-row">
-            <text class="fee-label">Shipping</text>
-            <text class="fee-value">{{ shippingFee > 0 ? '¥' + formatPrice(shippingFee) : 'Free' }}</text>
+            <text class="fee-label">运费</text>
+            <text class="fee-value">{{ shippingFee > 0 ? '¥' + formatPrice(shippingFee) : '免运费' }}</text>
           </view>
 
           <view class="fee-row coupon-row" @tap="showCouponPicker = !showCouponPicker">
-            <text class="fee-label">Coupon</text>
+            <text class="fee-label">优惠券</text>
             <view class="coupon-right">
               <text v-if="selectedCoupon" class="coupon-discount">-¥{{ formatPrice(selectedCoupon.discount) }}</text>
-              <text v-else class="coupon-link">Apply Coupon →</text>
+              <text v-else class="coupon-link">使用优惠券 →</text>
             </view>
           </view>
 
@@ -90,17 +90,17 @@
               </view>
             </view>
             <view class="coupon-none" @tap="selectCoupon(null)">
-              <text class="coupon-none-text">No Coupon</text>
+              <text class="coupon-none-text">不使用优惠券</text>
             </view>
           </view>
 
           <view v-if="discountAmount > 0" class="fee-row">
-            <text class="fee-label">Discount</text>
+            <text class="fee-label">优惠</text>
             <text class="fee-value fee-value--discount">-¥{{ formatPrice(discountAmount) }}</text>
           </view>
 
           <view class="fee-row fee-row--total">
-            <text class="fee-label">Total</text>
+            <text class="fee-label">合计</text>
             <text class="fee-value fee-value--total">¥{{ formatPrice(actualPrice) }}</text>
           </view>
         </view>
@@ -108,15 +108,15 @@
         <view class="section-divider" />
 
         <view class="payment-section">
-          <text class="section-label">Payment</text>
+          <text class="section-label">支付方式</text>
           <view class="payment-options">
             <view class="payment-option" @tap="paymentMethod = 'WECHAT'">
               <text class="payment-radio">{{ paymentMethod === 'WECHAT' ? '●' : '○' }}</text>
-              <text class="payment-name">WeChat Pay</text>
+              <text class="payment-name">微信支付</text>
             </view>
             <view class="payment-option" @tap="paymentMethod = 'ALIPAY'">
               <text class="payment-radio">{{ paymentMethod === 'ALIPAY' ? '●' : '○' }}</text>
-              <text class="payment-name">Alipay</text>
+              <text class="payment-name">支付宝</text>
             </view>
           </view>
         </view>
@@ -124,11 +124,11 @@
         <view class="section-divider" />
 
         <view class="remark-section">
-          <text class="section-label">Remark</text>
+          <text class="section-label">备注</text>
           <input
             v-model="remark"
             class="remark-input"
-            placeholder="Optional"
+            placeholder="选填"
             placeholder-class="remark-placeholder"
             :maxlength="200"
           />
@@ -139,14 +139,14 @@
 
       <view class="bottom-bar" :style="{ paddingBottom: safeAreaBottom + 'px' }">
         <view class="bottom-total">
-          <text class="bottom-total-label">Total</text>
+          <text class="bottom-total-label">合计</text>
           <text class="bottom-total-price">¥{{ formatPrice(actualPrice) }}</text>
         </view>
         <view
           :class="['pay-btn', { 'pay-btn--loading': isPaying }]"
           @tap="onPay"
         >
-          <text class="pay-btn-text">{{ isPaying ? 'Processing...' : 'Pay Now' }}</text>
+          <text class="pay-btn-text">{{ isPaying ? '支付中...' : '立即支付' }}</text>
         </view>
       </view>
     </view>
@@ -154,11 +154,11 @@
     <view v-else class="success-page">
       <view class="success-content">
         <text class="success-check">✓</text>
-        <text class="success-title">Order Confirmed</text>
+        <text class="success-title">订单已确认</text>
         <text class="success-order-no">{{ orderNo }}</text>
         <view class="success-actions">
-          <text class="success-link" @tap="goToOrderDetail">View Order →</text>
-          <text class="success-link" @tap="goToHome">Back to Home →</text>
+          <text class="success-link" @tap="goToOrderDetail">查看订单 →</text>
+          <text class="success-link" @tap="goToHome">返回首页 →</text>
         </view>
       </view>
     </view>
@@ -250,7 +250,7 @@ function selectCoupon(coupon: Coupon | null) {
 function onPay() {
   if (isPaying.value) return
   if (!currentAddress.value) {
-    uni.showToast({ title: 'Please add address', icon: 'none' })
+    uni.showToast({ title: '请添加收货地址', icon: 'none' })
     return
   }
   if (selectedItems.value.length === 0) return

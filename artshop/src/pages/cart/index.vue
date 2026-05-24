@@ -11,8 +11,8 @@
         @refresherrefresh="onRefresh"
       >
         <view class="cart-header">
-          <text class="cart-title">Cart</text>
-          <text class="cart-count">{{ cartStore.totalCount }}</text>
+          <text class="cart-title">购物车</text>
+          <text class="cart-count">{{ cartStore.totalCount }} 件商品</text>
         </view>
 
         <view class="cart-list">
@@ -51,40 +51,40 @@
             </view>
 
             <view class="swipe-action" @tap="onDelete(item.artworkId)">
-              <text class="swipe-action-text">DELETE</text>
+              <text class="swipe-action-text">删除</text>
             </view>
           </view>
         </view>
 
         <view class="continue-link" @tap="goToGallery">
-          <text class="continue-link-text">Continue Browsing →</text>
+          <text class="continue-link-text">继续逛逛 →</text>
         </view>
       </scroll-view>
 
       <view class="bottom-bar" :style="{ paddingBottom: safeAreaBottom + 'px' }">
         <view class="select-all" @tap="cartStore.selectAll()">
           <text class="select-radio">{{ cartStore.allSelected ? '●' : '○' }}</text>
-          <text class="select-all-text">Select All</text>
+          <text class="select-all-text">全选</text>
         </view>
 
         <view class="bottom-right">
           <view class="total-info">
-            <text class="total-label">Total</text>
+            <text class="total-label">合计</text>
             <text class="total-price">¥{{ formatPrice(cartStore.selectedTotalPrice) }}</text>
           </view>
           <view
             :class="['checkout-btn', { 'checkout-btn--disabled': cartStore.selectedCount === 0 }]"
             @tap="goToCheckout"
           >
-            <text class="checkout-btn-text">Checkout</text>
+            <text class="checkout-btn-text">结算</text>
           </view>
         </view>
       </view>
     </view>
 
     <view v-else class="cart-empty">
-      <text class="empty-title">Your cart is empty</text>
-      <text class="empty-link" @tap="goToGallery">Browse Works →</text>
+      <text class="empty-title">购物车是空的</text>
+      <text class="empty-link" @tap="goToGallery">去逛逛 →</text>
     </view>
   </view>
 </template>
@@ -127,7 +127,7 @@ function decreaseQuantity(artworkId: string) {
 function onDelete(artworkId: string) {
   uni.showModal({
     title: '',
-    content: 'Remove this item?',
+    content: '确定要删除这件商品吗？',
     success: (res) => {
       if (res.confirm) {
         cartStore.removeItem(artworkId)

@@ -2,7 +2,7 @@
   <view class="community-page">
     <view class="community-header">
       <view class="header-top">
-        <text class="header-title">Community</text>
+        <text class="header-title">社区</text>
       </view>
       <view class="tab-bar">
         <view
@@ -72,7 +72,7 @@
             @tap="onTopicTap(topic)"
           >
             <text class="topic-name">#{{ topic.name }}</text>
-            <text class="topic-count">{{ topic.postCount }} posts</text>
+            <text class="topic-count">{{ topic.postCount }} 动态</text>
           </view>
         </view>
       </view>

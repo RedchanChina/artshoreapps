@@ -1,7 +1,7 @@
 <template>
   <view class="gallery-page">
     <view class="gallery-header">
-      <text class="gallery-title">Works</text>
+      <text class="gallery-title">作品</text>
       <view class="gallery-rule" />
     </view>
 
@@ -245,32 +245,32 @@ import type { Artwork } from '@/types/artwork'
 const artworkStore = useArtworkStore()
 
 const primaryCategories = [
-  { label: 'All', value: '' },
-  { label: 'Photography', value: 'photography' },
-  { label: 'Illustration', value: 'illustration' },
-  { label: 'Merchandise', value: 'merchandise' },
-  { label: 'Framing', value: 'framing' },
+  { label: '全部', value: '' },
+  { label: '摄影', value: 'photography' },
+  { label: '插画', value: 'illustration' },
+  { label: '周边', value: 'merchandise' },
+  { label: '装裱', value: 'framing' },
 ]
 
 const subCategoryMap: Record<string, { label: string; value: string }[]> = {
   photography: [
-    { label: 'Landscape', value: 'landscape' },
-    { label: 'Portrait', value: 'portrait' },
-    { label: 'Abstract', value: 'abstract' },
-    { label: 'Vintage', value: 'vintage' },
+    { label: '风光', value: 'landscape' },
+    { label: '人像', value: 'portrait' },
+    { label: '抽象', value: 'abstract' },
+    { label: '复古', value: 'vintage' },
   ],
   illustration: [
-    { label: 'Trendy', value: 'trendy' },
-    { label: 'Healing', value: 'healing' },
-    { label: 'Hand-drawn', value: 'handdrawn' },
+    { label: '潮流', value: 'trendy' },
+    { label: '治愈', value: 'healing' },
+    { label: '手绘', value: 'handdrawn' },
   ],
 }
 
 const sortCycle = [
-  { label: 'Latest ↓', value: 'newest' },
-  { label: 'Price ↓', value: 'price_desc' },
-  { label: 'Price ↑', value: 'price_asc' },
-  { label: 'Popular ↓', value: 'sales' },
+  { label: '最新 ↓', value: 'newest' },
+  { label: '价格 ↓', value: 'price_desc' },
+  { label: '价格 ↑', value: 'price_asc' },
+  { label: '人气 ↓', value: 'sales' },
 ]
 
 const sizeOptions = [

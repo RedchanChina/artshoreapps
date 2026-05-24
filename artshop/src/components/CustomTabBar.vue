@@ -5,7 +5,7 @@
         v-for="(tab, index) in tabs"
         :key="index"
         class="custom-tab-bar__item"
-        :class="{ 'custom-tab-bar__item--active': current === index"
+        :class="{ 'custom-tab-bar__item--active': current === index}"
         @tap="handleTabChange(index)"
       >
         <text class="custom-tab-bar__label">{{ tab.label }}</text>
@@ -15,9 +15,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useI18n } from 'vue-i18n'
-
 const props = defineProps<{
   current: number
 }>()
@@ -26,19 +23,17 @@ const emit = defineEmits<{
   change: [index: number]
 }>()
 
-const { t } = useI18n()
-
-const tabs = computed(() => [
-  { label: t('tabBar.home'), path: '/pages/index/index' },
-  { label: t('tabBar.works'), path: '/pages/gallery/index' },
-  { label: t('tabBar.artists'), path: '/pages/artist/index' },
-  { label: t('tabBar.mine'), path: '/pages/user/index' },
-])
+const tabs = [
+  { label: '首页', path: '/pages/index/index' },
+  { label: '作品', path: '/pages/gallery/index' },
+  { label: '艺术家', path: '/pages/artist/index' },
+  { label: '我的', path: '/pages/user/index' },
+]
 
 const handleTabChange = (index: number) => {
   if (props.current === index) return
   emit('change', index)
-  uni.switchTab({ url: tabs.value[index].path })
+  uni.switchTab({ url: tabs[index].path })
 }
 </script>
 

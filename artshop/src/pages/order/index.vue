@@ -57,28 +57,28 @@
                 v-if="order.status === 'PENDING_PAYMENT'"
                 class="order-action"
                 @tap.stop="onPay(order)"
-              >Pay</text>
+              >去支付</text>
               <text
                 v-if="order.status === 'SHIPPED'"
                 class="order-action"
                 @tap.stop="onConfirmReceive(order)"
-              >Confirm</text>
+              >确认收货</text>
               <text
                 v-if="order.status === 'COMPLETED' || order.status === 'SHIPPED'"
                 class="order-action"
                 @tap.stop="onAfterSale(order)"
-              >Refund</text>
+              >退款/售后</text>
             </view>
           </view>
         </view>
       </view>
 
       <view v-if="!loading && filteredOrders.length === 0" class="empty-state">
-        <text class="empty-text">No orders yet</text>
+        <text class="empty-text">暂无订单</text>
       </view>
 
       <view v-if="loading" class="loading-more">
-        <text class="loading-more-text">Loading...</text>
+        <text class="loading-more-text">加载中...</text>
       </view>
 
       <view v-if="!hasMore && filteredOrders.length > 0" class="no-more">
@@ -262,11 +262,11 @@ const filteredOrders = computed(() => {
 
 const getStatusLabel = (status: string): string => {
   const map: Record<string, string> = {
-    PENDING_PAYMENT: 'Pending',
-    PENDING_SHIPMENT: 'Processing',
-    SHIPPED: 'Shipped',
-    COMPLETED: 'Completed',
-    AFTER_SALE: 'Refund',
+    PENDING_PAYMENT: '待付款',
+    PENDING_SHIPMENT: '处理中',
+    SHIPPED: '已发货',
+    COMPLETED: '已完成',
+    AFTER_SALE: '售后',
   }
   return map[status] || status
 }
@@ -302,7 +302,7 @@ const onPay = (order: Order) => {
 const onConfirmReceive = (order: Order) => {
   uni.showModal({
     title: '',
-    content: 'Confirm receipt?',
+    content: '确定已收到货品？',
     success: (res) => {
       if (res.confirm) {
         order.status = OrderStatus.COMPLETED

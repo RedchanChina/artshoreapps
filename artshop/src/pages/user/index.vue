@@ -13,40 +13,36 @@
     <view class="section-divider" />
 
     <view class="orders-section">
-      <text class="section-heading">My Orders</text>
+      <text class="section-heading">我的订单</text>
       <view class="order-links">
-        <text class="order-link" @tap="onOrderEntryTap('PENDING_PAYMENT')">Pending</text>
-        <text class="order-link" @tap="onOrderEntryTap('SHIPPED')">Shipped</text>
-        <text class="order-link" @tap="onOrderEntryTap('COMPLETED')">Completed</text>
-        <text class="order-link" @tap="onOrderEntryTap('AFTER_SALE')">Refund</text>
+        <text class="order-link" @tap="onOrderEntryTap('PENDING_PAYMENT')">待付款</text>
+        <text class="order-link" @tap="onOrderEntryTap('SHIPPED')">已发货</text>
+        <text class="order-link" @tap="onOrderEntryTap('COMPLETED')">已完成</text>
+        <text class="order-link" @tap="onOrderEntryTap('AFTER_SALE')">退款/售后</text>
       </view>
     </view>
 
     <view class="section-divider" />
 
     <view class="func-list">
-      <view class="func-row" @tap="onLanguageChange">
-        <text class="func-label">🌐 语言 / Language</text>
-        <text class="func-arrow">→</text>
-      </view>
       <view class="func-row" @tap="onFuncItemTap('collections')">
-        <text class="func-label">My Collections</text>
+        <text class="func-label">我的收藏</text>
         <text class="func-arrow">→</text>
       </view>
       <view class="func-row" @tap="onFuncItemTap('addresses')">
-        <text class="func-label">Addresses</text>
+        <text class="func-label">收货地址</text>
         <text class="func-arrow">→</text>
       </view>
       <view class="func-row" @tap="onFuncItemTap('coupons')">
-        <text class="func-label">Coupons</text>
+        <text class="func-label">优惠券</text>
         <text class="func-arrow">→</text>
       </view>
       <view class="func-row" @tap="onFuncItemTap('messages')">
-        <text class="func-label">Messages</text>
+        <text class="func-label">消息中心</text>
         <text class="func-arrow">→</text>
       </view>
       <view class="func-row" @tap="onFuncItemTap('about')">
-        <text class="func-label">About</text>
+        <text class="func-label">关于我们</text>
         <text class="func-arrow">→</text>
       </view>
       <view class="func-row" @tap="onFuncItemTap('admin')">
@@ -58,16 +54,16 @@
     <view class="section-divider" />
 
     <view class="member-section">
-      <text class="section-heading">Membership</text>
+      <text class="section-heading">会员权益</text>
       <text class="member-level">{{ memberLevelName }}</text>
-      <text class="member-points">{{ mockUser.points }} Points</text>
-      <text class="member-benefit">Exclusive discounts · Free shipping · Priority access</text>
+      <text class="member-points">{{ mockUser.points }} 积分</text>
+      <text class="member-benefit">专属折扣 · 免运费 · 优先体验</text>
     </view>
 
     <view class="section-divider" />
 
     <view class="logout-section">
-      <text class="logout-link" @tap="onLoginLogout">{{ isLoggedIn ? 'Log Out' : 'Log In' }}</text>
+      <text class="logout-link" @tap="onLoginLogout">{{ isLoggedIn ? '退出登录' : '登录' }}</text>
     </view>
 
     <view class="bottom-spacer" />
@@ -76,20 +72,17 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { useI18n } from 'vue-i18n'
 import { useUserStore } from '@/stores/user'
-import { setLanguage } from '@/locales'
 
-const { t, locale } = useI18n()
 const userStore = useUserStore()
 
 const isLoggedIn = computed(() => userStore.isLoggedIn)
-const memberLevelName = computed(() => userStore.memberLevelName || 'Standard Member')
+const memberLevelName = computed(() => userStore.memberLevelName || '标准会员')
 
 const mockUser = ref({
-  nickname: 'Art Voyager',
+  nickname: '艺术行者',
   avatar: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=abstract%20morandi%20colors%20artistic%20avatar%20soft%20beige%20minimalist&image_size=portrait_4_3',
-  bio: 'Illuminating life through art',
+  bio: '用艺术照亮生活',
   memberLevel: 2,
   points: 2680,
 })
@@ -113,17 +106,11 @@ const onFuncItemTap = (key: string) => {
   }
 }
 
-const onLanguageChange = () => {
-  const currentLang = locale.value
-  const newLang = currentLang === 'zh-CN' ? 'en-US' : 'zh-CN'
-  setLanguage(newLang)
-}
-
 const onLoginLogout = () => {
   if (isLoggedIn.value) {
     uni.showModal({
       title: '',
-      content: 'Log out?',
+      content: '确定要退出登录吗？',
       success: (res) => {
         if (res.confirm) {
           userStore.logout()

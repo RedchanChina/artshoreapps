@@ -4,14 +4,14 @@
       <view class="desktop-nav">
         <image class="nav-logo" src="/static/logo.png" mode="heightFix" />
         <view class="nav-links">
-          <text class="nav-link">{{ t('nav.works') }}</text>
-          <text class="nav-link">{{ t('nav.artists') }}</text>
-          <text class="nav-link">{{ t('nav.community') }}</text>
-          <text class="nav-link">{{ t('nav.about') }}</text>
+          <text class="nav-link">作品</text>
+          <text class="nav-link">艺术家</text>
+          <text class="nav-link">社区</text>
+          <text class="nav-link">关于</text>
         </view>
         <view class="nav-actions">
-          <text class="nav-action">{{ t('nav.cart') }}</text>
-          <text class="nav-action">{{ t('nav.account') }}</text>
+          <text class="nav-action">购物车</text>
+          <text class="nav-action">账户</text>
         </view>
       </view>
       <image
@@ -23,7 +23,7 @@
         <image class="brand-logo" src="/static/logo.png" mode="heightFix" />
       </view>
       <view class="hero-slogan">
-        <text class="slogan-text">{{ t('home.slogan') }}</text>
+        <text class="slogan-text">让生活多一点艺术</text>
       </view>
       <view class="hero-scroll-indicator">
         <view class="scroll-line" />
@@ -47,7 +47,7 @@
 
     <view class="section editions-section">
       <view class="section-heading">
-        <text class="section-title">Limited Editions</text>
+        <text class="section-title">限量版画</text>
       </view>
       <scroll-view class="editions-scroll" scroll-x :show-scrollbar="false">
         <view class="editions-list">
@@ -60,7 +60,7 @@
             <view class="edition-image-wrap">
               <image class="edition-image" :src="item.image" mode="aspectFill" />
               <view v-if="item.soldOut" class="sold-out-overlay">
-                <text class="sold-out-text">SOLD OUT</text>
+                <text class="sold-out-text">已售罄</text>
               </view>
             </view>
             <text class="edition-title">{{ item.title }}</text>
@@ -72,7 +72,7 @@
 
     <view class="section artists-section">
       <view class="section-heading">
-        <text class="section-title">Artists</text>
+        <text class="section-title">艺术家</text>
       </view>
       <scroll-view class="artists-scroll" scroll-x :show-scrollbar="false">
         <view class="artists-list">
@@ -91,7 +91,7 @@
 
     <view class="section store-section">
       <view class="store-link" @tap="onNavigate">
-        <text class="store-text">Visit Us — Shanghai</text>
+        <text class="store-text">线下空间 — 上海</text>
         <text class="store-arrow">→</text>
       </view>
     </view>
@@ -102,9 +102,6 @@
 
 <script setup lang="ts">
 import { onReachBottom, onPullDownRefresh } from '@dcloudio/uni-app'
-import { useI18n } from 'vue-i18n'
-
-const { t } = useI18n()
 
 const heroImage = 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=abstract%20oil%20painting%20morandi%20colors%20soft%20beige%20minimalist%20art&image_size=landscape_16_9'
 
