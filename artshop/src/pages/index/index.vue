@@ -4,14 +4,14 @@
       <view class="desktop-nav">
         <image class="nav-logo" src="/static/logo.png" mode="heightFix" />
         <view class="nav-links">
-          <text class="nav-link">Works</text>
-          <text class="nav-link">Artists</text>
-          <text class="nav-link">Community</text>
-          <text class="nav-link">About</text>
+          <text class="nav-link">作品 Works</text>
+          <text class="nav-link">艺术家 Artists</text>
+          <text class="nav-link">社区 Community</text>
+          <text class="nav-link">关于 About</text>
         </view>
         <view class="nav-actions">
-          <text class="nav-action">Cart (0)</text>
-          <text class="nav-action">Account</text>
+          <text class="nav-action">购物车 Cart</text>
+          <text class="nav-action">账户 Account</text>
         </view>
       </view>
       <image

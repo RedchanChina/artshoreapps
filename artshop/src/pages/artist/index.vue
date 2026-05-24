@@ -196,10 +196,10 @@ const interviewQA = [
 ]
 
 const tabs = [
-  { label: 'Works', value: 'works' },
-  { label: 'Story', value: 'story' },
-  { label: 'Exhibitions', value: 'exhibitions' },
-  { label: 'Message', value: 'message' },
+  { label: '作品 Works', value: 'works' },
+  { label: '故事 Story', value: 'story' },
+  { label: '展览 Exhibitions', value: 'exhibitions' },
+  { label: '留言 Message', value: 'message' },
 ]
 
 const artistWorks = ref([

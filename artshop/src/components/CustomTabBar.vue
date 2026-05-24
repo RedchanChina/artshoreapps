@@ -24,10 +24,10 @@ const emit = defineEmits<{
 }>()
 
 const tabs = [
-  { label: '首页', path: '/pages/index/index' },
-  { label: '作品', path: '/pages/gallery/index' },
-  { label: '艺术家', path: '/pages/artist/index' },
-  { label: '我的', path: '/pages/user/index' },
+  { label: '首页 Home', path: '/pages/index/index' },
+  { label: '作品 Works', path: '/pages/gallery/index' },
+  { label: '艺术家 Artists', path: '/pages/artist/index' },
+  { label: '我的 My', path: '/pages/user/index' },
 ]
 
 const handleTabChange = (index: number) => {

@@ -65,12 +65,12 @@ const currentTab = ref('dashboard')
 const isDesktop = ref(false)
 
 const menuItems = [
-  { key: 'dashboard', label: '数据概览', icon: '📊' },
-  { key: 'artworks', label: '作品管理', icon: '🖼️' },
-  { key: 'artists', label: '艺术家管理', icon: '🎨' },
-  { key: 'orders', label: '订单管理', icon: '📦' },
-  { key: 'community', label: '社区管理', icon: '💬' },
-  { key: 'stores', label: '门店管理', icon: '🏪' },
+  { key: 'dashboard', label: '数据概览 Dashboard', icon: '📊' },
+  { key: 'artworks', label: '作品管理 Artworks', icon: '🖼️' },
+  { key: 'artists', label: '艺术家管理 Artists', icon: '🎨' },
+  { key: 'orders', label: '订单管理 Orders', icon: '📦' },
+  { key: 'community', label: '社区管理 Community', icon: '💬' },
+  { key: 'stores', label: '门店管理 Stores', icon: '🏪' },
 ]
 
 const currentLabel = computed(() => {

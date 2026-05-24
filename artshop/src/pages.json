@@ -144,25 +144,25 @@
 		"list": [
 			{
 				"pagePath": "pages/index/index",
-				"text": "首页",
+				"text": "首页 Home",
 				"iconPath": "static/tab/home.png",
 				"selectedIconPath": "static/tab/home-active.png"
 			},
 			{
 				"pagePath": "pages/gallery/index",
-				"text": "作品",
+				"text": "作品 Works",
 				"iconPath": "static/tab/gallery.png",
 				"selectedIconPath": "static/tab/gallery-active.png"
 			},
 			{
 				"pagePath": "pages/artist/index",
-				"text": "艺术家",
+				"text": "艺术家 Artists",
 				"iconPath": "static/tab/artist.png",
 				"selectedIconPath": "static/tab/artist-active.png"
 			},
 			{
 				"pagePath": "pages/user/index",
-				"text": "我的",
+				"text": "我的 My",
 				"iconPath": "static/tab/user.png",
 				"selectedIconPath": "static/tab/user-active.png"
 			}
