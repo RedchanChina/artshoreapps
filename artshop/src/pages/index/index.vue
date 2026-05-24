@@ -2,7 +2,7 @@
   <view class="home-page">
     <view class="hero">
       <view class="desktop-nav">
-        <image class="nav-logo" src="/static/logo.png" mode="heightFix" />
+        <image class="nav-logo" :src="appStore.logoUrl" mode="heightFix" />
         <view class="nav-links">
           <text class="nav-link">作品</text>
           <text class="nav-link">艺术家</text>
@@ -20,7 +20,7 @@
         mode="aspectFill"
       />
       <view class="hero-brand">
-        <image class="brand-logo" src="/static/logo.png" mode="heightFix" />
+        <image class="brand-logo" :src="appStore.logoUrl" mode="heightFix" />
       </view>
       <view class="hero-slogan">
         <text class="slogan-text">让生活多一点艺术</text>
@@ -101,6 +101,10 @@
 
 <script setup lang="ts">
 import { onReachBottom, onPullDownRefresh } from '@dcloudio/uni-app'
+import { useAppStore } from '@/stores/app'
+
+const appStore = useAppStore()
+appStore.loadStoredLogo()
 
 const heroImage = 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=abstract%20oil%20painting%20morandi%20colors%20soft%20beige%20minimalist%20art&image_size=landscape_16_9'
 

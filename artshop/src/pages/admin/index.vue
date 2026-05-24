@@ -2,7 +2,7 @@
   <view class="admin-layout">
     <view class="admin-sidebar" v-if="isDesktop">
       <view class="sidebar-header">
-        <image class="sidebar-logo" src="/static/logo.png" mode="heightFix" />
+        <image class="sidebar-logo" :src="appStore.logoUrl" mode="heightFix" />
         <text class="sidebar-subtitle">后台管理</text>
       </view>
       <view
@@ -18,7 +18,7 @@
     <view class="admin-main">
       <view class="admin-topbar">
         <view class="topbar-left" v-if="!isDesktop">
-          <image class="topbar-logo" src="/static/logo.png" mode="heightFix" />
+          <image class="topbar-logo" :src="appStore.logoUrl" mode="heightFix" />
           <text class="topbar-title-text">后台管理</text>
         </view>
         <view class="topbar-left" v-else>
@@ -47,6 +47,7 @@
         <AdminOrders v-else-if="currentTab === 'orders'" />
         <AdminCommunity v-else-if="currentTab === 'community'" />
         <AdminStores v-else-if="currentTab === 'stores'" />
+        <AdminLogoManager v-else-if="currentTab === 'logo'" />
       </scroll-view>
     </view>
   </view>
@@ -54,12 +55,17 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useAppStore } from '@/stores/app'
 import AdminDashboard from './components/Dashboard.vue'
 import AdminArtworks from './components/Artworks.vue'
 import AdminArtists from './components/Artists.vue'
 import AdminOrders from './components/Orders.vue'
 import AdminCommunity from './components/Community.vue'
 import AdminStores from './components/Stores.vue'
+import AdminLogoManager from './components/LogoManager.vue'
+
+const appStore = useAppStore()
+appStore.loadStoredLogo()
 
 const currentTab = ref('dashboard')
 const isDesktop = ref(false)
@@ -71,6 +77,7 @@ const menuItems = [
   { key: 'orders', label: '订单管理', icon: '📦' },
   { key: 'community', label: '社区管理', icon: '💬' },
   { key: 'stores', label: '门店管理', icon: '🏪' },
+  { key: 'logo', label: 'LOGO 管理', icon: '🎯' },
 ]
 
 const currentLabel = computed(() => {
