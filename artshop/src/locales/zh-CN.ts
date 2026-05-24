@@ -39,8 +39,7 @@ export default {
     mine: '我的',
   },
   home: {
-    sloganZh: '让生活多一点艺术',
-    sloganEn: 'More Art In Life',
+    slogan: '让生活多一点艺术',
     shopName: 'ArtShop 旗舰空间',
   },
   admin: {

@@ -78,7 +78,7 @@
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useUserStore } from '@/stores/user'
-import i18n, { setLanguage } from '@/locales'
+import { setLanguage } from '@/locales'
 
 const { t, locale } = useI18n()
 const userStore = useUserStore()
@@ -114,14 +114,9 @@ const onFuncItemTap = (key: string) => {
 }
 
 const onLanguageChange = () => {
-  uni.showActionSheet({
-    itemList: [t('common.languageChinese'), t('common.languageEnglish')],
-    success: (res) => {
-      const newLocale = res.tapIndex === 0 ? 'zh-CN' : 'en-US'
-      locale.value = newLocale
-      setLanguage(newLocale)
-    },
-  })
+  const currentLang = locale.value
+  const newLang = currentLang === 'zh-CN' ? 'en-US' : 'zh-CN'
+  setLanguage(newLang)
 }
 
 const onLoginLogout = () => {

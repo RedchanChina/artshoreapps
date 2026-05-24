@@ -39,8 +39,7 @@ export default {
     mine: 'Mine',
   },
   home: {
-    sloganZh: 'More Art In Life',
-    sloganEn: 'More Art In Life',
+    slogan: 'More Art In Life',
     shopName: 'ArtShop Flagship Space',
   },
   admin: {

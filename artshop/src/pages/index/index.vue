@@ -23,8 +23,7 @@
         <image class="brand-logo" src="/static/logo.png" mode="heightFix" />
       </view>
       <view class="hero-slogan">
-        <text class="slogan-cn">{{ t('home.sloganCn') }}</text>
-        <text class="slogan-en">{{ t('home.sloganEn') }}</text>
+        <text class="slogan-text">{{ t('home.slogan') }}</text>
       </view>
       <view class="hero-scroll-indicator">
         <view class="scroll-line" />
@@ -269,23 +268,13 @@ onPullDownRefresh(() => {
     flex-direction: column;
   }
 
-  .slogan-cn {
+  .slogan-text {
     font-family: $font-serif;
     font-size: 56rpx;
     font-weight: 400;
     color: #ffffff;
     letter-spacing: 0.04em;
     line-height: 1.2;
-  }
-
-  .slogan-en {
-    font-family: $font-sans;
-    font-size: $font-sm;
-    font-weight: 400;
-    color: rgba(255, 255, 255, 0.7);
-    letter-spacing: 0.15em;
-    margin-top: 16rpx;
-    text-transform: uppercase;
   }
 
   .hero-scroll-indicator {
@@ -623,13 +612,8 @@ onPullDownRefresh(() => {
       bottom: 64px;
     }
 
-    .slogan-cn {
+    .slogan-text {
       font-size: 36px;
-    }
-
-    .slogan-en {
-      font-size: 14px;
-      margin-top: 12px;
     }
 
     .hero-scroll-indicator {
@@ -725,13 +709,8 @@ onPullDownRefresh(() => {
 
 @media (min-width: 1024px) {
   .hero {
-    .slogan-cn {
+    .slogan-text {
       font-size: 48px;
-    }
-
-    .slogan-en {
-      font-size: 16px;
-      margin-top: 16px;
     }
   }
 

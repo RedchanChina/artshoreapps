@@ -32,6 +32,11 @@ export function setLanguage(lang: 'zh-CN' | 'en-US') {
   try {
     uni.setStorageSync(STORAGE_KEY, lang)
   } catch (e) {}
+  i18n.global.locale.value = lang
+}
+
+export function getCurrentLanguage(): string {
+  return i18n.global.locale.value
 }
 
 const i18n = createI18n({
