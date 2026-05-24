@@ -4,14 +4,14 @@
       <view class="desktop-nav">
         <image class="nav-logo" src="/static/logo.png" mode="heightFix" />
         <view class="nav-links">
-          <text class="nav-link">作品 Works</text>
-          <text class="nav-link">艺术家 Artists</text>
-          <text class="nav-link">社区 Community</text>
-          <text class="nav-link">关于 About</text>
+          <text class="nav-link">{{ t('nav.works') }}</text>
+          <text class="nav-link">{{ t('nav.artists') }}</text>
+          <text class="nav-link">{{ t('nav.community') }}</text>
+          <text class="nav-link">{{ t('nav.about') }}</text>
         </view>
         <view class="nav-actions">
-          <text class="nav-action">购物车 Cart</text>
-          <text class="nav-action">账户 Account</text>
+          <text class="nav-action">{{ t('nav.cart') }}</text>
+          <text class="nav-action">{{ t('nav.account') }}</text>
         </view>
       </view>
       <image
@@ -23,8 +23,8 @@
         <image class="brand-logo" src="/static/logo.png" mode="heightFix" />
       </view>
       <view class="hero-slogan">
-        <text class="slogan-cn">让生活多一点艺术</text>
-        <text class="slogan-en">More Art In Life</text>
+        <text class="slogan-cn">{{ t('home.sloganCn') }}</text>
+        <text class="slogan-en">{{ t('home.sloganEn') }}</text>
       </view>
       <view class="hero-scroll-indicator">
         <view class="scroll-line" />
@@ -103,6 +103,9 @@
 
 <script setup lang="ts">
 import { onReachBottom, onPullDownRefresh } from '@dcloudio/uni-app'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const heroImage = 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=abstract%20oil%20painting%20morandi%20colors%20soft%20beige%20minimalist%20art&image_size=landscape_16_9'
 

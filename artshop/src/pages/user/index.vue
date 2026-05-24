@@ -25,6 +25,10 @@
     <view class="section-divider" />
 
     <view class="func-list">
+      <view class="func-row" @tap="onLanguageChange">
+        <text class="func-label">🌐 语言 / Language</text>
+        <text class="func-arrow">→</text>
+      </view>
       <view class="func-row" @tap="onFuncItemTap('collections')">
         <text class="func-label">My Collections</text>
         <text class="func-arrow">→</text>
@@ -72,8 +76,11 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useUserStore } from '@/stores/user'
+import i18n, { setLanguage } from '@/locales'
 
+const { t, locale } = useI18n()
 const userStore = useUserStore()
 
 const isLoggedIn = computed(() => userStore.isLoggedIn)
@@ -104,6 +111,17 @@ const onFuncItemTap = (key: string) => {
   if (url) {
     uni.navigateTo({ url })
   }
+}
+
+const onLanguageChange = () => {
+  uni.showActionSheet({
+    itemList: [t('common.languageChinese'), t('common.languageEnglish')],
+    success: (res) => {
+      const newLocale = res.tapIndex === 0 ? 'zh-CN' : 'en-US'
+      locale.value = newLocale
+      setLanguage(newLocale)
+    },
+  })
 }
 
 const onLoginLogout = () => {

@@ -120,7 +120,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 
-const tabs = ['资讯 News', '展厅 Gallery', '话题 Topics', '晒单 Posts']
+const tabs = ['资讯', '展厅', '话题', '晒单']
 const activeTab = ref(0)
 const isRefreshing = ref(false)
 const hasMore = ref(true)

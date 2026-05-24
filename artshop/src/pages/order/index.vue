@@ -94,12 +94,12 @@ import type { Order } from '@/types/order'
 import { OrderStatus } from '@/types/order'
 
 const tabs = [
-  { key: 'all', label: '全部 All' },
-  { key: 'PENDING_PAYMENT', label: '待付款 Pending' },
-  { key: 'PENDING_SHIPMENT', label: '处理中 Processing' },
-  { key: 'SHIPPED', label: '已发货 Shipped' },
-  { key: 'COMPLETED', label: '已完成 Completed' },
-  { key: 'AFTER_SALE', label: '售后 Refund' },
+  { key: 'all', label: '全部' },
+  { key: 'PENDING_PAYMENT', label: '待付款' },
+  { key: 'PENDING_SHIPMENT', label: '处理中' },
+  { key: 'SHIPPED', label: '已发货' },
+  { key: 'COMPLETED', label: '已完成' },
+  { key: 'AFTER_SALE', label: '售后' },
 ]
 
 const currentTab = ref('all')

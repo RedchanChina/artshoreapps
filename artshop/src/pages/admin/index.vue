@@ -54,6 +54,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import AdminDashboard from './components/Dashboard.vue'
 import AdminArtworks from './components/Artworks.vue'
 import AdminArtists from './components/Artists.vue'
@@ -61,20 +62,22 @@ import AdminOrders from './components/Orders.vue'
 import AdminCommunity from './components/Community.vue'
 import AdminStores from './components/Stores.vue'
 
+const { t } = useI18n()
+
 const currentTab = ref('dashboard')
 const isDesktop = ref(false)
 
-const menuItems = [
-  { key: 'dashboard', label: '数据概览 Dashboard', icon: '📊' },
-  { key: 'artworks', label: '作品管理 Artworks', icon: '🖼️' },
-  { key: 'artists', label: '艺术家管理 Artists', icon: '🎨' },
-  { key: 'orders', label: '订单管理 Orders', icon: '📦' },
-  { key: 'community', label: '社区管理 Community', icon: '💬' },
-  { key: 'stores', label: '门店管理 Stores', icon: '🏪' },
-]
+const menuItems = computed(() => [
+  { key: 'dashboard', label: t('admin.dashboard'), icon: '📊' },
+  { key: 'artworks', label: t('admin.artworks'), icon: '🖼️' },
+  { key: 'artists', label: t('admin.artists'), icon: '🎨' },
+  { key: 'orders', label: t('admin.orders'), icon: '📦' },
+  { key: 'community', label: t('admin.community'), icon: '💬' },
+  { key: 'stores', label: t('admin.stores'), icon: '🏪' },
+])
 
 const currentLabel = computed(() => {
-  const item = menuItems.find((m) => m.key === currentTab.value)
+  const item = menuItems.value.find((m) => m.key === currentTab.value)
   return item ? item.label : ''
 })
 
