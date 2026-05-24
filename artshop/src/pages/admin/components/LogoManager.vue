@@ -22,7 +22,7 @@
       <text class="label">上传新 LOGO</text>
       <view class="upload-area" @tap="chooseImage">
         <view class="upload-placeholder" v-if="!tempImage">
-          <text class="upload-icon">上传图片</text>
+          <text class="upload-icon">📷</text>
           <text class="upload-text">点击选择图片</text>
           <text class="upload-hint">推荐比例 4:1，支持 PNG、JPG</text>
         </view>
@@ -64,31 +64,8 @@ const tempImage = ref<string>('')
 const uploading = ref(false)
 
 function chooseImage() {
-  // #ifdef H5
-  // H5 环境使用原生 input
-  const input = document.createElement('input')
-  input.type = 'file'
-  input.accept = 'image/png,image/jpeg,image/jpg'
-  input.onchange = (e: any) => {
-    const file = e.target.files[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onload = (event: any) => {
-        tempImage.value = event.target.result
-        uni.showToast({
-          title: '已选择图片',
-          icon: 'success',
-          duration: 1500,
-        })
-      }
-      reader.readAsDataURL(file)
-    }
-  }
-  input.click()
-  // #endif
+  console.log('选择图片被点击')
   
-  // #ifndef H5
-  // App 和小程序环境使用 uni.chooseImage
   uni.chooseImage({
     count: 1,
     sizeType: ['original', 'compressed'],
@@ -107,13 +84,12 @@ function chooseImage() {
     fail: (err) => {
       console.error('选择图片失败', err)
       uni.showToast({
-        title: '请允许访问相册',
+        title: '选择图片失败，请重试',
         icon: 'none',
         duration: 2000,
       })
     },
   })
-  // #endif
 }
 
 function clearTempImage() {
@@ -254,9 +230,9 @@ onMounted(() => {
   margin-bottom: $space-md;
 }
 
-.upload-area:hover {
-  border-color: $color-accent;
+.upload-area:active {
   background-color: #FAFAF8;
+  border-color: $color-accent;
 }
 
 .upload-placeholder {
@@ -266,10 +242,7 @@ onMounted(() => {
 }
 
 .upload-icon {
-  font-family: $font-sans;
-  font-size: $font-lg;
-  font-weight: 500;
-  color: $color-accent;
+  font-size: 40px;
   margin-bottom: $space-sm;
 }
 
@@ -304,10 +277,6 @@ onMounted(() => {
   color: $color-text-secondary;
   cursor: pointer;
   transition: color $duration-fast;
-}
-
-.cancel-btn:hover {
-  color: $color-text-primary;
 }
 
 .save-btn {
