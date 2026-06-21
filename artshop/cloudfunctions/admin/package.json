@@ -1,9 +1,0 @@
-{
-  "name": "admin",
-  "version": "1.0.0",
-  "description": "ArtShop 后台管理云函数",
-  "main": "index.js",
-  "dependencies": {
-    "@cloudbase/node-sdk": "latest"
-  }
-}
