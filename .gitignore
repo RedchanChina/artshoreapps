@@ -1,0 +1,13 @@
+# dev-docs 目录 — 内部开发文档
+# 此目录下的所有文档为内部规则类文档，不上传到 GitHub
+dev-docs/
+
+# Trae IDE 内部文件
+.trae/
+
+# 参考文件（不上传）
+index.html
+M·art VI全套方案.pdf
+
+# macOS
+.DS_Store

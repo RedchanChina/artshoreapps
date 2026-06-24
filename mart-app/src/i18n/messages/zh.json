@@ -1,0 +1,75 @@
+{
+  "meta": {
+    "title": "M·art — 让艺术走进日常 | 签约限量艺术商店",
+    "desc": "M·art 莫阿特艺术商店：让艺术走进日常。签约精选艺术家，限量微喷作品，可验证版次证书。"
+  },
+  "nav": {
+    "works": "作品",
+    "artists": "艺术家",
+    "search": "搜索",
+    "account": "账户",
+    "cart": "购物车"
+  },
+  "announcement": {
+    "items": [
+      "新作品上架 — 陈墨白《晨雾》",
+      "新签约艺术家 — 苏雨晴",
+      "限量珍藏 — 林见微《光的褶皱》",
+      "会员首单立减 ¥100",
+      "阶梯升价 · 越早收藏越值得"
+    ]
+  },
+  "hero": {
+    "scrollHint": "SCROLL"
+  },
+  "tabs": {
+    "photography": "摄影",
+    "illustration": "插画",
+    "viewAll": "查看全部"
+  },
+  "product": {
+    "soldOut": "售罄",
+    "editionProgress": "已售 {sold} / {total}"
+  },
+  "artist": {
+    "featuredTitle": "本月艺术家",
+    "viewArtist": "查看艺术家",
+    "signedTitle": "签约艺术家",
+    "viewAll": "查看全部"
+  },
+  "newsletter": {
+    "title": "莫阿特一直在前进",
+    "description": "订阅莫阿特，第一时间收到新品上架、艺术家签约与展览推荐",
+    "emailPlaceholder": "你的邮箱地址",
+    "subscribe": "订阅 →",
+    "subscribed": "已订阅 ✓"
+  },
+  "footer": {
+    "brandTagline": "让艺术，走进日常。\n签约精选 · 限量珍藏 · 可验证真伪。",
+    "copyright": "© 2026 M·art · 让艺术走进日常 · 保留所有权利。",
+    "icp": "沪ICP备2026000000号 · 沪公网安备31000000000000号",
+    "explore": {
+      "title": "探索",
+      "allWorks": "全部作品",
+      "signedArtists": "签约艺术家"
+    },
+    "account": {
+      "title": "账户",
+      "myAccount": "我的账户",
+      "orderQuery": "订单查询",
+      "myFavorites": "我的收藏"
+    },
+    "help": {
+      "title": "帮助",
+      "faq": "常见问题",
+      "shipping": "配送说明",
+      "returns": "退换政策",
+      "offlineStore": "线下门店"
+    }
+  },
+  "social": {
+    "wechat": "微信",
+    "xiaohongshu": "小红书",
+    "instagram": "Instagram"
+  }
+}

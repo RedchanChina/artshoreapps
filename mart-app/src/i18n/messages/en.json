@@ -1,0 +1,75 @@
+{
+  "meta": {
+    "title": "M·art — More Art In Life | Limited Edition Art Shop",
+    "desc": "M·art: More Art In Life. Signed artists, limited edition giclée prints, verifiable edition certificates."
+  },
+  "nav": {
+    "works": "Works",
+    "artists": "Artists",
+    "search": "Search",
+    "account": "Account",
+    "cart": "Cart"
+  },
+  "announcement": {
+    "items": [
+      "New Works — Chen Mobai, Morning Mist",
+      "New Artist — Su Yuqing Signed",
+      "Limited Edition — Lin Jianwei, Folds of Light",
+      "Members Save ¥100 on First Order",
+      "Tiered Pricing · Earlier You Buy, Better the Value"
+    ]
+  },
+  "hero": {
+    "scrollHint": "SCROLL"
+  },
+  "tabs": {
+    "photography": "Photography",
+    "illustration": "Illustration",
+    "viewAll": "View All"
+  },
+  "product": {
+    "soldOut": "Sold Out",
+    "editionProgress": "{sold} / {total} sold"
+  },
+  "artist": {
+    "featuredTitle": "Featured Artist",
+    "viewArtist": "View Artist",
+    "signedTitle": "Signed Artists",
+    "viewAll": "View All"
+  },
+  "newsletter": {
+    "title": "M·art Keeps Moving Forward",
+    "description": "Subscribe to M·art — be first to know about new works, artist signings, and exhibition recommendations.",
+    "emailPlaceholder": "Your email address",
+    "subscribe": "Subscribe →",
+    "subscribed": "Subscribed ✓"
+  },
+  "footer": {
+    "brandTagline": "More Art In Life.\nSigned artists · Limited editions · Verifiable authenticity.",
+    "copyright": "© 2026 M·art · More Art In Life · All rights reserved.",
+    "icp": "沪ICP备2026000000号 · 沪公网安备31000000000000号",
+    "explore": {
+      "title": "Explore",
+      "allWorks": "All Works",
+      "signedArtists": "Signed Artists"
+    },
+    "account": {
+      "title": "Account",
+      "myAccount": "My Account",
+      "orderQuery": "Order Tracking",
+      "myFavorites": "Wishlist"
+    },
+    "help": {
+      "title": "Help",
+      "faq": "FAQ",
+      "shipping": "Shipping",
+      "returns": "Returns",
+      "offlineStore": "Offline Store"
+    }
+  },
+  "social": {
+    "wechat": "WeChat",
+    "xiaohongshu": "RED",
+    "instagram": "Instagram"
+  }
+}
