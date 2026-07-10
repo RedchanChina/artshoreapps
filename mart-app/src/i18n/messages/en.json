@@ -3,6 +3,9 @@
     "title": "M·art — More Art In Life | Limited Edition Art Shop",
     "desc": "M·art: More Art In Life. Signed artists, limited edition giclée prints, verifiable edition certificates."
   },
+  "common": {
+    "back": "Back"
+  },
   "nav": {
     "works": "Works",
     "artists": "Artists",
@@ -71,5 +74,245 @@
     "wechat": "WeChat",
     "xiaohongshu": "RED",
     "instagram": "Instagram"
+  },
+  "breadcrumb": {
+    "home": "Home",
+    "works": "Works",
+    "artists": "Artists",
+    "series": "Series"
+  },
+  "filters": {
+    "title": "Filters",
+    "all": "All",
+    "photography": "Photography",
+    "illustration": "Illustration",
+    "artist": "Artist",
+    "series": "Series",
+    "sizeTier": "Size Tier",
+    "tierSmall": "Small",
+    "tierMedium": "Medium",
+    "tierLarge": "Large",
+    "tierExtraLarge": "Extra Large",
+    "reset": "Reset",
+    "button": "Filter",
+    "drawerTitle": "Filter Options",
+    "noResult": "No works match these filters",
+    "viewResults": "View {count} works",
+    "resultCount": "{count} works",
+    "close": "Close"
+  },
+  "sort": {
+    "latest": "Latest",
+    "priceAsc": "Price: Low to High",
+    "priceDesc": "Price: High to Low",
+    "scarcity": "Scarcity"
+  },
+  "pagination": {
+    "prev": "Previous",
+    "next": "Next",
+    "page": "Page {n}"
+  },
+  "workDetail": {
+    "tierName": {
+      "small": "Small",
+      "medium": "Medium",
+      "large": "Large",
+      "extraLarge": "Extra Large"
+    },
+    "tier": {
+      "label": "Size"
+    },
+    "framing": {
+      "label": "Framing",
+      "bag": "Carry Bag Edition",
+      "aluminum": "Aluminum Frame Edition"
+    },
+    "editionTracker": {
+      "onlineSold": "Online Sold {sold} / {total}",
+      "remaining": "{count} editions remaining",
+      "globalLimited": "Global Limited {total} Editions",
+      "onlyLeft": "Only {count} left"
+    },
+    "tieredPricing": {
+      "currentPrice": "Current Price",
+      "nextTierPrice": "Next Tier Price",
+      "rule": "Price increases 8% every 5 editions sold",
+      "raiseAfter": "Raises to {price} after {n} more sold"
+    },
+    "trustInfo": {
+      "certificate": "Physical Paper Certificate",
+      "crossBorder": "Cross-border Shipping",
+      "productionTime": "Production takes {n} business days"
+    },
+    "workDetails": {
+      "title": "Work Details",
+      "description": "Description",
+      "year": "Year Created",
+      "printCraft": "Print Craft",
+      "paperType": "Paper Type",
+      "artistNote": "Artist's Note"
+    },
+    "buttons": {
+      "addToCart": "Add to Cart",
+      "buyNow": "Buy Now",
+      "soldOut": "Sold Out",
+      "comingSoon": "Coming Soon"
+    },
+    "relatedWorks": {
+      "sameSeries": "More from this Series",
+      "sameArtist": "More from this Artist"
+    },
+    "galleryAlt": "Work image {n} / {total}",
+    "aspectRatio": "Aspect {ratio}",
+    "stickyBar": {
+      "from": "From"
+    },
+    "aboutArtist": {
+      "eyebrow": "About the Artist",
+      "viewAllWorks": "View All Works by Artist",
+      "follow": "Follow {name}",
+      "followComingSoon": "Follow feature coming soon"
+    },
+    "cartDrawer": {
+      "title": "Shopping Bag",
+      "close": "Close",
+      "subtotal": "Subtotal",
+      "viewBag": "View Bag",
+      "checkout": "Checkout",
+      "urgencyMessage": "Limited editions — collect early",
+      "urgencyUrgent": "Only {count} left — collect early",
+      "empty": "Your cart is empty",
+      "browse": "Browse Works"
+    },
+    "alreadyInCart": "This edition is already in your cart, one per edition"
+  },
+  "artistList": {
+    "title": "Artists",
+    "workCount": "{count} works",
+    "sortBy": {
+      "name": "By Name",
+      "workCount": "By Work Count"
+    }
+  },
+  "artistDetail": {
+    "totalWorks": "{count} total works",
+    "series": "Series",
+    "standaloneWorks": "Standalone Works",
+    "bio": "Artist Bio",
+    "bornIn": "b.",
+    "basedIn": "Lives and works in",
+    "statement": "Artistic Philosophy",
+    "exhibitions": "Exhibitions",
+    "exhibitionType": {
+      "solo": "Solo",
+      "group": "Group"
+    }
+  },
+  "cart": {
+    "title": "Shopping Bag",
+    "empty": "Your cart is empty",
+    "goShopping": "Browse Works",
+    "item": {
+      "edition": "Edition #{number}",
+      "remove": "Remove",
+      "expired": "Expired",
+      "reAdd": "Please re-add to cart"
+    },
+    "summary": {
+      "subtotal": "Subtotal",
+      "shipping": "Shipping",
+      "shippingHint": "Calculated at checkout",
+      "duty": "Duty",
+      "dutyHint": "Calculated at checkout",
+      "total": "Total",
+      "currencyNote": "Final price in checkout currency",
+      "priceLocked": "Price locked"
+    },
+    "checkout": "Checkout"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "shipping": {
+      "title": "Shipping Address",
+      "fullName": "Full Name",
+      "phone": "Phone",
+      "email": "Email",
+      "country": "Country/Region",
+      "state": "State/Province",
+      "city": "City",
+      "address": "Address",
+      "zipCode": "ZIP Code",
+      "selectCountry": "Select country",
+      "selectState": "Select state/province",
+      "selectCity": "Select city",
+      "selectStateFirst": "Select state/province first",
+      "errorPhoneFormat": "Invalid phone format",
+      "errorEmailFormat": "Invalid email format"
+    },
+    "shippingOptions": {
+      "title": "Shipping Method",
+      "estimatedDays": "{days} days",
+      "pendingConfirmation": "Fee pending confirmation",
+      "unsupported": "Shipping unavailable for this region",
+      "selectCountry": "Please select a country first",
+      "loading": "Calculating shipping..."
+    },
+    "payment": {
+      "title": "Payment Method",
+      "stripe": "Stripe",
+      "stripeDesc": "Credit Card / Apple Pay / Google Pay",
+      "paypal": "PayPal",
+      "paypalDesc": "PayPal balance or bank card",
+      "alipay": "Alipay",
+      "alipayDesc": "Alipay balance or Huabei",
+      "wechat": "WeChat Pay",
+      "wechatDesc": "Scan to pay with WeChat"
+    },
+    "summary": {
+      "title": "Order Summary",
+      "subtotal": "Subtotal",
+      "shipping": "Shipping",
+      "duty": "Duty",
+      "dutyExempt": "Exempt",
+      "total": "Total",
+      "priceLocked": "Price locked",
+      "dutyNote": "Actual duty determined by customs"
+    },
+    "confirm": "Pay {amount}",
+    "comingSoon": "Payment coming soon",
+    "empty": "Your cart is empty",
+    "reasonIncomplete": "Please complete shipping information",
+    "reasonSelectShipping": "Please select shipping method",
+    "reasonShippingPending": "Shipping fee pending, please contact support"
+  },
+  "order": {
+    "paymentSuccess": "Payment Successful",
+    "orderNumber": "Order Number",
+    "orderNotFound": "Order not found",
+    "continueShopping": "Continue Shopping",
+    "backToHome": "Back to Home",
+    "shippingNotice": "Track shipping in order details after dispatch",
+    "processing": "Processing...",
+    "errorVersionExpired": "Price lock expired, please re-add to cart",
+    "errorVersionUnavailable": "Item purchased by another buyer, please reselect",
+    "errorEmptyCart": "Cart is empty",
+    "errorUnknown": "Order failed, please try again later",
+    "orderItems": "Order Items",
+    "orderSummary": "Order Summary",
+    "shippingAddress": "Shipping Address",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "duty": "Duty",
+    "total": "Total",
+    "paidAt": "Order Time"
+  },
+  "seriesDetail": {
+    "intro": "Series Intro",
+    "workCount": "{count} works"
+  },
+  "comingSoon": {
+    "title": "Coming Soon",
+    "description": "This feature is under development. Stay tuned.",
+    "backHome": "Back to Home"
   }
 }

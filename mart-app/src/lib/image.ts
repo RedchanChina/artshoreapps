@@ -8,7 +8,7 @@ export type ImageSize =
 
 export function imageUrl(
   prompt: string,
-  size: ImageSize
+  size: ImageSize = "square",
 ): string {
   return `https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=${encodeURIComponent(prompt)}&image_size=${size}&format=webp`;
 }

@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { useSettings } from "@/store/useSettings";
@@ -11,6 +12,8 @@ interface ProductCardProps {
   product: Product;
   /** 卡片在列表中的索引，前 4 张 eager 加载 */
   index?: number;
+  /** 卡片布局变体：'scroll' 横向滑动固定宽度（默认），'grid' 网格自适应宽度 */
+  variant?: "scroll" | "grid";
 }
 
 /**
@@ -20,17 +23,16 @@ interface ProductCardProps {
  * - 售罄作品（sold >= total）：艺术家名砖红色 + 售罄标签
  * - 不展示阶梯定价信息
  */
-export function ProductCard({ product, index = 0 }: ProductCardProps) {
+export function ProductCard({ product, index = 0, variant = "scroll" }: ProductCardProps) {
   const t = useTranslations("product");
   const locale = useLocale() as "zh" | "en";
-  const { currency } = useSettings();
+  const currency = useSettings((s) => s.currency);
 
   const [mainLoaded, setMainLoaded] = useState(false);
   const [sceneLoaded, setSceneLoaded] = useState(false);
   const [hasHovered, setHasHovered] = useState(false);
   const [imageToggled, setImageToggled] = useState(false);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
-  const mainRef = useRef<HTMLImageElement>(null);
 
   const eager = index < 4;
 
@@ -42,10 +44,8 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
       ? `¥${product.priceCNY.toLocaleString()}`
       : `$${product.priceUSD.toFixed(2)}`;
 
-  // 处理已缓存图片 + 5s 超时兜底
+  // 5s 超时兜底
   useEffect(() => {
-    const img = mainRef.current;
-    if (img?.complete && img.naturalWidth > 0) setMainLoaded(true);
     const timer = setTimeout(() => setMainLoaded(true), 5000);
     return () => clearTimeout(timer);
   }, []);
@@ -75,12 +75,21 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
   return (
     <Link
       href={`/${locale}/works/${product.id}`}
-      className="group/card block w-[240px] flex-shrink-0 cursor-pointer sm:w-[280px]"
+      className={cn(
+        "group/card block cursor-pointer",
+        variant === "scroll"
+          ? "w-[240px] flex-shrink-0 sm:w-[280px]"
+          : "w-full",
+        soldOut && "opacity-60"
+      )}
       onMouseEnter={() => setHasHovered(true)}
     >
       {/* 图片区 */}
       <div
-        className="relative aspect-square overflow-hidden rounded-[2px] bg-mist"
+        className={cn(
+          "relative overflow-hidden rounded-[2px] bg-mist",
+          "aspect-square",
+        )}
         onClick={handleImageClick}
       >
         {/* shimmer 骨架 */}
@@ -92,19 +101,16 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
         )}
 
         {/* 主图 */}
-        <img
-          ref={mainRef}
+        <Image
           src={product.mainImage}
           alt={product.title[locale]}
-          width={280}
-          height={280}
-          loading={eager ? "eager" : "lazy"}
-          fetchPriority={eager ? "high" : "auto"}
-          decoding="async"
+          fill
+          sizes="(max-width: 768px) 50vw, 25vw"
+          priority={eager}
           onLoad={() => setMainLoaded(true)}
           onError={() => setMainLoaded(true)}
           className={cn(
-            "relative z-[2] h-full w-full object-cover transition-opacity duration-500 ease-mart",
+            "z-[2] object-cover transition-opacity duration-500 ease-mart",
             mainLoaded ? "opacity-100" : "opacity-0",
             // 桌面端 hover 淡出
             !isTouchDevice && "group-hover/card:opacity-0",
@@ -115,18 +121,16 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
 
         {/* 场景图（首次 hover 时 lazy 加载） */}
         {hasHovered && (
-          <img
+          <Image
             src={product.sceneImage}
             alt=""
             aria-hidden="true"
-            width={280}
-            height={280}
-            loading="lazy"
-            decoding="async"
+            fill
+            sizes="(max-width: 768px) 50vw, 25vw"
             onLoad={() => setSceneLoaded(true)}
             onError={() => setSceneLoaded(true)}
             className={cn(
-              "absolute left-0 top-0 z-[2] h-full w-full object-cover transition-all duration-500 ease-mart",
+              "z-[2] object-cover transition-all duration-500 ease-mart",
               sceneLoaded ? "" : "opacity-0",
               // 桌面端 hover 淡入
               !isTouchDevice &&

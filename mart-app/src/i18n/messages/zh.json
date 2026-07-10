@@ -3,6 +3,9 @@
     "title": "M·art — 让艺术走进日常 | 签约限量艺术商店",
     "desc": "M·art 莫阿特艺术商店：让艺术走进日常。签约精选艺术家，限量微喷作品，可验证版次证书。"
   },
+  "common": {
+    "back": "返回"
+  },
   "nav": {
     "works": "作品",
     "artists": "艺术家",
@@ -71,5 +74,245 @@
     "wechat": "微信",
     "xiaohongshu": "小红书",
     "instagram": "Instagram"
+  },
+  "breadcrumb": {
+    "home": "首页",
+    "works": "作品",
+    "artists": "艺术家",
+    "series": "系列"
+  },
+  "filters": {
+    "title": "筛选",
+    "all": "全部",
+    "photography": "摄影",
+    "illustration": "插画",
+    "artist": "艺术家",
+    "series": "系列",
+    "sizeTier": "尺寸档位",
+    "tierSmall": "小幅",
+    "tierMedium": "中幅",
+    "tierLarge": "大幅",
+    "tierExtraLarge": "巨幅",
+    "reset": "重置",
+    "button": "筛选",
+    "drawerTitle": "筛选条件",
+    "noResult": "没有符合条件的作品",
+    "viewResults": "查看 {count} 件作品",
+    "resultCount": "{count} 件作品",
+    "close": "关闭"
+  },
+  "sort": {
+    "latest": "最新",
+    "priceAsc": "价格从低到高",
+    "priceDesc": "价格从高到低",
+    "scarcity": "稀缺度"
+  },
+  "pagination": {
+    "prev": "上一页",
+    "next": "下一页",
+    "page": "第 {n} 页"
+  },
+  "workDetail": {
+    "tierName": {
+      "small": "小幅",
+      "medium": "中幅",
+      "large": "大幅",
+      "extraLarge": "巨幅"
+    },
+    "tier": {
+      "label": "规格尺寸"
+    },
+    "framing": {
+      "label": "装裱方式",
+      "bag": "手拎袋版",
+      "aluminum": "铝框版"
+    },
+    "editionTracker": {
+      "onlineSold": "线上已售 {sold} / {total}",
+      "remaining": "剩余 {count} 版",
+      "globalLimited": "全球限量 {total} 版",
+      "onlyLeft": "仅剩 {count} 版"
+    },
+    "tieredPricing": {
+      "currentPrice": "当前价格",
+      "nextTierPrice": "下一档价格",
+      "rule": "每售出 5 版涨价 8%",
+      "raiseAfter": "售出 {n} 版后涨价至 {price}"
+    },
+    "trustInfo": {
+      "certificate": "物理纸质证书",
+      "crossBorder": "跨境配送",
+      "productionTime": "制作周期 {n} 个工作日"
+    },
+    "workDetails": {
+      "title": "作品详情",
+      "description": "作品描述",
+      "year": "创作年份",
+      "printCraft": "印刷工艺",
+      "paperType": "纸张类型",
+      "artistNote": "艺术家寄语"
+    },
+    "buttons": {
+      "addToCart": "加入购物车",
+      "buyNow": "立即购买",
+      "soldOut": "售罄",
+      "comingSoon": "功能即将上线"
+    },
+    "relatedWorks": {
+      "sameSeries": "同系列作品",
+      "sameArtist": "同艺术家作品"
+    },
+    "galleryAlt": "作品大图 {n} / {total}",
+    "aspectRatio": "作品比例 {ratio}",
+    "stickyBar": {
+      "from": "起"
+    },
+    "aboutArtist": {
+      "eyebrow": "关于艺术家",
+      "viewAllWorks": "查看艺术家全部作品",
+      "follow": "关注 {name}",
+      "followComingSoon": "关注功能即将上线"
+    },
+    "cartDrawer": {
+      "title": "购物袋",
+      "close": "关闭",
+      "subtotal": "小计",
+      "viewBag": "查看购物袋",
+      "checkout": "结算",
+      "urgencyMessage": "版次有限，尽早收藏",
+      "urgencyUrgent": "仅剩 {count} 版，尽早收藏",
+      "empty": "购物车是空的",
+      "browse": "去逛逛"
+    },
+    "alreadyInCart": "该规格已在购物车中，每档位限购 1 件"
+  },
+  "artistList": {
+    "title": "艺术家",
+    "workCount": "{count} 件作品",
+    "sortBy": {
+      "name": "按姓名",
+      "workCount": "按作品数量"
+    }
+  },
+  "artistDetail": {
+    "totalWorks": "作品总数 {count}",
+    "series": "系列",
+    "standaloneWorks": "独立作品",
+    "bio": "艺术家简介",
+    "bornIn": "生于",
+    "basedIn": "现居和工作于",
+    "statement": "艺术理念",
+    "exhibitions": "展览历史",
+    "exhibitionType": {
+      "solo": "个展",
+      "group": "群展"
+    }
+  },
+  "cart": {
+    "title": "购物袋",
+    "empty": "购物车是空的",
+    "goShopping": "去逛逛",
+    "item": {
+      "edition": "版号 #{number}",
+      "remove": "移除",
+      "expired": "已过期",
+      "reAdd": "请重新加购"
+    },
+    "summary": {
+      "subtotal": "商品小计",
+      "shipping": "运费",
+      "shippingHint": "结账时计算",
+      "duty": "关税",
+      "dutyHint": "结账时计算",
+      "total": "合计",
+      "currencyNote": "价格以结算时币种为准",
+      "priceLocked": "价格已锁定"
+    },
+    "checkout": "去结账"
+  },
+  "checkout": {
+    "title": "结账",
+    "shipping": {
+      "title": "收货信息",
+      "fullName": "姓名",
+      "phone": "电话",
+      "email": "邮箱",
+      "country": "国家/地区",
+      "state": "省/州",
+      "city": "城市",
+      "address": "详细地址",
+      "zipCode": "邮编",
+      "selectCountry": "选择国家/地区",
+      "selectState": "选择省/州",
+      "selectCity": "选择城市",
+      "selectStateFirst": "请先选择省/州",
+      "errorPhoneFormat": "电话格式不正确",
+      "errorEmailFormat": "邮箱格式不正确"
+    },
+    "shippingOptions": {
+      "title": "配送方式",
+      "estimatedDays": "{days} 天",
+      "pendingConfirmation": "运费待确认",
+      "unsupported": "该地区暂不支持配送",
+      "selectCountry": "请先选择收货国家",
+      "loading": "正在计算运费..."
+    },
+    "payment": {
+      "title": "支付方式",
+      "stripe": "Stripe",
+      "stripeDesc": "信用卡 / Apple Pay / Google Pay",
+      "paypal": "PayPal",
+      "paypalDesc": "PayPal 余额或银行卡",
+      "alipay": "支付宝",
+      "alipayDesc": "支付宝余额或花呗",
+      "wechat": "微信支付",
+      "wechatDesc": "微信扫码支付"
+    },
+    "summary": {
+      "title": "订单摘要",
+      "subtotal": "商品小计",
+      "shipping": "运费",
+      "duty": "关税",
+      "dutyExempt": "免税",
+      "total": "合计",
+      "priceLocked": "价格已锁定",
+      "dutyNote": "实际以海关征收为准"
+    },
+    "confirm": "确认支付 {amount}",
+    "comingSoon": "支付功能即将开放",
+    "empty": "购物车是空的",
+    "reasonIncomplete": "请填写完整收货信息",
+    "reasonSelectShipping": "请选择配送方式",
+    "reasonShippingPending": "运费待确认，请联系客服"
+  },
+  "order": {
+    "paymentSuccess": "支付成功",
+    "orderNumber": "订单号",
+    "orderNotFound": "订单未找到",
+    "continueShopping": "继续逛逛",
+    "backToHome": "返回首页",
+    "shippingNotice": "发货后可在订单详情查看物流信息",
+    "processing": "处理中...",
+    "errorVersionExpired": "商品锁价已过期，请重新加购",
+    "errorVersionUnavailable": "商品已被他人购买，请重新选择",
+    "errorEmptyCart": "购物车为空",
+    "errorUnknown": "下单失败，请稍后重试",
+    "orderItems": "商品清单",
+    "orderSummary": "订单金额",
+    "shippingAddress": "收货地址",
+    "subtotal": "商品小计",
+    "shipping": "运费",
+    "duty": "关税",
+    "total": "合计",
+    "paidAt": "下单时间"
+  },
+  "seriesDetail": {
+    "intro": "系列简介",
+    "workCount": "{count} 件作品"
+  },
+  "comingSoon": {
+    "title": "即将上线",
+    "description": "此功能正在开发中，敬请期待。",
+    "backHome": "返回首页"
   }
 }

@@ -2,16 +2,15 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { Menu, Search, ShoppingBag, User } from "lucide-react";
 import { Logo } from "./Logo";
 import { LanguageSwitch } from "./LanguageSwitch";
 import { CurrencySwitch } from "./CurrencySwitch";
 import { MobileDrawer } from "./MobileDrawer";
+import { CartBadge } from "./CartBadge";
 import { cn } from "@/lib/utils";
-
-/** 假设购物车有 2 件商品（MVP 静态数据） */
-const CART_COUNT = 2;
 
 /**
  * 顶部导航栏：透明 / 固定双态切换。
@@ -21,6 +20,8 @@ const CART_COUNT = 2;
 export function Header() {
   const t = useTranslations("nav");
   const locale = useLocale();
+  const pathname = usePathname();
+  const isHomepage = pathname === `/${locale}` || pathname === `/${locale}/`;
   const [scrolled, setScrolled] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -31,7 +32,7 @@ export function Header() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const variant = scrolled ? "dark" : "light";
+  const variant = !isHomepage || scrolled ? "dark" : "light";
 
   const navLinks = [
     { href: `/${locale}/works`, label: t("works") },
@@ -42,7 +43,7 @@ export function Header() {
     <header
       className={cn(
         "fixed inset-x-0 top-8 z-[200] h-[52px] border-b border-transparent transition-[background-color,color,border-color,box-shadow] duration-[350ms] ease-mart sm:h-16",
-        scrolled
+        (!isHomepage || scrolled)
           ? "border-line bg-paper text-ink shadow-[0_1px_0_rgba(0,0,0,0.06)]"
           : "bg-transparent text-paper"
       )}
@@ -76,13 +77,13 @@ export function Header() {
 
         {/* 功能图标 + 切换器 */}
         <div className="-mr-1.5 flex items-center justify-self-end gap-4 sm:-mr-[15px] sm:gap-[22px]">
-          <button
-            type="button"
+          <Link
+            href={`/${locale}/search`}
             aria-label={t("search")}
             className="inline-flex h-8 w-8 items-center justify-center"
           >
             <Search size={18} strokeWidth={1.4} />
-          </button>
+          </Link>
 
           <Link
             href={`/${locale}/account`}
@@ -98,9 +99,7 @@ export function Header() {
             className="relative inline-flex h-8 w-8 items-center justify-center"
           >
             <ShoppingBag size={18} strokeWidth={1.4} />
-            <span className="absolute right-[-2px] top-0 inline-flex h-[14px] min-w-[14px] items-center justify-center rounded-full bg-brand px-[3px] text-[9px] font-medium leading-[14px] text-white">
-              {CART_COUNT}
-            </span>
+            <CartBadge />
           </Link>
 
           <div className="hidden sm:inline-flex">

@@ -1,0 +1,26 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: mart-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: mart
+      POSTGRES_PASSWORD: mart
+      POSTGRES_DB: mart
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    container_name: mart-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+
+volumes:
+  pgdata:
+  redisdata:

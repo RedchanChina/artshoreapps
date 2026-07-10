@@ -52,6 +52,16 @@ export function CurrencySwitch({
     };
   }, [open]);
 
+  // 同步 currency 到 cookie，供 Server Component 读取
+  useEffect(() => {
+    document.cookie = `mart-currency=${currency}; path=/; max-age=31536000; samesite=lax`;
+  }, [currency]);
+
+  // 手动 rehydrate（skipHydration: true 阻止自动读取 localStorage，需在客户端手动触发）
+  useEffect(() => {
+    useSettings.persist.rehydrate();
+  }, []);
+
   const isDrawer = variant === "drawer";
   const triggerColor =
     variant === "dark" ? "text-ink" : "text-paper";

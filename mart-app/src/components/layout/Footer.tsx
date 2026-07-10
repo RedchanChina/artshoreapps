@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 interface FooterLink {
   label: string;
@@ -14,6 +14,7 @@ interface SocialLink {
 export default function Footer() {
   const t = useTranslations("footer");
   const tSocial = useTranslations("social");
+  const locale = useLocale();
 
   const socialLinks: SocialLink[] = [
     { label: tSocial("wechat"), href: "#" },
@@ -22,21 +23,21 @@ export default function Footer() {
   ];
 
   const exploreLinks: FooterLink[] = [
-    { label: t("explore.allWorks"), href: "/works" },
-    { label: t("explore.signedArtists"), href: "/artists" },
+    { label: t("explore.allWorks"), href: `/${locale}/works` },
+    { label: t("explore.signedArtists"), href: `/${locale}/artists` },
   ];
 
   const accountLinks: FooterLink[] = [
-    { label: t("account.myAccount"), href: "/account" },
-    { label: t("account.orderQuery"), href: "/account/orders" },
-    { label: t("account.myFavorites"), href: "/account/wishlist" },
+    { label: t("account.myAccount"), href: `/${locale}/account` },
+    { label: t("account.orderQuery"), href: `/${locale}/account/orders` },
+    { label: t("account.myFavorites"), href: `/${locale}/account/wishlist` },
   ];
 
   const helpLinks: FooterLink[] = [
-    { label: t("help.faq"), href: "/faq" },
-    { label: t("help.shipping"), href: "/shipping" },
-    { label: t("help.returns"), href: "/returns" },
-    { label: t("help.offlineStore"), href: "/store" },
+    { label: t("help.faq"), href: `/${locale}/faq` },
+    { label: t("help.shipping"), href: `/${locale}/shipping` },
+    { label: t("help.returns"), href: `/${locale}/returns` },
+    { label: t("help.offlineStore"), href: `/${locale}/store` },
   ];
 
   const renderLinkList = (links: FooterLink[]) => (

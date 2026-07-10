@@ -16,6 +16,7 @@ export const useSettings = create<SettingsState>()(
     }),
     {
       name: "mart-settings",
+      skipHydration: true,
     }
   )
 );

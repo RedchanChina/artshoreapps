@@ -1,0 +1,271 @@
+// M·art 艺术商店 Prisma Schema
+// 对应 src/data/types.ts 中的接口定义
+// 多语言字段统一使用 Json 类型（结构为 { zh: string; en: string }）
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DATABASE_URL")
+}
+
+/// 作品（对应 types.ts 的 Work 接口）
+model Work {
+  id              String   @id @default(cuid())
+  slug            String   @unique
+  category        String // photography / illustration
+  artistSlug      String
+  artistName      Json // LocalizedText { zh, en }
+  seriesSlug      String?
+  seriesName      Json? // LocalizedText | null
+  title           Json
+  categoryLabel   Json
+  description     Json
+  aspectRatio     String // 1:1 / 3:2 / 4:3
+  creationYear    Int
+  printTechnology Json
+  paperType       Json
+  artistNote      Json?
+  images          String[] // 图片 URL 数组
+  mainImage       String
+  sceneImage      String
+  edition         Json // LocalizedText
+  priceCNY        Int // 元为单位
+  priceUSD        Int // 元为单位
+  sold            Int
+  total           Int
+  status          String   @default("published") // draft / published / archived
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  artist       Artist        @relation(fields: [artistSlug], references: [slug])
+  editionTiers EditionTier[]
+
+  @@index([artistSlug])
+  @@index([seriesSlug])
+  @@index([category])
+}
+
+/// 版本档位（对应 types.ts 的 EditionTier 接口）
+model EditionTier {
+  id               String   @id @default(cuid())
+  workId           String
+  workSlug         String // 与 workId 并存，便于查询
+  tierName         String // small / medium / large / xlarge
+  tierLabel        Json
+  physicalSize     String
+  framingType      String // tote_bag / aluminum_frame / acrylic_sandwich
+  framingLabel     Json
+  totalEditions    Int
+  onlineEditions   Int
+  offlineEditions  Int
+  basePriceCNY     Int // 元为单位
+  basePriceUSD     Int // 元为单位
+  framingFeeCNY    Int
+  framingFeeUSD    Int
+  productionType   String // stocked / on_demand
+  productionDays   Int
+  onlineSoldCount  Int
+  offlineSoldCount Int
+  status           String   @default("active") // active / sold_out
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  work           Work            @relation(fields: [workId], references: [id], onDelete: Cascade)
+  editionNumbers EditionNumber[]
+
+  @@index([workId])
+  @@index([workSlug])
+  @@index([tierName])
+}
+
+/// 版号池（对应 types.ts 的 EditionNumber 接口）
+model EditionNumber {
+  id             String    @id @default(cuid())
+  tierId         String
+  channel        String // online / offline
+  number         Int
+  status         String    @default("available") // available / locked / sold / shipped / delivered
+  framingOption  String? // tote_bag / aluminum_frame
+  lockedAt       DateTime?
+  lockedByCartId String?
+  soldAt         DateTime?
+  orderItemId    String?
+  shippedAt      DateTime?
+  deliveredAt    DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  tier EditionTier @relation(fields: [tierId], references: [id], onDelete: Cascade)
+
+  @@unique([tierId, number, channel])
+  @@index([tierId])
+  @@index([status])
+  @@index([channel])
+}
+
+/// 艺术家（对应 types.ts 的 Artist 接口）
+model Artist {
+  id              String   @id @default(cuid())
+  slug            String   @unique
+  name            Json
+  role            Json
+  bio             Json
+  avatar          String
+  fullBio         Json?
+  birthYear       Int?
+  birthPlace      Json?
+  currentLocation Json?
+  statement       Json?
+  workCount       Int      @default(0)
+  seriesCount     Int      @default(0)
+  status          String   @default("published")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  works       Work[]
+  series      Series[]
+  exhibitions Exhibition[]
+}
+
+/// 展览（对应 types.ts 的 Exhibition 接口）
+model Exhibition {
+  id         String @id @default(cuid())
+  artistSlug String
+  year       Int
+  title      Json
+  gallery    Json
+  location   Json
+  type       String // solo / group
+  sortOrder  Int    @default(0)
+
+  artist Artist @relation(fields: [artistSlug], references: [slug], onDelete: Cascade)
+
+  @@index([artistSlug])
+  @@index([year])
+}
+
+/// 系列（对应 types.ts 的 Series 接口）
+model Series {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  artistSlug  String
+  artistName  Json
+  name        Json
+  coverImage  String
+  description Json?
+  workCount   Int      @default(0)
+  status      String   @default("published")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  artist Artist @relation(fields: [artistSlug], references: [slug], onDelete: Cascade)
+
+  @@index([artistSlug])
+}
+
+/// 配送地区配置（后台可管理）
+model ShippingRegion {
+  id                String   @id @default(cuid())
+  countryCode       String   @unique // CN / US / JP / KR 等
+  countryName       Json // LocalizedText { zh, en }
+  regionCode        String // cn / hmt / asia / na / eu / other
+  regionCoefficient Float // 地区系数 1.0 / 1.2 / 1.5 / 2.0 / 2.2 / 2.5
+  supported         Boolean  @default(true) // 是否支持配送
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([regionCode])
+}
+
+/// 物流方案（后台可管理）
+model ShippingMethod {
+  id            String   @id @default(cuid())
+  code          String   @unique // sf-express / dhl / ems / fedex 等
+  name          Json // LocalizedText { zh, en }
+  regionCode    String // cn / hmt / asia / na / eu / other / global
+  estimatedDays String // "3-5" / "5-7" / "7-14"
+  baseFeeCNY    Int // 基础运费 CNY（元为单位）
+  baseFeeUSD    Int // 基础运费 USD
+  active        Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([regionCode])
+  @@index([active])
+}
+
+/// 尺寸档位运费系数（后台可管理）
+model TierShippingCoefficient {
+  id          String   @id @default(cuid())
+  tierName    String   @unique // small / medium / large / xlarge
+  coefficient Float // 1.0 / 1.3 / 1.8 / 2.5
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+/// 关税配置（后台可管理）
+model DutyConfig {
+  id          String   @id @default(cuid())
+  countryCode String   @unique // US / CN 等
+  rate        Float // 税率，如 0.003456 表示 0.3456%
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+/// 订单主表
+model Order {
+  id                 String   @id @default(cuid())
+  orderNumber        String   @unique // 业务标识 MA{YYYYMMDD}{6位随机}
+  userEmail          String
+  shippingAddress    Json // 收货地址快照
+  shippingMethodCode String
+  shippingMethodName Json // LocalizedText { zh, en }
+  shippingFeeCNY     Int
+  shippingFeeUSD     Int
+  dutyCNY            Int
+  dutyUSD            Int
+  subtotalCNY        Int
+  subtotalUSD        Int
+  totalCNY           Int
+  totalUSD           Int
+  currency           String // CNY / USD
+  paymentMethod      String // stripe / paypal / alipay / wechat
+  status             String   @default("paid") // pending / paid / shipped / delivered / cancelled
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  items OrderItem[]
+
+  @@index([userEmail])
+  @@index([status])
+  @@index([createdAt])
+}
+
+/// 订单项（含商品快照，防止后续商品信息变更影响订单）
+model OrderItem {
+  id              String  @id @default(cuid())
+  orderId         String
+  workSlug        String
+  tierId          String
+  editionNumber   Int
+  tierLabel       Json // LocalizedText { zh, en }
+  framingLabel    Json? // LocalizedText | null
+  title           Json // LocalizedText { zh, en }
+  artistName      Json // LocalizedText { zh, en }
+  thumbnail       String
+  lockedPriceCNY  Int
+  lockedPriceUSD  Int
+  productionType   String // stocked / on_demand
+  productionDays   Int
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@index([workSlug])
+  @@index([tierId])
+}

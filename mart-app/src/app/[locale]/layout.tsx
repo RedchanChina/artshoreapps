@@ -1,18 +1,25 @@
 import type { Metadata } from "next";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { notFound } from "next/navigation";
-import { getMessages, setRequestLocale } from "next-intl/server";
+import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import AnnouncementBar from "@/components/layout/AnnouncementBar";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import "@/app/globals.css";
 
-export const metadata: Metadata = {
-  title: "M·art — 让艺术走进日常 | 签约限量艺术商店",
-  description:
-    "M·art 莫阿特艺术商店：让艺术走进日常。签约精选艺术家，限量微喷作品，可验证版次证书。",
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "meta" });
+  return {
+    title: t("title"),
+    description: t("desc"),
+  };
+}
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
