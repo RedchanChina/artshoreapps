@@ -13,6 +13,7 @@ import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
 import { routing } from "@/i18n/routing";
 import { fetchWorkBySlug, fetchRelatedWorks, fetchArtistBySlug } from "@/lib/actions";
+import { checkWishlisted } from "@/lib/account/actions";
 import { toLocale } from "@/lib/utils";
 import { WORKS } from "@/data/works";
 import { Breadcrumb } from "@/components/ui/Breadcrumb";
@@ -66,6 +67,8 @@ export default async function WorkDetailPage({ params }: PageProps) {
 
   const artist = await fetchArtistBySlug(work.artistSlug);
 
+  const isFavorited = await checkWishlisted(work.slug);
+
   const t = await getTranslations("breadcrumb");
 
   const breadcrumbItems = [
@@ -107,7 +110,7 @@ export default async function WorkDetailPage({ params }: PageProps) {
 
           {/* 右：作品信息 */}
           <div>
-            <WorkDetailClient key={work.slug} work={work} locale={loc} />
+            <WorkDetailClient key={work.slug} work={work} locale={loc} isWishlisted={isFavorited} />
           </div>
         </div>
 

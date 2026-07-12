@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
+import { useSession } from "next-auth/react";
 import { Menu, Search, ShoppingBag, User } from "lucide-react";
 import { Logo } from "./Logo";
 import { LanguageSwitch } from "./LanguageSwitch";
@@ -19,8 +20,10 @@ import { cn } from "@/lib/utils";
  */
 export function Header() {
   const t = useTranslations("nav");
+  const tAuth = useTranslations("auth.header");
   const locale = useLocale();
   const pathname = usePathname();
+  const { status } = useSession();
   const isHomepage = pathname === `/${locale}` || pathname === `/${locale}/`;
   const [scrolled, setScrolled] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -85,13 +88,31 @@ export function Header() {
             <Search size={18} strokeWidth={1.4} />
           </Link>
 
-          <Link
-            href={`/${locale}/account`}
-            aria-label={t("account")}
-            className="inline-flex h-8 w-8 items-center justify-center"
-          >
-            <User size={18} strokeWidth={1.4} />
-          </Link>
+          {status === "loading" && (
+            <div className="inline-flex h-8 w-8 items-center justify-center">
+              <User size={18} strokeWidth={1.4} className="opacity-40" />
+            </div>
+          )}
+
+          {status === "unauthenticated" && (
+            <Link
+              href={`/${locale}/auth/login`}
+              aria-label={tAuth("login")}
+              className="inline-flex h-8 items-center justify-center px-1 text-[13px] font-medium uppercase tracking-[0.14em]"
+            >
+              {tAuth("login")}
+            </Link>
+          )}
+
+          {status === "authenticated" && (
+            <Link
+              href={`/${locale}/account`}
+              aria-label={t("account")}
+              className="inline-flex h-8 w-8 items-center justify-center"
+            >
+              <User size={18} strokeWidth={1.4} />
+            </Link>
+          )}
 
           <Link
             href={`/${locale}/cart`}

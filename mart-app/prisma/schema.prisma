@@ -222,6 +222,7 @@ model Order {
   id                 String   @id @default(cuid())
   orderNumber        String   @unique // 业务标识 MA{YYYYMMDD}{6位随机}
   userEmail          String
+  userId             String?
   shippingAddress    Json // 收货地址快照
   shippingMethodCode String
   shippingMethodName Json // LocalizedText { zh, en }
@@ -236,12 +237,22 @@ model Order {
   currency           String // CNY / USD
   paymentMethod      String // stripe / paypal / alipay / wechat
   status             String   @default("paid") // pending / paid / shipped / delivered / cancelled
+  // 新增：物流追踪字段
+  logisticsCompany   String?  // 物流商名称
+  trackingNumber     String?  // 物流单号
+  shippedAt          DateTime? // 发货时间
+  deliveredAt        DateTime? // 签收时间
+  // 新增：退款字段
+  refundedAt         DateTime? // 退款时间
+  refundReason       String?  // 退款原因
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 
   items OrderItem[]
+  user  User? @relation("UserOrders", fields: [userId], references: [id])
 
   @@index([userEmail])
+  @@index([userId])
   @@index([status])
   @@index([createdAt])
 }
@@ -268,4 +279,94 @@ model OrderItem {
   @@index([orderId])
   @@index([workSlug])
   @@index([tierId])
+}
+
+// ==================== NextAuth.js 鉴权模型 ====================
+
+/// 用户（NextAuth.js 标准 + Credentials Provider 密码哈希）
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  emailVerified DateTime?
+  name          String?
+  image         String?
+  passwordHash  String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  accounts      Account[]
+  sessions      Session[]
+  orders        Order[]   @relation("UserOrders")
+  addresses     Address[]
+  wishlist      Wishlist[]
+}
+
+/// 第三方登录账户（NextAuth.js 标准）
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+/// 会话（NextAuth.js 标准）
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+/// 验证令牌（NextAuth.js 标准）
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ==================== 用户扩展模型（Phase 4.3 预留） ====================
+
+/// 收货地址
+model Address {
+  id          String   @id @default(cuid())
+  userId      String
+  fullName    String
+  phone       String
+  email       String?
+  countryCode String
+  state       String
+  city        String
+  address     String
+  zipCode     String
+  isDefault   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+/// 收藏夹
+model Wishlist {
+  id        String   @id @default(cuid())
+  userId    String
+  workSlug  String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, workSlug])
+  @@index([userId])
 }

@@ -13,11 +13,14 @@
  */
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { Heart } from "lucide-react";
 import type { FramingOption, Work } from "@/data/types";
 import { useSettings } from "@/store/useSettings";
 import { useCartUI } from "@/store/useCartUI";
 import { addItem } from "@/lib/cart/actions";
+import { toggleWishlistAction } from "@/lib/account/actions";
 import { cn } from "@/lib/utils";
 import { TierSelector } from "./TierSelector";
 import { FramingSelector } from "./FramingSelector";
@@ -28,13 +31,19 @@ import { TrustInfo } from "./TrustInfo";
 interface WorkDetailClientProps {
   work: Work;
   locale: "zh" | "en";
+  isWishlisted: boolean;
 }
 
-export function WorkDetailClient({ work, locale }: WorkDetailClientProps) {
+export function WorkDetailClient({
+  work,
+  locale,
+  isWishlisted,
+}: WorkDetailClientProps) {
   const t = useTranslations("workDetail");
   const currency = useSettings((s) => s.currency);
   const openCart = useCartUI((s) => s.open);
   const bumpCart = useCartUI((s) => s.bump);
+  const router = useRouter();
 
   // 默认选中第一个非售罄档位；若全部售罄则回退到第一档
   const initialTierId = useMemo(() => {
@@ -46,6 +55,7 @@ export function WorkDetailClient({ work, locale }: WorkDetailClientProps) {
 
   const [selectedTierId, setSelectedTierId] = useState<string>(initialTierId);
   const [selectedFraming, setSelectedFraming] = useState<FramingOption>("bag");
+  const [favorited, setFavorited] = useState<boolean>(isWishlisted);
   const [toast, setToast] = useState<string | null>(null);
 
   const tier =
@@ -82,9 +92,35 @@ export function WorkDetailClient({ work, locale }: WorkDetailClientProps) {
     }
   };
 
-  const handleBuyNow = () => {
+  const handleBuyNow = async () => {
     if (soldOut) return;
-    setToast(t("buttons.comingSoon"));
+    const result = await addItem(work.slug, tier.id);
+    if (result.success) {
+      router.push(`/${locale}/checkout`);
+    } else if (result.error === "SOLD_OUT") {
+      setToast(t("buttons.soldOut"));
+    } else if (result.error === "ALREADY_IN_CART") {
+      // 已在购物车，仍跳转结账页
+      router.push(`/${locale}/checkout`);
+    } else {
+      setToast(t("alreadyInCart"));
+    }
+  };
+
+  // 收藏切换：乐观更新，失败回滚
+  const handleToggleWishlist = async () => {
+    const next = !favorited;
+    setFavorited(next);
+    const result = await toggleWishlistAction(work.slug);
+    if (!result.success) {
+      // 未登录，回滚
+      setFavorited(!next);
+      setToast(t("wishlist.loginRequired"));
+      return;
+    }
+    setToast(
+      result.wishlisted ? t("wishlist.added") : t("wishlist.removed")
+    );
   };
 
   return (
@@ -94,10 +130,27 @@ export function WorkDetailClient({ work, locale }: WorkDetailClientProps) {
         {work.categoryLabel[locale]}
       </p>
 
-      {/* 2. 作品标题 */}
-      <h1 className="font-display text-[22px] font-light text-ink sm:text-[28px]">
-        {work.title[locale]}
-      </h1>
+      {/* 2. 作品标题 + 收藏按钮 */}
+      <div className="flex items-start justify-between gap-4">
+        <h1 className="font-display text-[22px] font-light text-ink sm:text-[28px]">
+          {work.title[locale]}
+        </h1>
+        <button
+          type="button"
+          onClick={handleToggleWishlist}
+          aria-label={favorited ? t("wishlist.remove") : t("wishlist.add")}
+          className="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center border border-line transition-colors duration-200 ease-mart hover:bg-ink/5"
+        >
+          <Heart
+            size={20}
+            strokeWidth={1.5}
+            className={cn(
+              "transition-colors",
+              favorited ? "fill-ink text-ink" : "fill-none text-ink"
+            )}
+          />
+        </button>
+      </div>
 
       {/* 3. 艺术家 + 系列（链接到艺术家页） */}
       <Link

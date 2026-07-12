@@ -15,6 +15,8 @@ export interface CreateOrderInput {
   totalUSD: number;
   currency: Currency;
   paymentMethod: string; // stripe / paypal / alipay / wechat
+  userId?: string; // 登录用户关联，游客为 undefined
+  saveAddressToBook?: boolean; // 是否保存地址到地址簿（Task 3 使用）
 }
 
 /** createOrder 结果 */

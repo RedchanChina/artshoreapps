@@ -8,8 +8,10 @@
  * - order 存在：支付成功标识 + 订单号 + 物流提示 + 商品清单 + 订单金额 + 收货地址 + 按钮区
  */
 import Link from "next/link";
+import { useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { formatPrice } from "@/lib/format";
+import { useCartUI } from "@/store/useCartUI";
 import type { OrderResult } from "@/lib/order/types";
 
 interface OrderResultClientProps {
@@ -42,6 +44,12 @@ function CheckIcon({ className }: { className?: string }) {
 
 export function OrderResultClient({ order, locale }: OrderResultClientProps) {
   const t = useTranslations("order");
+  const bumpCart = useCartUI((s) => s.bump);
+
+  // mount 时补偿刷新购物袋角标（即使从其他入口直接落到结果页也能强制刷新）
+  useEffect(() => {
+    bumpCart();
+  }, [bumpCart]);
 
   // 订单未找到
   if (!order) {
@@ -69,7 +77,7 @@ export function OrderResultClient({ order, locale }: OrderResultClientProps) {
   });
 
   return (
-    <div className="mx-auto max-w-[800px] px-4 pb-16 pt-40 md:pt-48">
+    <div className="mx-auto max-w-[800px] px-4 pb-16 pt-[120px] md:pt-[144px]">
       {/* 1. 支付成功标识 */}
       <div className="flex flex-col items-center text-center">
         <CheckIcon className="text-ink" />

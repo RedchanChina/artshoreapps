@@ -49,6 +49,7 @@ export async function createOrder(
       data: {
         orderNumber,
         userEmail: input.shippingAddress.email,
+        userId: input.userId ?? null, // 登录用户关联，游客为 null
         shippingAddress: input.shippingAddress as unknown as Prisma.InputJsonValue,
         shippingMethodCode: input.shippingMethodCode,
         shippingMethodName: input.shippingMethodName as unknown as Prisma.InputJsonValue,

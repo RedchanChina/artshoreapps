@@ -42,7 +42,7 @@ export function CartClient({ initialItems }: CartClientProps) {
   }
 
   return (
-    <div className="container mx-auto px-4 pb-16 pt-20 md:px-7 lg:px-10">
+    <div className="container mx-auto px-4 pb-16 pt-[120px] md:px-7 md:pt-[144px] lg:px-10">
       <h1 className="mb-8 font-display text-[22px] font-light tracking-[-0.01em] text-ink">
         {t("title")}
       </h1>

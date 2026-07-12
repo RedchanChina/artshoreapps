@@ -11,6 +11,8 @@ import { hasLocale } from "next-intl";
 import { routing } from "@/i18n/routing";
 import { getCart } from "@/lib/cart/actions";
 import { getCountries } from "@/lib/checkout/actions";
+import { auth } from "@/lib/auth/auth";
+import { getAddresses, type AddressData } from "@/lib/account/repository";
 import { CheckoutClient } from "@/components/checkout/CheckoutClient";
 
 interface PageProps {
@@ -29,6 +31,18 @@ export default async function CheckoutPage({ params }: PageProps) {
     redirect(`/${locale}/cart`);
   }
 
-  const countries = await getCountries();
-  return <CheckoutClient initialItems={items} countries={countries} />;
+  const [countries, session] = await Promise.all([getCountries(), auth()]);
+  const isLoggedIn = !!session?.user;
+  // 登录用户预取地址簿（默认地址置顶），供 CheckoutClient 自动填充
+  const savedAddresses: AddressData[] = session?.user
+    ? await getAddresses(session.user.id)
+    : [];
+  return (
+    <CheckoutClient
+      initialItems={items}
+      countries={countries}
+      isLoggedIn={isLoggedIn}
+      savedAddresses={savedAddresses}
+    />
+  );
 }

@@ -6,6 +6,7 @@ import { routing } from "@/i18n/routing";
 import AnnouncementBar from "@/components/layout/AnnouncementBar";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import { AuthProviders } from "@/components/auth/AuthProviders";
 import "@/app/globals.css";
 
 export async function generateMetadata({
@@ -47,10 +48,12 @@ export default async function LocaleLayout({
       </head>
       <body className="font-sans antialiased">
         <NextIntlClientProvider messages={messages}>
-          <AnnouncementBar />
-          <Header />
-          {children}
-          <Footer />
+          <AuthProviders>
+            <AnnouncementBar />
+            <Header />
+            {children}
+            <Footer />
+          </AuthProviders>
         </NextIntlClientProvider>
       </body>
     </html>

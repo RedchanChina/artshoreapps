@@ -10,20 +10,26 @@
  *
  * Client Component（需 useTranslations）。
  */
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { ChevronDown } from "lucide-react";
 import type { CountryOption, ShippingAddress } from "@/lib/checkout/types";
+import type { AddressData } from "@/lib/account/repository";
 import { getStatesByCountry, hasRegionDivisions } from "@/data/regions";
 import { cn } from "@/lib/utils";
+import { EMAIL_RE } from "@/lib/auth/constants";
+import { useClickOutside } from "@/hooks/useClickOutside";
 
 interface ShippingFormProps {
   address: ShippingAddress;
   countries: CountryOption[];
   onChange: (patch: Partial<ShippingAddress>) => void;
+  isLoggedIn: boolean;
+  onSaveToAddressBookChange?: (save: boolean) => void;
+  savedAddresses?: AddressData[];
+  onSelectAddress?: (addr: AddressData) => void;
 }
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_RE = /^[+\d(][\d\s()-]{5,}$/;
 
 /** 校验整张表单是否可提交（供父组件判断按钮是否禁用）。 */
@@ -61,8 +67,17 @@ const INPUT_BASE =
 const LABEL_BASE =
   "mb-2 block text-[12px] uppercase tracking-[0.14em] text-gray-500";
 
-export function ShippingForm({ address, countries, onChange }: ShippingFormProps) {
+export function ShippingForm({
+  address,
+  countries,
+  onChange,
+  isLoggedIn,
+  onSaveToAddressBookChange,
+  savedAddresses,
+  onSelectAddress,
+}: ShippingFormProps) {
   const t = useTranslations("checkout.shipping");
+  const [saveToAddressBook, setSaveToAddressBook] = useState(true);
   const [touched, setTouched] = useState<Record<keyof ShippingAddress, boolean>>({
     fullName: false,
     phone: false,
@@ -74,6 +89,55 @@ export function ShippingForm({ address, countries, onChange }: ShippingFormProps
     zipCode: false,
   });
   const errors = fieldErrors(address);
+
+  // 地址簿选择器：open / wrapRef / selectedAddressId（与 CheckoutClient 自动填充保持同步）
+  const [open, setOpen] = useState(false);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [selectedAddressId, setSelectedAddressId] = useState<string | null>(
+    savedAddresses && savedAddresses.length > 0 ? savedAddresses[0].id : null,
+  );
+  // 选择态 vs 编辑态：有已保存地址时默认展示摘要卡片，否则进入编辑态
+  const [mode, setMode] = useState<"selected" | "editing">(
+    savedAddresses && savedAddresses.length > 0 ? "selected" : "editing",
+  );
+
+  // 点击外部 / ESC 关闭
+  useClickOutside(wrapRef, () => setOpen(false), open);
+
+  const selectedAddress = savedAddresses?.find((a) => a.id === selectedAddressId);
+
+  // 选择「手动输入」：清空选中项 + 切换编辑态 + 关闭面板 + 清空所有字段
+  const handleSelectManual = () => {
+    setSelectedAddressId(null);
+    setMode("editing");
+    setOpen(false);
+    onChange({
+      fullName: "",
+      phone: "",
+      email: "",
+      countryCode: "",
+      state: "",
+      city: "",
+      address: "",
+      zipCode: "",
+    });
+  };
+
+  // 新增地址：清空选中项 + 切换编辑态 + 清空所有字段
+  const handleAddNew = () => {
+    setSelectedAddressId(null);
+    setMode("editing");
+    onChange({
+      fullName: "",
+      phone: "",
+      email: "",
+      countryCode: "",
+      state: "",
+      city: "",
+      address: "",
+      zipCode: "",
+    });
+  };
 
   const handleBlur = (field: keyof ShippingAddress) => {
     setTouched((prev) => ({ ...prev, [field]: true }));
@@ -98,6 +162,143 @@ export function ShippingForm({ address, countries, onChange }: ShippingFormProps
   return (
     <section>
       <h2 className="mb-6 text-[15px] font-medium text-ink">{t("title")}</h2>
+
+      {/* 地址簿选择器（登录且有保存地址时显示）：选择态摘要卡片 vs 编辑态触发器 */}
+      {isLoggedIn && savedAddresses && savedAddresses.length > 0 && (
+        <div ref={wrapRef} className="relative mb-4">
+          {mode === "selected" && selectedAddress ? (
+            // 选中态：地址摘要卡片
+            <div>
+              <div className="border border-line p-4">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <p className="text-[14px] font-medium text-ink">
+                      {selectedAddress.fullName}
+                    </p>
+                    {selectedAddress.isDefault && (
+                      <span className="bg-ink px-2 py-0.5 text-[10px] uppercase tracking-[0.14em] text-paper">
+                        {t("default")}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-[14px] text-gray-600">
+                    {selectedAddress.phone}
+                  </p>
+                  <p className="text-[14px] text-gray-600">
+                    {selectedAddress.address}, {selectedAddress.city},{" "}
+                    {selectedAddress.state} {selectedAddress.zipCode}
+                  </p>
+                  <p className="text-[14px] text-gray-600">
+                    {selectedAddress.countryCode}
+                  </p>
+                </div>
+              </div>
+              <div className="mt-3 flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setOpen(true)}
+                  className="border border-ink px-6 py-2 text-[12px] uppercase tracking-[0.14em] text-ink transition-colors hover:bg-ink hover:text-paper"
+                >
+                  {t("changeAddress")}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleAddNew}
+                  className="border border-line px-6 py-2 text-[12px] uppercase tracking-[0.14em] text-ink transition-colors hover:bg-gray-50"
+                >
+                  {t("addNewAddress")}
+                </button>
+              </div>
+            </div>
+          ) : (
+            // 编辑态：下拉触发器
+            <button
+              type="button"
+              onClick={() => setOpen((v) => !v)}
+              aria-haspopup="listbox"
+              aria-expanded={open}
+              className="inline-flex items-center gap-1 text-[11px] tracking-[0.14em] text-ink"
+            >
+              <span>
+                {selectedAddress ? selectedAddress.fullName : t("selectAddress")}
+              </span>
+              <ChevronDown
+                size={12}
+                strokeWidth={1.2}
+                className={cn(
+                  "transition-transform duration-200 ease-mart",
+                  open && "rotate-180",
+                )}
+              />
+            </button>
+          )}
+
+          {/* 下拉面板：两种模式共享，由 open 控制 */}
+          {open && (
+            <ul
+              role="listbox"
+              className="absolute left-0 top-full z-50 mt-2 min-w-[280px] border border-line bg-paper py-1 shadow-[0_2px_12px_rgba(0,0,0,0.1)]"
+            >
+              {savedAddresses.map((addr) => {
+                const isActive = addr.id === selectedAddressId;
+                return (
+                  <li key={addr.id} role="none">
+                    <button
+                      type="button"
+                      role="option"
+                      aria-selected={isActive}
+                      onClick={() => {
+                        onSelectAddress?.(addr);
+                        setSelectedAddressId(addr.id);
+                        setMode("selected");
+                        setOpen(false);
+                      }}
+                      className={cn(
+                        "flex w-full flex-col items-start gap-0.5 px-3 py-2 text-left text-[12px] transition-colors duration-200 ease-mart",
+                        isActive
+                          ? "bg-gray-100 text-ink"
+                          : "text-gray-700 hover:bg-gray-100 hover:text-ink",
+                      )}
+                    >
+                      <span className="flex items-center">
+                        {addr.fullName} · {addr.phone}
+                        {addr.isDefault && (
+                          <span className="ml-2 bg-gray-200 px-1 text-[10px]">
+                            {t("default")}
+                          </span>
+                        )}
+                      </span>
+                      <span className="text-gray-500">
+                        {addr.address}, {addr.city}, {addr.state} {addr.zipCode}
+                      </span>
+                    </button>
+                  </li>
+                );
+              })}
+              {/* 手动输入 */}
+              <li role="none" className="mt-1 border-t border-line pt-1">
+                <button
+                  type="button"
+                  role="option"
+                  aria-selected={selectedAddressId === null}
+                  onClick={handleSelectManual}
+                  className={cn(
+                    "flex w-full items-center px-3 py-2 text-left text-[12px] transition-colors duration-200 ease-mart",
+                    selectedAddressId === null
+                      ? "bg-gray-100 text-ink"
+                      : "text-gray-700 hover:bg-gray-100 hover:text-ink",
+                  )}
+                >
+                  {t("addNew")}
+                </button>
+              </li>
+            </ul>
+          )}
+        </div>
+      )}
+
+      {/* 表单 grid：选中态且有摘要时不渲染，其他情况（编辑态 / 无已保存地址 / 未登录）渲染 */}
+      {!(mode === "selected" && selectedAddress) && (
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {/* 姓名 */}
         <div className="sm:col-span-2">
@@ -310,6 +511,23 @@ export function ShippingForm({ address, countries, onChange }: ShippingFormProps
           />
         </div>
       </div>
+      )}
+
+      {/* 登录用户可勾选保存到地址簿（仅在编辑态显示，选中已有地址时隐藏） */}
+      {isLoggedIn && !(mode === "selected" && selectedAddress) && (
+        <label className="mt-4 flex items-center gap-2 text-[13px] text-ink">
+          <input
+            type="checkbox"
+            checked={saveToAddressBook}
+            onChange={(e) => {
+              setSaveToAddressBook(e.target.checked);
+              onSaveToAddressBookChange?.(e.target.checked);
+            }}
+            className="h-4 w-4 rounded border-line"
+          />
+          {t("saveToAddressBook")}
+        </label>
+      )}
     </section>
   );
 }

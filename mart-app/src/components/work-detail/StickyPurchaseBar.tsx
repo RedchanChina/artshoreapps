@@ -10,6 +10,7 @@
  * Client Component（需 IntersectionObserver + useCartUI + useSettings）。
  */
 import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import type { Work } from "@/data/types";
 import { useSettings } from "@/store/useSettings";
@@ -28,6 +29,7 @@ export function StickyPurchaseBar({ work, locale }: StickyPurchaseBarProps) {
   const currency = useSettings((s) => s.currency);
   const openCart = useCartUI((s) => s.open);
   const bumpCart = useCartUI((s) => s.bump);
+  const router = useRouter();
   const [visible, setVisible] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
 
@@ -86,6 +88,21 @@ export function StickyPurchaseBar({ work, locale }: StickyPurchaseBarProps) {
     }
   };
 
+  const handleBuyNow = async () => {
+    if (soldOut) return;
+    const result = await addItem(work.slug, defaultTier.id);
+    if (result.success) {
+      router.push(`/${locale}/checkout`);
+    } else if (result.error === "SOLD_OUT") {
+      setToast(t("buttons.soldOut"));
+    } else if (result.error === "ALREADY_IN_CART") {
+      // 已在购物车，仍跳转结账页
+      router.push(`/${locale}/checkout`);
+    } else {
+      setToast(t("alreadyInCart"));
+    }
+  };
+
   return (
     <div
       className={cn(
@@ -124,17 +141,28 @@ export function StickyPurchaseBar({ work, locale }: StickyPurchaseBarProps) {
           <span className="text-[12px] text-gray-500">{t("stickyBar.from")}</span>
         </div>
 
-        {/* 加入购物车 */}
+        {/* 加入购物车 + 立即购买 */}
         <button
           type="button"
           disabled={soldOut}
           onClick={handleAddToCart}
           className={cn(
-            "flex-shrink-0 bg-ink px-5 py-2 text-[12px] font-medium uppercase tracking-[0.14em] text-paper transition-colors duration-200 ease-mart hover:bg-ink/90",
+            "flex-shrink-0 border border-ink bg-paper px-5 py-2 text-[12px] font-medium uppercase tracking-[0.14em] text-ink transition-colors duration-200 ease-mart hover:bg-ink/5",
             soldOut && "cursor-not-allowed opacity-50",
           )}
         >
           {soldOut ? t("buttons.soldOut") : t("buttons.addToCart")}
+        </button>
+        <button
+          type="button"
+          disabled={soldOut}
+          onClick={handleBuyNow}
+          className={cn(
+            "flex-shrink-0 bg-ink px-5 py-2 text-[12px] font-medium uppercase tracking-[0.14em] text-paper transition-colors duration-200 ease-mart hover:bg-ink/90",
+            soldOut && "cursor-not-allowed opacity-50",
+          )}
+        >
+          {soldOut ? t("buttons.soldOut") : t("buttons.buyNow")}
         </button>
       </div>
 

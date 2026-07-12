@@ -29,8 +29,8 @@ export default function Footer() {
 
   const accountLinks: FooterLink[] = [
     { label: t("account.myAccount"), href: `/${locale}/account` },
-    { label: t("account.orderQuery"), href: `/${locale}/account/orders` },
-    { label: t("account.myFavorites"), href: `/${locale}/account/wishlist` },
+    { label: t("account.orderQuery"), href: `/${locale}/account?tab=orders` },
+    { label: t("account.myFavorites"), href: `/${locale}/account?tab=wishlist` },
   ];
 
   const helpLinks: FooterLink[] = [

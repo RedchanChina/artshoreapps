@@ -9,8 +9,13 @@
  * Client Component（需 useTranslations）。
  */
 import { useTranslations } from "next-intl";
-import { CreditCard, Wallet, Smartphone, QrCode } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import {
+  siStripe,
+  siPaypal,
+  siAlipay,
+  siWechat,
+  type SimpleIcon,
+} from "simple-icons";
 import { cn } from "@/lib/utils";
 
 export type PaymentMethod = "stripe" | "paypal" | "alipay" | "wechat";
@@ -24,14 +29,30 @@ interface PaymentOptionDef {
   id: PaymentMethod;
   nameKey: "stripe" | "paypal" | "alipay" | "wechat";
   descKey: "stripeDesc" | "paypalDesc" | "alipayDesc" | "wechatDesc";
-  Icon: LucideIcon;
+  icon: SimpleIcon;
+}
+
+function PaymentBrandIcon({ icon, size = 24 }: { icon: SimpleIcon; size?: number }) {
+  return (
+    <svg
+      role="img"
+      viewBox="0 0 24 24"
+      width={size}
+      height={size}
+      fill={`#${icon.hex}`}
+      aria-label={icon.title}
+      className="flex-shrink-0"
+    >
+      <path d={icon.path} />
+    </svg>
+  );
 }
 
 const OPTIONS: PaymentOptionDef[] = [
-  { id: "stripe", nameKey: "stripe", descKey: "stripeDesc", Icon: CreditCard },
-  { id: "paypal", nameKey: "paypal", descKey: "paypalDesc", Icon: Wallet },
-  { id: "alipay", nameKey: "alipay", descKey: "alipayDesc", Icon: Smartphone },
-  { id: "wechat", nameKey: "wechat", descKey: "wechatDesc", Icon: QrCode },
+  { id: "stripe", nameKey: "stripe", descKey: "stripeDesc", icon: siStripe },
+  { id: "paypal", nameKey: "paypal", descKey: "paypalDesc", icon: siPaypal },
+  { id: "alipay", nameKey: "alipay", descKey: "alipayDesc", icon: siAlipay },
+  { id: "wechat", nameKey: "wechat", descKey: "wechatDesc", icon: siWechat },
 ];
 
 export function PaymentSelector({ selected, onSelect }: PaymentSelectorProps) {
@@ -41,7 +62,7 @@ export function PaymentSelector({ selected, onSelect }: PaymentSelectorProps) {
     <section>
       <h2 className="mb-6 text-[15px] font-medium text-ink">{t("title")}</h2>
       <div className="space-y-3">
-        {OPTIONS.map(({ id, nameKey, descKey, Icon }) => {
+        {OPTIONS.map(({ id, nameKey, descKey, icon }) => {
           const isSelected = selected === id;
           return (
             <button
@@ -56,11 +77,7 @@ export function PaymentSelector({ selected, onSelect }: PaymentSelectorProps) {
                   : "border-line hover:border-ink/50",
               )}
             >
-              <Icon
-                size={24}
-                strokeWidth={1.4}
-                className="flex-shrink-0 text-ink"
-              />
+              <PaymentBrandIcon icon={icon} size={24} />
               <div className="min-w-0 flex-1">
                 <p className="text-[15px] text-ink">{t(nameKey)}</p>
                 <p className="mt-0.5 text-[12px] text-gray-500">

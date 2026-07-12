@@ -18,12 +18,14 @@ import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { calculateShipping } from "@/lib/checkout/actions";
 import { createOrder } from "@/lib/order/actions";
+import { useCartUI } from "@/store/useCartUI";
 import type {
   CountryOption,
   DutyEstimate,
   ShippingAddress,
   ShippingOption,
 } from "@/lib/checkout/types";
+import type { AddressData } from "@/lib/account/repository";
 import type { CreateOrderInput } from "@/lib/order/types";
 import type { CartItem } from "@/lib/cart/types";
 import type { Currency } from "@/data/types";
@@ -37,6 +39,8 @@ import { OrderSummary } from "./OrderSummary";
 interface CheckoutClientProps {
   initialItems: CartItem[];
   countries: CountryOption[];
+  isLoggedIn: boolean;
+  savedAddresses?: AddressData[];
 }
 
 const EMPTY_ADDRESS: ShippingAddress = {
@@ -50,15 +54,35 @@ const EMPTY_ADDRESS: ShippingAddress = {
   zipCode: "",
 };
 
-export function CheckoutClient({ initialItems, countries }: CheckoutClientProps) {
+/** 将地址簿 AddressData 转为 ShippingAddress（剥离 id / isDefault，email 兜底空串） */
+function toShippingAddress(addr: AddressData): ShippingAddress {
+  return {
+    fullName: addr.fullName,
+    phone: addr.phone,
+    email: addr.email ?? "",
+    countryCode: addr.countryCode,
+    state: addr.state,
+    city: addr.city,
+    address: addr.address,
+    zipCode: addr.zipCode,
+  };
+}
+
+export function CheckoutClient({ initialItems, countries, isLoggedIn, savedAddresses }: CheckoutClientProps) {
   const t = useTranslations("checkout");
   const tOrder = useTranslations("order");
   const locale = useLocale() as "zh" | "en";
   const router = useRouter();
+  const bumpCart = useCartUI((s) => s.bump);
   const currency = useSettings((s) => s.currency);
 
   const [shippingAddress, setShippingAddress] =
-    useState<ShippingAddress>(EMPTY_ADDRESS);
+    useState<ShippingAddress>(
+      savedAddresses && savedAddresses.length > 0
+        ? toShippingAddress(savedAddresses[0])
+        : EMPTY_ADDRESS,
+    );
+  const [saveAddressToBook, setSaveAddressToBook] = useState(true);
   const [selectedMethodCode, setSelectedMethodCode] = useState<string | null>(
     null,
   );
@@ -122,6 +146,10 @@ export function CheckoutClient({ initialItems, countries }: CheckoutClientProps)
     },
     [],
   );
+
+  const handleSelectAddress = useCallback((addr: AddressData) => {
+    setShippingAddress(toShippingAddress(addr));
+  }, []);
 
   // 客户端本地计算摘要（零延迟，无需调用 Server Action）
   const summary = useMemo(() => {
@@ -218,12 +246,14 @@ export function CheckoutClient({ initialItems, countries }: CheckoutClientProps)
       totalUSD: summary.totalUSD,
       currency,
       paymentMethod: selectedPayment,
+      saveAddressToBook,
     };
 
     setSubmitting(true);
     try {
       const result = await createOrder(input);
       if (result.success && result.orderNumber) {
+        bumpCart();
         router.push(`/${locale}/checkout/result?order=${result.orderNumber}`);
       } else {
         // 根据错误类型显示对应 toast
@@ -252,13 +282,15 @@ export function CheckoutClient({ initialItems, countries }: CheckoutClientProps)
     currency,
     selectedPayment,
     shippingAddress,
+    saveAddressToBook,
     locale,
     router,
+    bumpCart,
     tOrder,
   ]);
 
   return (
-    <div className="container mx-auto px-4 pb-16 pt-20 md:px-7 lg:px-10">
+    <div className="container mx-auto px-4 pb-16 pt-[120px] md:px-7 md:pt-[144px] lg:px-10">
       <h1 className="mb-8 font-display text-[22px] font-light tracking-[-0.01em] text-ink">
         {t("title")}
       </h1>
@@ -269,6 +301,10 @@ export function CheckoutClient({ initialItems, countries }: CheckoutClientProps)
             address={shippingAddress}
             countries={countries}
             onChange={handleAddressChange}
+            isLoggedIn={isLoggedIn}
+            onSaveToAddressBookChange={setSaveAddressToBook}
+            savedAddresses={savedAddresses}
+            onSelectAddress={handleSelectAddress}
           />
           <ShippingOptions
             options={shippingOptions}
